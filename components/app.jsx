@@ -1,6 +1,7 @@
 import React from 'react'
 import { hot } from 'react-hot-loader/root'
-import { TabBar } from 'antd-mobile'
+import { Switch, Route, Link } from 'react-router-dom'
+import TabBar from './tabbar'
 import PageUser from './user'
 import PagePay from './pay'
 import PageBill from './bill'
@@ -14,7 +15,25 @@ import statO from '../static/img/tabbar/stat-o.svg'
 import stat from '../static/img/tabbar/stat.svg'
 import userO from '../static/img/tabbar/user-o.svg'
 import user from '../static/img/tabbar/user.svg'
-import './app.less'
+
+const TabItem = ({ label, to, exact, icon, selectedIcon }) => {
+    return (
+        <Route
+            path={to}
+            exact={exact}
+            children={({ match }) => (
+                <Link to={to}>
+                    <TabBar.Item
+                        label={label}
+                        icon={<Icon svg={icon} />}
+                        selectedIcon={<Icon svg={selectedIcon} />}
+                        selected={match}
+                    />
+                </Link>
+            )}
+        />
+    )
+}
 
 class App extends React.Component {
     constructor(props) {
@@ -23,72 +42,46 @@ class App extends React.Component {
             selectedTab: 'user'
         }
     }
+
     render() {
         return (
-            <div className='tab-bar'>
-                <TabBar
-                    unselectedTintColor='#949494'
-                    tintColor='#33A3F4'
-                    barTintColor='white'
-                    hidden={this.state.hidden}
-                >
-                    <TabBar.Item
-                        title='个人中心'
-                        key='user'
-                        icon={<Icon svg={userO} className='inactive' />}
-                        selectedIcon={<Icon svg={user} className='active' />}
-                        selected={this.state.selectedTab === 'user'}
-                        onPress={() => {
-                            this.setState({
-                                selectedTab: 'user'
-                            })
-                        }}
-                    >
-                        <PageUser className='tab-page' />
-                    </TabBar.Item>
-                    <TabBar.Item
-                        title='余额充值'
-                        key='pay'
-                        icon={<Icon svg={payO} className='inactive' />}
-                        selectedIcon={<Icon svg={pay} className='active' />}
-                        selected={this.state.selectedTab === 'pay'}
-                        onPress={() => {
-                            this.setState({
-                                selectedTab: 'pay'
-                            })
-                        }}
-                    >
-                        <PagePay className='tab-page' />
-                    </TabBar.Item>
-                    <TabBar.Item
-                        title='账单查询'
-                        key='bill'
-                        icon={<Icon svg={billO} className='inactive' />}
-                        selectedIcon={<Icon svg={bill} className='active' />}
-                        selected={this.state.selectedTab === 'bill'}
-                        onPress={() => {
-                            this.setState({
-                                selectedTab: 'bill'
-                            })
-                        }}
-                    >
-                        <PageBill className='tab-page' />
-                    </TabBar.Item>
-                    <TabBar.Item
-                        title='用量分析'
-                        key='usage'
-                        icon={<Icon svg={statO} className='inactive' />}
-                        selectedIcon={<Icon svg={stat} className='active' />}
-                        selected={this.state.selectedTab === 'usage'}
-                        onPress={() => {
-                            this.setState({
-                                selectedTab: 'usage'
-                            })
-                        }}
-                    >
-                        <PageUsage className='tab-page' />
-                    </TabBar.Item>
-                </TabBar>
+            <div>
+                <Switch>
+                    <Route exact path='/' component={PageUser} />
+                    <Route path='/pay' component={PagePay} />
+                    <Route path='/bill' component={PageBill} />
+                    <Route path='/usage' component={PageUsage} />
+                </Switch>
+
+                <div className='tab-bar'>
+                    <TabBar>
+                        <TabItem
+                            to='/'
+                            label='个人中心'
+                            exact={true}
+                            icon={userO}
+                            selectedIcon={user}
+                        />
+                        <TabItem
+                            to='/pay'
+                            label='余额充值'
+                            icon={payO}
+                            selectedIcon={pay}
+                        />
+                        <TabItem
+                            to='/bill'
+                            label='账单查询'
+                            icon={billO}
+                            selectedIcon={bill}
+                        />
+                        <TabItem
+                            to='/usage'
+                            label='用量分析'
+                            icon={statO}
+                            selectedIcon={stat}
+                        />
+                    </TabBar>
+                </div>
             </div>
         )
     }
