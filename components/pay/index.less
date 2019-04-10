@@ -1,0 +1,79 @@
+@import '../../static/style/theme.less';
+
+.page-pay {
+    background-color: @body-bg-color;
+
+    .top {
+        background-color: @top-bg-color;
+        overflow: hidden;
+
+        p {
+            color: white;
+            margin: 25px 0 0 @side-margin;
+            font-size: 16px;
+        }
+
+        h1 {
+            color: white;
+            margin: 0;
+            margin-left: @side-margin;
+            font-size: 48px;
+            font-weight: normal;
+            height: 100px;
+            line-height: 100px;
+        }
+    }
+
+    .content {
+        background-color: white;
+        margin: 14px 0;
+        padding: 0 @side-margin;
+        overflow: hidden;
+
+        section {
+            h3 {
+                font-size: 16px;
+                font-weight: normal;
+            }
+
+            .am-list-item {
+                padding-left: 0;
+            }
+
+            .fee {
+                display: flex;
+                align-items: center;
+                border-bottom: @divider;
+                padding-bottom: 4px;
+
+                .am-icon {
+                    flex: 0 0 22px;
+                    margin-right: 8px;
+                    color: @heading-color;
+                }
+
+                input {
+                    flex: 1 0;
+                    border: none;
+                    outline: 0;
+                    font-size: 46px;
+
+                    &::-webkit-input-placeholder {
+                        font-size: 16px;
+                        transform: translateY(-10px);
+                    }
+                }
+            }
+
+            .next-btn {
+                background-color: @success-color;
+                margin: 8px 0;
+
+                &.active {
+                    background-color: darken(@success-color, 5%);
+                    color: darken(white, 5%);
+                }
+            }
+        }
+    }
+}

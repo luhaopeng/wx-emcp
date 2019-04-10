@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0"
+        />
+        <title>e能家园</title>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script src="https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js"></script>
+        <script>
+            if ('addEventListener' in document) {
+              document.addEventListener('DOMContentLoaded', function() {
+                FastClick.attach(document.body);
+              }, false);
+            }
+            if(!window.Promise) {
+              document.writeln('<script src="https://cdn.jsdelivr.net/npm/es6-promise@4.2.6/dist/es6-promise.auto.min.js">\<\/script>');
+            }
+          </script>
+    </body>
+</html>
