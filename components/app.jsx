@@ -22,7 +22,7 @@ const TabItem = ({ label, to, exact, icon, selectedIcon }) => {
             path={to}
             exact={exact}
             children={({ match }) => (
-                <Link to={to}>
+                <Link to={to} replace>
                     <TabBar.Item
                         label={label}
                         icon={<Icon svg={icon} />}
@@ -35,6 +35,26 @@ const TabItem = ({ label, to, exact, icon, selectedIcon }) => {
     )
 }
 
+const TabWrap = () => (
+    <TabBar>
+        <TabItem
+            to='/'
+            label='个人中心'
+            exact={true}
+            icon={userO}
+            selectedIcon={user}
+        />
+        <TabItem to='/pay' label='余额充值' icon={payO} selectedIcon={pay} />
+        <TabItem to='/bill' label='账单查询' icon={billO} selectedIcon={bill} />
+        <TabItem
+            to='/usage'
+            label='用量分析'
+            icon={statO}
+            selectedIcon={stat}
+        />
+    </TabBar>
+)
+
 class App extends React.Component {
     render() {
         return (
@@ -46,35 +66,12 @@ class App extends React.Component {
                     <Route path='/usage' component={PageUsage} />
                 </Switch>
 
-                <div className='tab-bar'>
-                    <TabBar>
-                        <TabItem
-                            to='/'
-                            label='个人中心'
-                            exact={true}
-                            icon={userO}
-                            selectedIcon={user}
-                        />
-                        <TabItem
-                            to='/pay'
-                            label='余额充值'
-                            icon={payO}
-                            selectedIcon={pay}
-                        />
-                        <TabItem
-                            to='/bill'
-                            label='账单查询'
-                            icon={billO}
-                            selectedIcon={bill}
-                        />
-                        <TabItem
-                            to='/usage'
-                            label='用量分析'
-                            icon={statO}
-                            selectedIcon={stat}
-                        />
-                    </TabBar>
-                </div>
+                <Switch>
+                    <Route exact path='/' component={TabWrap} />
+                    <Route exact path='/pay' component={TabWrap} />
+                    <Route exact path='/bill' component={TabWrap} />
+                    <Route exact path='/usage' component={TabWrap} />
+                </Switch>
             </div>
         )
     }
