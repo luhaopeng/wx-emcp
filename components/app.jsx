@@ -36,13 +36,6 @@ const TabItem = ({ label, to, exact, icon, selectedIcon }) => {
 }
 
 class App extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            selectedTab: 'user'
-        }
-    }
-
     render() {
         return (
             <div>
