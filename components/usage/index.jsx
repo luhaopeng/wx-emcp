@@ -207,7 +207,7 @@ class Usage extends React.Component {
             )
         })
         return (
-            <div className={`page-usage ${this.props.className || ''}`}>
+            <div className='page-usage'>
                 <SegmentedControl
                     className='segment-control'
                     values={['用电分析', '用水分析']}

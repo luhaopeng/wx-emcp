@@ -20,7 +20,7 @@ class Pay extends React.Component {
 
     render() {
         return (
-            <div className={`page-pay ${this.props.className || ''}`}>
+            <div className='page-pay'>
                 <div className='top'>
                     <p>账户余额 (元)</p>
                     <h1>1925.71</h1>

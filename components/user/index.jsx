@@ -10,7 +10,7 @@ class User extends React.Component {
 
     render() {
         return (
-            <div className={`page-user ${this.props.className || ''}`}>
+            <div className='page-user'>
                 <div className='top'>
                     <h2 className='title'>张腾</h2>
                     <ul>

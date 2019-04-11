@@ -86,7 +86,7 @@ class Bill extends React.Component {
             </List.Item>
         )
         return (
-            <div className={`page-bill ${this.props.className || ''}`}>
+            <div className='page-bill'>
                 <SegmentedControl
                     className='segment-control'
                     values={['电费账单', '水费账单']}
