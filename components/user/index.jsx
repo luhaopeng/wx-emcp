@@ -8,6 +8,10 @@ class User extends React.Component {
         console.log('relog') // eslint-disable-line
     }
 
+    handleChargeClick = () => {
+        this.props.history.push('/pay')
+    }
+
     render() {
         return (
             <div className='page-user'>
@@ -25,7 +29,16 @@ class User extends React.Component {
                             <b>
                                 0.00 <span>元</span>
                             </b>
-                            <button>充值</button>
+                            <Button
+                                inline
+                                type='warning'
+                                size='small'
+                                className='charge-btn'
+                                activeClassName='charge-btn-active'
+                                onClick={this.handleChargeClick}
+                            >
+                                充值
+                            </Button>
                         </div>
                     </section>
                     <section>

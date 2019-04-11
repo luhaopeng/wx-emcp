@@ -60,22 +60,24 @@
                 margin-left: @side-margin;
                 height: 100px;
                 line-height: 100px;
+
+                span {
+                    color: @money-color;
+                    font-size: 14px;
+                }
             }
 
-            span {
-                color: @money-color;
-                font-size: 14px;
-            }
-
-            button {
+            .charge-btn {
                 background-color: @money-color;
                 color: white;
-                border: none;
-                border-radius: 4px;
                 font-size: 16px;
-                padding: 8px 16px;
                 height: max-content;
                 margin-right: @side-margin;
+            }
+
+            .charge-btn-active {
+                color: rgba(255, 255, 255, 0.3);
+                background-color: darken(@money-color, 5%);
             }
         }
 
