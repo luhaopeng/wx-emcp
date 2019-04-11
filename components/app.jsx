@@ -1,11 +1,12 @@
 import React from 'react'
 import { hot } from 'react-hot-loader/root'
-import { Switch, Route, Link } from 'react-router-dom'
+import { Switch, Route, Link, Redirect } from 'react-router-dom'
 import TabBar from './tabbar'
 import PageUser from './user'
 import PagePay from './pay'
 import PageBill from './bill'
 import PageUsage from './usage'
+import PageLogin from './login'
 import Icon from './icon'
 import billO from '../static/img/tabbar/bill-o.svg'
 import bill from '../static/img/tabbar/bill.svg'
@@ -55,15 +56,36 @@ const TabWrap = () => (
     </TabBar>
 )
 
+const AuthRoute = ({ component: Component, ...rest }) => {
+    return (
+        <Route
+            {...rest}
+            render={props =>
+                localStorage.customerId ? (
+                    <Component {...props} />
+                ) : (
+                    <Redirect
+                        to={{
+                            pathname: '/login',
+                            state: { from: props.location }
+                        }}
+                    />
+                )
+            }
+        />
+    )
+}
+
 class App extends React.Component {
     render() {
         return (
             <div>
                 <Switch>
-                    <Route exact path='/' component={PageUser} />
-                    <Route path='/pay' component={PagePay} />
-                    <Route path='/bill' component={PageBill} />
-                    <Route path='/usage' component={PageUsage} />
+                    <AuthRoute exact path='/' component={PageUser} />
+                    <AuthRoute path='/pay' component={PagePay} />
+                    <AuthRoute path='/bill' component={PageBill} />
+                    <AuthRoute path='/usage' component={PageUsage} />
+                    <Route path='/login' component={PageLogin} />
                 </Switch>
 
                 <Switch>
