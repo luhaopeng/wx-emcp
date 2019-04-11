@@ -1,6 +1,8 @@
 import React from 'react'
 import { SegmentedControl, List } from 'antd-mobile'
+import { Switch, Route, Link } from 'react-router-dom'
 import dayjs from 'dayjs'
+import Detail from './detail'
 import './index.less'
 
 class Bill extends React.Component {
@@ -54,30 +56,36 @@ class Bill extends React.Component {
         ]
         let list = billList.map(item => {
             return (
-                <List.Item
+                <Link
                     key={item.datatime}
-                    arrow='horizontal'
-                    onClick={() => {
-                        this.handleListClick(item.datatime)
-                    }}
+                    to={`/bill/detail/${item.datatime}`}
                 >
-                    <div className='list-row'>
-                        <span>{dayjs(item.datatime).format('YYYY年MM月')}</span>
-                        <span className='usage'>{`${item.energyzong.toFixed(
-                            2
-                        )} 度`}</span>
-                    </div>
-                    <div className='list-row'>
-                        <span className='brief'>
-                            {`结算时间: ${dayjs(item.updatetime).format(
-                                'YYYY-MM-DD HH:mm:ss'
-                            )}`}
-                        </span>
-                        <span className='price'>{`${item.fee.toFixed(
-                            2
-                        )} 元`}</span>
-                    </div>
-                </List.Item>
+                    <List.Item
+                        arrow='horizontal'
+                        onClick={() => {
+                            this.handleListClick(item.datatime)
+                        }}
+                    >
+                        <div className='list-row'>
+                            <span>
+                                {dayjs(item.datatime).format('YYYY年MM月')}
+                            </span>
+                            <span className='usage'>{`${item.energyzong.toFixed(
+                                2
+                            )} 度`}</span>
+                        </div>
+                        <div className='list-row'>
+                            <span className='brief'>
+                                {`结算时间: ${dayjs(item.updatetime).format(
+                                    'YYYY-MM-DD HH:mm:ss'
+                                )}`}
+                            </span>
+                            <span className='price'>{`${item.fee.toFixed(
+                                2
+                            )} 元`}</span>
+                        </div>
+                    </List.Item>
+                </Link>
             )
         })
         list.push(
@@ -121,4 +129,13 @@ class Bill extends React.Component {
     }
 }
 
-export default Bill
+const Render = () => {
+    return (
+        <Switch>
+            <Route path='/bill' exact component={Bill} />
+            <Route path='/bill/detail/:date' component={Detail} />
+        </Switch>
+    )
+}
+
+export default Render

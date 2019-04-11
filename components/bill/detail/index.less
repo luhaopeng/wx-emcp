@@ -1,0 +1,46 @@
+@import '../../../static/style/theme.less';
+@detail-data-color: #228b22;
+
+.usage-detail {
+    background-color: white;
+    overflow: scroll;
+
+    h3 {
+        text-align: center;
+        margin-left: @side-margin;
+        margin-right: @side-margin;
+    }
+
+    .table-title {
+        display: flex;
+        margin: 20px calc(@side-margin / 2) 0;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+
+        p {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+    }
+
+    table {
+        border-collapse: collapse;
+        font-size: 12px;
+        width: calc(100vw - @side-margin * 2);
+        margin: 0 auto 20px;
+
+        th,
+        td {
+            border: 1px dashed @text-color-secondary;
+            height: 40px;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: normal;
+        }
+
+        td {
+            color: @detail-data-color;
+        }
+    }
+}
