@@ -11,14 +11,14 @@ module.exports = {
   entry: path.resolve(__dirname, 'src/index.js'),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name]_[hash].js'
+    filename: '[name]_[hash].js',
+    publicPath: '/'
   },
   devServer: {
     contentBase: path.resolve(__dirname, 'dist'),
     historyApiFallback: true,
     compress: true,
     port: 9000,
-    open: true,
     hot: true
   },
   module: {
