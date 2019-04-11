@@ -21,5 +21,13 @@ module.exports = {
     semi: ['error', 'never'],
     'react/jsx-uses-react': 'error',
     'react/jsx-uses-vars': 'error'
-  }
+  },
+  overrides: [
+    {
+      files: ['.*', '*.config.js', '*.json'],
+      rules: {
+        indent: ['error', 2]
+      }
+    }
+  ]
 }
