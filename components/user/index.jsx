@@ -12,6 +12,10 @@ class User extends React.Component {
         this.props.history.push('/pay')
     }
 
+    handleMoreClick = () => {
+        this.props.history.push('/history')
+    }
+
     render() {
         return (
             <div className='page-user'>
@@ -58,7 +62,7 @@ class User extends React.Component {
                                 </div>
                                 <b>+ 0.01</b>
                             </li>
-                            <li>
+                            <li onClick={this.handleMoreClick}>
                                 查看更多记录
                                 <Icon
                                     svg={

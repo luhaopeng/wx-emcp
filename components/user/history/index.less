@@ -1,0 +1,38 @@
+@import '../../../static/style/theme.less';
+
+.page-history {
+    .history-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .history-item-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            h4 {
+                font-weight: normal;
+                margin: 0 0 4px;
+                font-size: 14px;
+                color: @text-color;
+            }
+
+            span {
+                color: @text-color-secondary;
+                font-size: 12px;
+            }
+        }
+
+        .history-item {
+            font-size: 14px;
+            color: @text-color;
+        }
+    }
+
+    .more {
+        font-size: 14px;
+        text-align: center;
+        color: @text-color;
+    }
+}
