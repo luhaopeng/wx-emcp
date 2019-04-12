@@ -16,6 +16,10 @@ class User extends React.Component {
         this.props.history.push('/history')
     }
 
+    handleSignOut = () => {
+        localStorage.clear()
+    }
+
     render() {
         return (
             <div className='page-user'>
@@ -79,7 +83,11 @@ class User extends React.Component {
                         <Button className='op-btn' onClick={this.relog}>
                             切换户号
                         </Button>
-                        <Button type='warning' className='op-btn'>
+                        <Button
+                            type='warning'
+                            className='op-btn'
+                            onClick={this.handleSignOut}
+                        >
                             退出登录
                         </Button>
                     </section>

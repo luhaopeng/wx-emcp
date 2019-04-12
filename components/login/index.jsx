@@ -1,9 +1,20 @@
 import React from 'react'
+import { Switch, Route } from 'react-router-dom'
 import { List, InputItem, Button } from 'antd-mobile'
+import Guide from './guide'
 import './index.less'
 import Avatar from '../../static/img/login.jpg'
 
 class Login extends React.Component {
+    handleCodeClick = () => {
+        let { history, location } = this.props
+        let to = {
+            pathname: '/login/guide',
+            state: { from: location.state.from || { pathname: '/' } }
+        }
+        history.push(to)
+    }
+
     handleLogin = () => {
         localStorage.customerId = 65
         let { history, location } = this.props
@@ -24,7 +35,12 @@ class Login extends React.Component {
                         placeholder='填写验证码'
                         maxLength='6'
                         extra={
-                            <Button type='primary' size='small' inline>
+                            <Button
+                                type='primary'
+                                size='small'
+                                inline
+                                onClick={this.handleCodeClick}
+                            >
                                 获取验证码
                             </Button>
                         }
@@ -44,4 +60,11 @@ class Login extends React.Component {
     }
 }
 
-export default Login
+const Render = () => (
+    <Switch>
+        <Route path='/login' exact component={Login} />
+        <Route path='/login/guide' component={Guide} />
+    </Switch>
+)
+
+export default Render

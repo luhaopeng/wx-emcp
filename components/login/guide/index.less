@@ -1,0 +1,38 @@
+@import '../../../static/style/theme.less';
+
+.page-guide {
+    header {
+        overflow: hidden;
+        margin: 20px @side-margin 10px;
+
+        p {
+            color: @text-color-secondary;
+        }
+    }
+
+    .record-wrap {
+        display: flex;
+
+        div {
+            font-size: 14px;
+            color: @text-color;
+            overflow-x: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            &:first-child {
+                width: 30%;
+                margin-right: 8px;
+            }
+
+            &:last-child {
+                width: 60%;
+            }
+        }
+    }
+
+    .bind-btn {
+        font-size: 16px;
+        margin: 20px @side-margin;
+    }
+}
