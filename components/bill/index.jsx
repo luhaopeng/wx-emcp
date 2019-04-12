@@ -56,10 +56,7 @@ class Bill extends React.Component {
         ]
         let list = billList.map(item => {
             return (
-                <Link
-                    key={item.datatime}
-                    to={`/bill/detail/${item.datatime}`}
-                >
+                <Link key={item.datatime} to={`/bill/detail/${item.datatime}`}>
                     <List.Item
                         arrow='horizontal'
                         onClick={() => {
@@ -129,13 +126,11 @@ class Bill extends React.Component {
     }
 }
 
-const Render = () => {
-    return (
-        <Switch>
-            <Route path='/bill' exact component={Bill} />
-            <Route path='/bill/detail/:date' component={Detail} />
-        </Switch>
-    )
-}
+const Render = () => (
+    <Switch>
+        <Route path='/bill' exact component={Bill} />
+        <Route path='/bill/detail/:date' component={Detail} />
+    </Switch>
+)
 
 export default Render
