@@ -1,8 +1,10 @@
 import React from 'react'
+import { Switch, Route } from 'react-router-dom'
 import { Button, List, Radio } from 'antd-mobile'
 import Icon from '../icon'
 import './index.less'
 import OptionGroup from './option'
+import Result from './result'
 
 const Option = OptionGroup.Item
 
@@ -16,6 +18,7 @@ class Pay extends React.Component {
 
     handleOptionClick = val => {
         console.log(val) // eslint-disable-line
+        this.props.history.push('/pay/result')
     }
 
     render() {
@@ -103,4 +106,11 @@ class Pay extends React.Component {
     }
 }
 
-export default Pay
+const Render = () => (
+    <Switch>
+        <Route exact path='/pay' component={Pay} />
+        <Route path='/pay/result' component={Result} />
+    </Switch>
+)
+
+export default Render
