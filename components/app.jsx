@@ -8,6 +8,7 @@ import PageBill from './bill'
 import PageUsage from './usage'
 import PageLogin from './login'
 import PageHistory from './user/history'
+import PagePaid from './pay/done'
 import Icon from './icon'
 import billO from '../static/img/tabbar/bill-o.svg'
 import bill from '../static/img/tabbar/bill.svg'
@@ -88,6 +89,7 @@ class App extends React.Component {
                     <AuthRoute path='/bill' component={PageBill} />
                     <AuthRoute path='/usage' component={PageUsage} />
                     <Route path='/login' component={PageLogin} />
+                    <Route path='/paid' component={PagePaid} />
                 </Switch>
 
                 <Switch>

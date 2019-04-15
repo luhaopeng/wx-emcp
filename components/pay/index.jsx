@@ -16,9 +16,12 @@ class Pay extends React.Component {
         }
     }
 
-    handleOptionClick = val => {
-        console.log(val) // eslint-disable-line
+    handleOptionClick = () => {
         this.props.history.push('/pay/result')
+    }
+
+    handleNextClick = () => {
+        this.props.history.push('/paid')
     }
 
     render() {
@@ -96,6 +99,7 @@ class Pay extends React.Component {
                             type='primary'
                             className='next-btn'
                             activeClassName='active'
+                            onClick={this.handleNextClick}
                         >
                             下一步
                         </Button>
