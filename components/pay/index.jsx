@@ -5,6 +5,7 @@ import Icon from '../icon'
 import './index.less'
 import OptionGroup from './option'
 import Result from './result'
+import Redirect from './redirect'
 
 const Option = OptionGroup.Item
 
@@ -17,7 +18,11 @@ class Pay extends React.Component {
     }
 
     handleOptionClick = () => {
-        this.props.history.push('/pay/result')
+        if (this.state.payType === 1) {
+            this.props.history.push('/pay/result')
+        } else {
+            this.props.history.push('/pay/redirect')
+        }
     }
 
     handleNextClick = () => {
@@ -114,6 +119,7 @@ const Render = () => (
     <Switch>
         <Route exact path='/pay' component={Pay} />
         <Route path='/pay/result' component={Result} />
+        <Route path='/pay/redirect' component={Redirect} />
     </Switch>
 )
 
