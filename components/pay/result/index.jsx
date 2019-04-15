@@ -1,5 +1,5 @@
 import React from 'react'
-import { Result } from 'antd-mobile'
+import { Button } from 'antd-mobile'
 import Icon from '../../icon'
 import './index.less'
 
@@ -8,61 +8,61 @@ const ResultEnum = {
         unknown: {
             title: '充值尚未到账',
             message: () => (
-                <div>
+                <p>
                     预计10分钟内到账
                     <br />
                     请稍后前往个人中心查询充值记录
-                </div>
+                </p>
             )
         },
         success: {
             title: '充值成功',
             message: remain => (
-                <div>
+                <p>
                     当前余额为 <b>{remain.toFixed(2)}</b> 元
-                </div>
+                </p>
             )
         },
         error: {
             title: '交易失败或关闭',
-            message: () => <div>交易超时, 请重新发起交易</div>
+            message: () => <p>交易超时, 请重新发起交易</p>
         }
     },
     icm: {
         unknown: {
             title: '支付尚未到账',
-            message: () => <div>请稍后关注公众号推送消息</div>
+            message: () => <p>请稍后关注公众号推送消息</p>
         },
         processing: {
             title: '电量下发中',
-            message: () => <div>请稍后关注公众号推送消息</div>
+            message: () => <p>请稍后关注公众号推送消息</p>
         },
         success: {
             title: '购电成功',
-            message: () => <div>请稍后关注卡表电量</div>
+            message: () => <p>请稍后关注卡表电量</p>
         },
         error: {
             title: '交易失败或关闭',
-            message: () => <div>交易超时, 请重新发起交易</div>
+            message: () => <p>交易超时, 请重新发起交易</p>
         },
         refund: {
             title: '购电失败',
             message: () => (
-                <div>
+                <p>
                     已退款
                     <br />
                     请稍后关注您的余额信息
-                </div>
+                </p>
             )
         },
         warning: {
             title: '购电超时',
             message: () => (
-                <div>
+                <p>
                     请到物业处人工处理
                     <br />
                     本次购电金额无需重复缴纳
-                </div>
+                </p>
             )
         }
     }
@@ -123,35 +123,42 @@ function categorize({ type, recharge, operate }) {
 }
 
 class PayResult extends React.Component {
-    handleRedirectClick = () => {
+    handleRedirectUserClick = () => {
         this.props.history.push('/')
+    }
+
+    handleRedirectPayClick = () => {
+        this.props.history.push('/pay')
     }
 
     render() {
         let type = 1
-        let recharge = 2
+        let recharge = 1
         let operate = 1
         let { cat, status } = categorize({ type, recharge, operate })
         let { title, message } = ResultEnum[cat][status]
         return (
             <div className='page-result'>
-                <Result
-                    className='result-section'
-                    img={
-                        <Icon
-                            className='result-icon'
-                            svg={
-                                require(`../../../static/img/result/${status}.svg`)
-                                    .default
-                            }
-                        />
+                <Icon
+                    className='result-icon'
+                    svg={
+                        require(`../../../static/img/result/${status}.svg`)
+                            .default
                     }
-                    title={title}
-                    message={message(120)}
-                    buttonText='个人中心'
-                    buttonType='primary'
-                    onButtonClick={this.handleRedirectClick}
                 />
+                <h2>{title}</h2>
+                {message(120)}
+                <footer>
+                    <Button
+                        type='primary'
+                        onClick={this.handleRedirectUserClick}
+                    >
+                        前往个人中心
+                    </Button>
+                    <Button onClick={this.handleRedirectPayClick}>
+                        返回充值页
+                    </Button>
+                </footer>
             </div>
         )
     }
