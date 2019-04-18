@@ -1,0 +1,18 @@
+@import '../../../static/style/theme.less';
+@money-color: #ff8c00;
+
+.page-meter-list {
+    height: 100vh;
+    overflow: scroll;
+    background-color: @body-bg-color;
+
+    .meter-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 16px;
+
+        span {
+            color: @money-color;
+        }
+    }
+}

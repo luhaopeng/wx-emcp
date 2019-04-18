@@ -1,9 +1,23 @@
 import React from 'react'
 import { Button } from 'antd-mobile'
+import dayjs from 'dayjs'
 import Icon from '../icon'
 import './index.less'
+import { Mine } from '../../api/url'
 
 class User extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            hm: '---',
+            user: '---',
+            phone: '---',
+            balance: 0,
+            type: 1,
+            history: []
+        }
+    }
+
     handleRelog = () => {
         // redirect
         let { history, location } = this.props
@@ -26,22 +40,107 @@ class User extends React.Component {
         localStorage.clear()
     }
 
+    handleMeterListClick = () => {
+        if (this.state.type > 1) {
+            this.props.history.push('/meters')
+        }
+    }
+
+    async componentDidMount() {
+        let { customerId } = localStorage
+        let resBasic = await Mine.basic.query({ customerid: customerId })
+        let { customer } = resBasic.data.data
+        let resBalance = await Mine.balance.query({ customerid: customerId })
+        let { prepayType, icmList, account } = resBalance.data.data
+        let resHistory = await Mine.history.query({
+            customerid: customerId,
+            num: -1
+        })
+        let {
+            esamRechargeHistory,
+            icmRechargeHistory,
+            rechargeHistory
+        } = resHistory.data.data
+
+        // process
+        let balance = 0
+        if (parseInt(prepayType) === 1) {
+            balance = account.usablemoney
+        } else {
+            for (let { remain } of icmList) {
+                balance += remain
+            }
+        }
+        let history = []
+        switch (parseInt(prepayType)) {
+            case 2:
+                history = icmRechargeHistory.map(item => {
+                    let { handler, addTime, buyMoney } = item
+                    return { handler, money: buyMoney, time: addTime }
+                })
+                break
+            case 3:
+                history = esamRechargeHistory.map(item => {
+                    let { handler, addTime, money } = item
+                    return { handler, money, time: addTime }
+                })
+                break
+            case 1:
+            default:
+                history = rechargeHistory.map(item => {
+                    let { handler, addtime, payMoney, actualMoney } = item
+                    return {
+                        handler,
+                        time: addtime,
+                        money: actualMoney || payMoney
+                    }
+                })
+                break
+        }
+
+        this.setState({
+            hm: customer.hm,
+            user: customer.linkman,
+            phone: customer.phone,
+            type: parseInt(prepayType),
+            balance,
+            history
+        })
+    }
+
     render() {
+        let { hm, user, phone, balance, type, history } = this.state
+        let list = history.map((item, idx) => (
+            <li key={idx}>
+                <div>
+                    <p>{item.handler}</p>
+                    <span>
+                        {dayjs(item.time).format('YYYY-MM-DD HH:mm:ss')}
+                    </span>
+                </div>
+                <b>+ {item.money.toFixed(2)}</b>
+            </li>
+        ))
         return (
             <div className='page-user'>
                 <div className='top'>
-                    <h2 className='title'>张腾</h2>
+                    <h2 className='title'>{hm}</h2>
                     <ul>
-                        <li>张腾</li>
-                        <li>18868823613</li>
+                        <li>{user}</li>
+                        <li>{phone}</li>
                     </ul>
                 </div>
                 <div className='content'>
                     <section>
-                        <h3>账户余额</h3>
+                        <h3>
+                            {type === 1
+                                ? '账户余额'
+                                : `剩余电${type === 2 ? '量' : '费'}`}
+                        </h3>
                         <div className='balance'>
-                            <b>
-                                0.00 <span>元</span>
+                            <b onClick={this.handleMeterListClick}>
+                                {balance.toFixed(2)}
+                                <span>{type === 2 ? '度' : '元'}</span>
                             </b>
                             <Button
                                 inline
@@ -51,27 +150,14 @@ class User extends React.Component {
                                 activeClassName='charge-btn-active'
                                 onClick={this.handleChargeClick}
                             >
-                                充值
+                                {type === 1 ? '充值' : '购电'}
                             </Button>
                         </div>
                     </section>
                     <section>
-                        <h3>充值记录</h3>
+                        <h3>{type === 1 ? '充值记录' : '购电记录'}</h3>
                         <ul className='history'>
-                            <li>
-                                <div>
-                                    <p>微信支付</p>
-                                    <span>2019-02-21 13:29:58</span>
-                                </div>
-                                <b>+ 0.01</b>
-                            </li>
-                            <li>
-                                <div>
-                                    <p>支付宝</p>
-                                    <span>2019-02-21 13:29:52</span>
-                                </div>
-                                <b>+ 0.01</b>
-                            </li>
+                            {list}
                             <li onClick={this.handleMoreClick}>
                                 查看更多记录
                                 <Icon
