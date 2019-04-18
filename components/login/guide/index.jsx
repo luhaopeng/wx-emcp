@@ -1,48 +1,45 @@
 import React from 'react'
 import { List, Radio, Button } from 'antd-mobile'
 import './index.less'
+import { Mine } from '../../../api/url'
 
 class Guide extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            selectedIndex: 0
+            selectedId: 0,
+            records: []
         }
     }
 
     handleBindClick = () => {
-        localStorage.customerId = 68
+        localStorage.customerId = this.state.selectedId
         let { history, location } = this.props
         let { from } = location.state || { from: { pathname: '/' } }
         history.replace(from)
     }
 
+    async componentDidMount() {
+        let { relog, phone } = localStorage
+        let { data } = await Mine.login.query({ relog, phone })
+        if (data.errcode === 0) {
+            let array = data.data.customerEnts
+            let records = array.map(item => {
+                return { id: item.customerid, hm: item.hm, company: item.ename }
+            })
+            this.setState({ selectedId: records[0].id, records })
+        }
+    }
+
     render() {
-        const records = [
-            {
-                hm: '张腾',
-                company: '华立科技股份有限公司'
-            },
-            {
-                hm: '张腾2',
-                company: '华立测试'
-            },
-            {
-                hm: 'test',
-                company: '华立演示专用'
-            },
-            {
-                hm: '1234',
-                company: '滨城物业'
-            }
-        ]
-        let { selectedIndex } = this.state
-        let list = records.map((val, idx) => (
+        let { records } = this.state
+        let { selectedId } = this.state
+        let list = records.map(val => (
             <Radio.RadioItem
-                key={idx}
-                checked={selectedIndex === idx}
+                key={val.id}
+                checked={selectedId === val.id}
                 onChange={() => {
-                    this.setState({ selectedIndex: idx })
+                    this.setState({ selectedId: val.id })
                 }}
             >
                 <div className='record-wrap'>
