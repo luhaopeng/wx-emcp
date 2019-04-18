@@ -17,11 +17,15 @@
 
     .segment-control {
         margin: @side-margin;
+
+        &.hide {
+            display: none;
+        }
     }
 
     .content {
         section {
-            margin: @side-margin 0;
+            margin-bottom: @side-margin;
             background-color: #fff;
 
             header {
