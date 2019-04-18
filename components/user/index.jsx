@@ -4,8 +4,14 @@ import Icon from '../icon'
 import './index.less'
 
 class User extends React.Component {
-    relog() {
-        console.log('relog') // eslint-disable-line
+    handleRelog = () => {
+        // redirect
+        let { history, location } = this.props
+        let to = {
+            pathname: '/login/guide',
+            state: { from: location }
+        }
+        history.replace(to)
     }
 
     handleChargeClick = () => {
@@ -80,9 +86,14 @@ class User extends React.Component {
                     </section>
                     <section>
                         <h3>其他</h3>
-                        <Button className='op-btn' onClick={this.relog}>
-                            切换户号
-                        </Button>
+                        {!localStorage.relog ? null : (
+                            <Button
+                                className='op-btn'
+                                onClick={this.handleRelog}
+                            >
+                                切换户号
+                            </Button>
+                        )}
                         <Button
                             type='warning'
                             className='op-btn'
