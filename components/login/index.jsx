@@ -33,7 +33,7 @@ class Login extends React.Component {
             this.second = 60
             this.setState({
                 sent: true,
-                sentBtnLabel: `重新发送（${this.second}秒）`
+                sentBtnLabel: `重新发送(${this.second}秒)`
             })
             this.timer = setInterval(() => {
                 if (--this.second <= 0) {
@@ -42,7 +42,7 @@ class Login extends React.Component {
                     this.setState({ sent: false, sentBtnLabel: '获取验证码' })
                 } else {
                     this.setState({
-                        sentBtnLabel: `重新发送（${this.second}秒）`
+                        sentBtnLabel: `重新发送(${this.second}秒)`
                     })
                 }
             }, 1000)
