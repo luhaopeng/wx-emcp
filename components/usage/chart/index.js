@@ -9,8 +9,10 @@ const theme = require('./theme.json')
 echarts.registerTheme('roma', theme)
 
 function buildChart(domEl, option) {
-    let chart = echarts.init(domEl, 'roma')
+    let chart = echarts.getInstanceByDom(domEl) || echarts.init(domEl, 'roma')
+    chart.clear()
     chart.setOption(option)
+    window.onresize = chart.resize
     return chart
 }
 
