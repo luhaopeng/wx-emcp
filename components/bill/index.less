@@ -74,52 +74,50 @@
                 }
             }
 
-            .am-list {
-                margin: 0 @side-margin;
+            .list-row {
+                display: flex;
+                justify-content: space-between;
 
-                .am-list-body::before,
-                .am-list-body::after {
-                    display: none;
-                }
+                .list-col {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
 
-                .am-list-item {
-                    padding-left: 0;
+                    &.right {
+                        text-align: end;
+                    }
 
-                    .am-list-line {
-                        padding-right: 0;
+                    span {
+                        font-size: 12px;
+                        color: @heading-color;
 
-                        .list-row {
-                            display: flex;
-                            justify-content: space-between;
-
-                            &:first-child {
-                                margin-bottom: 4px;
-                            }
-
-                            span {
-                                font-size: 12px;
-                                color: @heading-color;
-
-                                &.brief {
-                                    color: @text-color-secondary;
-                                }
-
-                                &.usage {
-                                    .num-usage;
-                                }
-
-                                &.price {
-                                    .num-price;
-                                }
-                            }
+                        &:first-child {
+                            margin-bottom: 4px;
                         }
 
-                        .more {
-                            font-size: 14px;
-                            text-align: center;
+                        &.brief {
+                            color: @text-color-secondary;
+                        }
+
+                        &.usage {
+                            .num-usage;
+                        }
+
+                        &.price {
+                            .num-price;
                         }
                     }
                 }
+            }
+
+            .more {
+                font-size: 14px;
+                text-align: center;
+            }
+
+            .am-list-body::before,
+            .am-list-body::after {
+                display: none;
             }
         }
     }

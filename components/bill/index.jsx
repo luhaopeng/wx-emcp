@@ -14,10 +14,14 @@ class Bill extends React.Component {
         this.state = {
             billType: 0, // 0 电；1 水,
             single: true,
-            type: 1,
+            type: 1, // 1 regular; 2 icm; 3 esam
             curElec: null,
-            curWater: null
+            curWater: null,
+            done: false,
+            pastElec: [],
+            pastWater: []
         }
+        this.num = 0
     }
 
     handleBillTypeChange = e => {
@@ -26,7 +30,7 @@ class Bill extends React.Component {
     }
 
     handleListClick = time => {
-        console.log(time) // eslint-disable-line
+        this.props.history.push(`/bill/detail/${this.state.billType}/${time}`)
     }
 
     queryCurrent = async () => {
@@ -46,82 +50,95 @@ class Bill extends React.Component {
         }
     }
 
-    queryPast = async () => {}
+    queryPast = async () => {
+        if (this.state.done) {
+            return
+        }
+        let { data } = await Elec.billList.query({
+            customerid: localStorage.customerId,
+            num: this.num++
+        })
+        if (data.errcode !== 0) {
+            this.setState({ done: true })
+        } else {
+            let {
+                prepayType,
+                briefList: elec,
+                briefWaterList: water
+            } = data.data
+            if (this.num > 1) {
+                let { pastElec, pastWater } = this.state
+                this.setState({
+                    pastElec: pastElec.concat(elec),
+                    pastWater: pastWater.concat(water)
+                })
+            } else {
+                this.setState({
+                    billType: elec.length === 0 && water.length > 0 ? 1 : 0,
+                    single: !(elec.length > 0 && water.length > 0),
+                    type: prepayType,
+                    pastElec: elec,
+                    pastWater: water
+                })
+            }
+        }
+    }
 
     componentDidMount() {
         this.queryCurrent()
+        this.queryPast()
     }
 
     render() {
-        let { type, billType, curElec, curWater, single } = this.state
+        let {
+            type,
+            single,
+            billType,
+            curElec,
+            curWater,
+            pastElec,
+            pastWater,
+            done
+        } = this.state
         let cur = billType === 1 ? curWater : curElec
-        const billList = [
-            {
-                datatime: '2019-03-01 00:00:00',
-                updatetime: '2019-04-01 02:51:53',
-                energyzong: 454.31,
-                fee: 681.47
-            },
-            {
-                datatime: '2019-02-01 00:00:00',
-                updatetime: '2019-04-01 02:51:53',
-                energyzong: 454.31,
-                fee: 681.47
-            },
-            {
-                datatime: '2019-01-01 00:00:00',
-                updatetime: '2019-04-01 02:51:53',
-                energyzong: 454.31,
-                fee: 681.47
-            },
-            {
-                datatime: '2018-12-01 00:00:00',
-                updatetime: '2019-04-01 02:51:53',
-                energyzong: 454.31,
-                fee: 681.47
-            },
-            {
-                datatime: '2018-11-01 00:00:00',
-                updatetime: '2019-04-01 02:51:53',
-                energyzong: 454.31,
-                fee: 681.47
-            },
-            {
-                datatime: '2018-10-01 00:00:00',
-                updatetime: '2019-04-01 02:51:53',
-                energyzong: 454.31,
-                fee: 681.47
-            }
-        ]
-        let list = billList.map(item => {
+        let past = billType === 1 ? pastWater : pastElec
+        let list = past.map(item => {
+            let { datatime, energyzong: usage, fee, updatetime } = item
             return (
                 <List.Item
-                    key={item.datatime}
+                    key={datatime}
                     arrow='horizontal'
                     onClick={() => {
-                        this.handleListClick(item.datatime)
+                        this.handleListClick(datatime)
                     }}
                 >
                     <div className='list-row'>
-                        <span>{dayjs(item.datatime).format('YYYY年MM月')}</span>
-                        <span className='usage'>{`${item.energyzong.toFixed(
-                            2
-                        )} 度`}</span>
-                    </div>
-                    <div className='list-row'>
-                        <span className='brief'>
-                            {`结算时间: ${dayjs(item.updatetime).format(full)}`}
-                        </span>
-                        <span className='price'>{`${item.fee.toFixed(
-                            2
-                        )} 元`}</span>
+                        <div className='list-col'>
+                            <span>{dayjs(datatime).format('YYYY年MM月')}</span>
+                            <span className='brief'>
+                                结算时间: {dayjs(updatetime).format(full)}
+                            </span>
+                        </div>
+                        <div className='list-col right'>
+                            {type === 3 ? null : (
+                                <span className='usage'>
+                                    {usage.toFixed(2)}
+                                    {billType === 2 ? '吨' : '度'}
+                                </span>
+                            )}
+                            <span className='price'>
+                                {fee ? fee.toFixed(2) : '0.00'} 元
+                            </span>
+                        </div>
                     </div>
                 </List.Item>
             )
         })
         list.push(
             <List.Item key='more'>
-                <div className='more'>加载更多</div>
+                <div className='more' onClick={this.queryPast}>
+                    {done ? '没有更多了' : '加载更多'}
+                </div>
             </List.Item>
         )
         return (
@@ -142,7 +159,14 @@ class Bill extends React.Component {
                                     : dayjs(cur.updatetime).format(full)}
                             </div>
                         </header>
-                        <div className='cur'>
+                        <div
+                            className='cur'
+                            onClick={() => {
+                                if (cur) {
+                                    this.handleListClick(cur.updatetime)
+                                }
+                            }}
+                        >
                             <div>
                                 <h3 className='usage'>
                                     {!cur ? '-.--' : cur.energyzong.toFixed(2)}
@@ -180,7 +204,7 @@ class Bill extends React.Component {
 const Render = () => (
     <Switch>
         <Route path='/bill' exact component={Bill} />
-        <Route path='/bill/detail/:date' component={Detail} />
+        <Route path='/bill/detail/:type/:date' component={Detail} />
     </Switch>
 )
 

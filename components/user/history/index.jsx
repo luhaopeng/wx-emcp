@@ -102,7 +102,7 @@ class History extends React.Component {
         list.push(
             <List.Item key='more'>
                 <div className='more' onClick={this.queryData}>
-                    {this.state.done ? '加载完毕' : '加载更多'}
+                    {this.state.done ? '没有更多了' : '加载更多'}
                 </div>
             </List.Item>
         )
