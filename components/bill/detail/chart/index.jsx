@@ -20,8 +20,8 @@ function regularTop({ obj, detail, billType, current, checked }) {
                 <thead>
                     <tr>
                         <th>计费月份</th>
-                        <th>{billType === 1 ? '水' : '电'}表数量</th>
-                        <th>{billType === 1 ? '水' : '电'}费</th>
+                        <th>{billType ? '水' : '电'}表数量</th>
+                        <th>{billType ? '水' : '电'}费</th>
                         <th>{current ? '总余额' : '追退费用'}</th>
                         <th>{current ? '冻结余额' : '应付金额'}</th>
                         <th>{current ? '可用余额' : '账户余额'}</th>
@@ -57,8 +57,8 @@ function regularTop({ obj, detail, billType, current, checked }) {
 }
 
 function singlet({ obj, billType }) {
-    let type = billType === 1 ? '水' : '电'
-    let unit = billType === 1 ? '吨' : '度'
+    let type = billType ? '水' : '电'
+    let unit = billType ? '吨' : '度'
     return (
         <React.Fragment key={obj.pointid}>
             <div className='table-title'>
@@ -203,8 +203,8 @@ function rating({ obj }) {
 }
 
 function stair({ obj, billType }) {
-    let type = billType === 1 ? '水' : '电'
-    let unit = billType === 1 ? '吨' : '度'
+    let type = billType ? '水' : '电'
+    let unit = billType ? '吨' : '度'
     let {
         energy1,
         energy2,

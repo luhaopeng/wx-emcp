@@ -105,8 +105,8 @@ class Bill extends React.Component {
             pastWater,
             done
         } = this.state
-        let cur = billType === 1 ? curWater : curElec
-        let past = billType === 1 ? pastWater : pastElec
+        let cur = billType ? curWater : curElec
+        let past = billType ? pastWater : pastElec
         let list = past.map(item => {
             let { datatime, energyzong: usage, fee, updatetime } = item
             return (
@@ -177,7 +177,7 @@ class Bill extends React.Component {
                                     {!cur ? '-.--' : cur.energyzong.toFixed(2)}
                                 </h3>
                                 <span>
-                                    {billType === 1
+                                    {billType
                                         ? '消耗水量 (吨)'
                                         : type === 3
                                             ? '购电金额 (元)'
@@ -188,9 +188,7 @@ class Bill extends React.Component {
                                 <h3 className='price'>
                                     {!cur ? '-.--' : cur.fee.toFixed(2)}
                                 </h3>
-                                <span>
-                                    预计{billType === 1 ? '水' : '电'}费 (元)
-                                </span>
+                                <span>预计{billType ? '水' : '电'}费 (元)</span>
                             </div>
                         </div>
                     </section>
