@@ -56,13 +56,8 @@ class User extends React.Component {
             customerid: customerId,
             num: -1
         })
-        let {
-            esamRechargeHistory,
-            icmRechargeHistory,
-            rechargeHistory
-        } = resHistory.data.data
 
-        // process
+        // process balance
         let balance = 0
         if (parseInt(prepayType) === 1) {
             balance = account.usablemoney
@@ -71,31 +66,40 @@ class User extends React.Component {
                 balance += remain
             }
         }
+        // process history
         let history = []
-        switch (parseInt(prepayType)) {
-            case 2:
-                history = icmRechargeHistory.map(item => {
-                    let { handler, addTime, buyMoney } = item
-                    return { handler, money: buyMoney, time: addTime }
-                })
-                break
-            case 3:
-                history = esamRechargeHistory.map(item => {
-                    let { handler, addTime, money } = item
-                    return { handler, money, time: addTime }
-                })
-                break
-            case 1:
-            default:
-                history = rechargeHistory.map(item => {
-                    let { handler, addtime, payMoney, actualMoney } = item
-                    return {
-                        handler,
-                        time: addtime,
-                        money: actualMoney || payMoney
-                    }
-                })
-                break
+        if (resHistory.data.errcode === 0) {
+            let {
+                esamRechargeHistory,
+                icmRechargeHistory,
+                rechargeHistory
+            } = resHistory.data.data
+
+            switch (parseInt(prepayType)) {
+                case 2:
+                    history = icmRechargeHistory.map(item => {
+                        let { handler, addTime, buyMoney } = item
+                        return { handler, money: buyMoney, time: addTime }
+                    })
+                    break
+                case 3:
+                    history = esamRechargeHistory.map(item => {
+                        let { handler, addTime, money } = item
+                        return { handler, money, time: addTime }
+                    })
+                    break
+                case 1:
+                default:
+                    history = rechargeHistory.map(item => {
+                        let { handler, addtime, payMoney, actualMoney } = item
+                        return {
+                            handler,
+                            time: addtime,
+                            money: actualMoney || payMoney
+                        }
+                    })
+                    break
+            }
         }
 
         this.setState({
@@ -121,6 +125,19 @@ class User extends React.Component {
                 <b>+ {item.money.toFixed(2)}</b>
             </li>
         ))
+        list.push(
+            history.length < 2 ? (
+                <li key='more'>无记录</li>
+            ) : (
+                <li key='more' onClick={this.handleMoreClick}>
+                    查看更多记录
+                    <Icon
+                        svg={require('../../static/img/right.svg').default}
+                        className='icon'
+                    />
+                </li>
+            )
+        )
         return (
             <div className='page-user'>
                 <div className='top'>
@@ -156,19 +173,7 @@ class User extends React.Component {
                     </section>
                     <section>
                         <h3>{type === 1 ? '充值记录' : '购电记录'}</h3>
-                        <ul className='history'>
-                            {list}
-                            <li onClick={this.handleMoreClick}>
-                                查看更多记录
-                                <Icon
-                                    svg={
-                                        require('../../static/img/right.svg')
-                                            .default
-                                    }
-                                    className='icon'
-                                />
-                            </li>
-                        </ul>
+                        <ul className='history'>{list}</ul>
                     </section>
                     <section>
                         <h3>其他</h3>

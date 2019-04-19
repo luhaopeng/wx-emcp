@@ -6,7 +6,7 @@ import Detail from './detail'
 import './index.less'
 import { Elec } from '../../api/url'
 
-const full = 'YYYY-MM-DD HH:mm:ss'
+const FULL = 'YYYY-MM-DD HH:mm:ss'
 
 class Bill extends React.Component {
     constructor(props) {
@@ -29,8 +29,13 @@ class Bill extends React.Component {
         this.setState({ billType: idx })
     }
 
-    handleListClick = time => {
-        this.props.history.push(`/bill/detail/${this.state.billType}/${time}`)
+    handleListClick = (time, current = false) => {
+        let { billType, type } = this.state
+        let to = {
+            pathname: '/bill/detail',
+            state: { time, current, billType, type }
+        }
+        this.props.history.push(to)
     }
 
     queryCurrent = async () => {
@@ -116,14 +121,14 @@ class Bill extends React.Component {
                         <div className='list-col'>
                             <span>{dayjs(datatime).format('YYYY年MM月')}</span>
                             <span className='brief'>
-                                结算时间: {dayjs(updatetime).format(full)}
+                                结算时间: {dayjs(updatetime).format(FULL)}
                             </span>
                         </div>
                         <div className='list-col right'>
                             {type === 3 ? null : (
                                 <span className='usage'>
                                     {usage.toFixed(2)}
-                                    {billType === 2 ? '吨' : '度'}
+                                    {billType === 2 ? ' 吨' : ' 度'}
                                 </span>
                             )}
                             <span className='price'>
@@ -156,14 +161,14 @@ class Bill extends React.Component {
                             <div>
                                 {!cur
                                     ? '暂无当月信息'
-                                    : dayjs(cur.updatetime).format(full)}
+                                    : dayjs(cur.updatetime).format(FULL)}
                             </div>
                         </header>
                         <div
                             className='cur'
                             onClick={() => {
                                 if (cur) {
-                                    this.handleListClick(cur.updatetime)
+                                    this.handleListClick(cur.updatetime, true)
                                 }
                             }}
                         >
@@ -204,7 +209,7 @@ class Bill extends React.Component {
 const Render = () => (
     <Switch>
         <Route path='/bill' exact component={Bill} />
-        <Route path='/bill/detail/:type/:date' component={Detail} />
+        <Route path='/bill/detail' component={Detail} />
     </Switch>
 )
 
