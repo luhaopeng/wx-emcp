@@ -8,94 +8,26 @@ class Usage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            usageList: [
-                {
-                    datatime: '2019-04-09 00:00:00',
-                    zong: 16.21,
-                    jian: 3,
-                    feng: 2,
-                    ping: 4,
-                    gu: 1
-                },
-                {
-                    datatime: '2019-04-08 00:00:00',
-                    zong: 16.21,
-                    jian: 3,
-                    feng: 2,
-                    ping: 4,
-                    gu: 1
-                },
-                {
-                    datatime: '2019-04-07 00:00:00',
-                    zong: 16.21,
-                    jian: 3,
-                    feng: 2,
-                    ping: 4,
-                    gu: 1
-                },
-                {
-                    datatime: '2019-04-06 00:00:00',
-                    zong: 16.21,
-                    jian: 3,
-                    feng: 2,
-                    ping: 4,
-                    gu: 1
-                },
-                {
-                    datatime: '2019-04-05 00:00:00',
-                    zong: 16.21,
-                    jian: 3,
-                    feng: 2,
-                    ping: 4,
-                    gu: 1
-                },
-                {
-                    datatime: '2019-04-04 00:00:00',
-                    zong: 16.21,
-                    jian: 3,
-                    feng: 2,
-                    ping: 4,
-                    gu: 1
-                },
-                {
-                    datatime: '2019-04-03 00:00:00',
-                    zong: 16.21,
-                    jian: 3,
-                    feng: 2,
-                    ping: 4,
-                    gu: 1
-                },
-                {
-                    datatime: '2019-04-02 00:00:00',
-                    zong: 16.21,
-                    jian: 3,
-                    feng: 2,
-                    ping: 4,
-                    gu: 1
-                },
-                {
-                    datatime: '2019-04-01 00:00:00',
-                    zong: 16.21,
-                    jian: 3,
-                    feng: 2,
-                    ping: 4,
-                    gu: 1
-                }
-            ]
+            usageList: [],
+            type: 0, // 0 电; 1 水
+            mode: 0 // 0 天; 1 小时
         }
     }
 
     handleUsageTypeChange = e => {
         let idx = e.nativeEvent.selectedSegmentIndex
-        console.log('type change: %d', idx) // eslint-disable-line
+        this.setState({ type: idx })
     }
 
-    componentDidMount() {
+    buildChart() {
         let root = document.getElementById('usage-chart')
-        let timePeriod = 7
+        let { usageList, type, mode } = this.state
+        let timePeriod = mode ? 24 : 7
+        let cat = type ? '水' : '电'
+        let unit = type ? '吨' : '度'
         let dayList = [],
             dataList = []
-        let elecList = this.state.usageList
+        let elecList = usageList
 
         for (let i = 0; i < elecList.length; i++) {
             dayList.unshift(elecList[i].datatime.substr(5, 5))
@@ -112,7 +44,7 @@ class Usage extends React.Component {
 
         let option = {
             title: {
-                text: '最近30天用电量(度)',
+                text: `最近${!type && mode ? 3 : 30}天用${cat}量(${unit})`,
                 left: 'center',
                 top: 10,
                 textStyle: {
