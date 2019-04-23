@@ -213,7 +213,8 @@ class Usage extends React.Component {
                 />
                 <Switch
                     className={classNames('mode-switch', {
-                        hide: usageType > 0
+                        hide: usageType > 0,
+                        'non-seg': single
                     })}
                     checked={mode}
                     onLabel='时'
