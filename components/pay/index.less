@@ -1,5 +1,52 @@
 @import '../../static/style/theme.less';
 
+.am-modal-mask {
+    display: none;
+}
+
+.am-modal-wrap {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.pay-modal-wrap {
+    height: calc(100vh - @tabbar-height);
+
+    .pay-modal-body {
+        .am-modal-body {
+            padding-bottom: 0;
+
+            p {
+                margin: 0;
+                color: @text-color;
+                font-size: 15px;
+            }
+
+            span {
+                color: @text-color-secondary;
+                font-size: 13px;
+            }
+
+            .am-checkbox-agree {
+                .am-checkbox-agree-label {
+                    color: tomato;
+
+                    .am-checkbox-inner {
+                        width: 17px;
+                        height: 17px;
+                        top: 13px;
+
+                        &::after {
+                            right: 5px;
+                            width: 4px;
+                            height: 8px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 .page-pay {
     background-color: @body-bg-color;
     overflow: scroll;
@@ -23,6 +70,11 @@
             font-weight: normal;
             height: 100px;
             line-height: 100px;
+        }
+
+        .picker-selected {
+            font-size: 20px;
+            border-bottom: solid 2px white;
         }
     }
 
