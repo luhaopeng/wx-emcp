@@ -3,6 +3,8 @@ import { Switch, Route } from 'react-router-dom'
 import { Button, List, Radio } from 'antd-mobile'
 import Icon from '../icon'
 import './index.less'
+import { Wechat } from '../../api/url'
+import { isDev, isTest, isWeChat } from '../../util/constants'
 import OptionGroup from './option'
 import Result from './result'
 import Redirect from './redirect'
@@ -27,6 +29,24 @@ class Pay extends React.Component {
 
     handleNextClick = () => {
         this.props.history.push('/paid')
+    }
+
+    async componentDidMount() {
+        if (!isDev && isWeChat) {
+            // config wechat jsapi
+            let { data } = await Wechat.config.query({
+                url: window.location.href
+            })
+            // eslint-disable-next-line no-undef
+            wx.config({
+                debug: isDev || isTest,
+                appId: data.data.wxConfig.appId,
+                timestamp: data.data.wxConfig.timestamp,
+                nonceStr: data.data.wxConfig.nonceStr,
+                signature: data.data.wxConfig.signature,
+                jsApiList: ['chooseWXPay']
+            })
+        }
     }
 
     render() {

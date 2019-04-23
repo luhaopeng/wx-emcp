@@ -1,11 +1,9 @@
 import React from 'react'
-import MobileDetect from 'mobile-detect'
 import { Button } from 'antd-mobile'
+import { isWeChat, isIOS } from '../../../util/constants'
 import './index.less'
 import android from '../../../static/img/tip_android.png'
 import ios from '../../../static/img/tip_ios.png'
-
-const detect = new MobileDetect(window.navigator.userAgent)
 
 class Redirect extends React.Component {
     handleDoneClick = () => {
@@ -13,14 +11,12 @@ class Redirect extends React.Component {
     }
 
     componentDidMount() {
-        let isWeChat = detect.match(/micromessenger/i)
         if (!isWeChat) {
             console.log('执行alipay') // eslint-disable-line
         }
     }
 
     render() {
-        let isIOS = detect.match(/iphone|ipad|ipod/i)
         let img = isIOS ? ios : android
         return (
             <div className='page-redirect'>

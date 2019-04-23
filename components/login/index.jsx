@@ -2,10 +2,12 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { List, InputItem, Button } from 'antd-mobile'
 import classNames from 'classnames'
+import queryString from 'query-string'
 import Guide from './guide'
 import './index.less'
 import Avatar from '../../static/img/login.jpg'
-import { Mine } from '../../api/url'
+import { Mine, Wechat } from '../../api/url'
+import { isWeChat, isDev, authUrl } from '../../util/constants'
 
 class Login extends React.Component {
     constructor(props) {
@@ -17,6 +19,14 @@ class Login extends React.Component {
             errMsg: '',
             sent: false,
             sentBtnLabel: '获取验证码'
+        }
+        let { code } = queryString(props.location.search)
+        if (!isDev && isWeChat && !localStorage.openId) {
+            if (!code) {
+                window.location.href = authUrl
+            } else {
+                this.code = code
+            }
         }
     }
 
@@ -90,6 +100,13 @@ class Login extends React.Component {
 
     handleCodeChange = code => {
         this.setState({ code })
+    }
+
+    async componentDidMount() {
+        if (!isDev && isWeChat && !localStorage.openId && this.code) {
+            let { data } = await Wechat.auth.query({ code: this.code })
+            localStorage.openId = data.data.openId
+        }
     }
 
     render() {
