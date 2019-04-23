@@ -1,13 +1,10 @@
 import axios from 'axios'
-const isDev = process.env.NODE_ENV === 'development'
-const devUrl = 'http://localhost:8080/wxemcp/'
-const prodUrl = 'http://hl.energyman.cn/wxemcp/'
-
-const urlPrefix = isDev ? devUrl : prodUrl
+import { urlPrefix, prodUrl } from '../util/constants'
 
 class Request {
-    constructor(url) {
+    constructor(url, base) {
         this.url = url
+        this.base = base
     }
 
     query(data = {}, option = {}) {
@@ -17,7 +14,7 @@ class Request {
         }
         let setting = Object.assign(
             {
-                baseURL: urlPrefix,
+                baseURL: this.base || urlPrefix,
                 method: 'post',
                 url: this.url,
                 timeout: 30000,
@@ -64,8 +61,8 @@ const Test = {
 }
 
 const Wechat = {
-    auth: new Request('/wechat_authorize.action'),
-    config: new Request('/wechat_wxConfig.action')
+    auth: new Request('/wechat_authorize.action', prodUrl),
+    config: new Request('/wechat_wxConfig.action', prodUrl)
 }
 
 export { Elec, Mine, Pay, Test, Wechat }
