@@ -1,41 +1,59 @@
 import React from 'react'
+import classNames from 'classnames'
 import { List, SegmentedControl } from 'antd-mobile'
 import dayjs from 'dayjs'
 import './index.less'
 import Chart from './chart'
+import { Elec } from '../../api/url'
+import Empty from '../empty'
+import Switch from '../switch'
 
 class Usage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            usageList: [],
-            type: 0, // 0 电; 1 水
-            mode: 0 // 0 天; 1 小时
+            elecList: [],
+            waterList: [],
+            usageType: 0, // 0 电; 1 水
+            type: 1, // 1 regular; 2 icm; 3 esam
+            mode: 0, // 0 天; 1 小时
+            single: true
         }
+        this.chartRef = React.createRef()
+        this.chart = null
     }
 
     handleUsageTypeChange = e => {
         let idx = e.nativeEvent.selectedSegmentIndex
-        this.setState({ type: idx })
+        this.setState({ usageType: idx })
+    }
+
+    handleModeChange = () => {
+        this.queryData(this.state.mode ^ 1)
     }
 
     buildChart() {
-        let root = document.getElementById('usage-chart')
-        let { usageList, type, mode } = this.state
-        let timePeriod = mode ? 24 : 7
-        let cat = type ? '水' : '电'
-        let unit = type ? '吨' : '度'
+        let { usageType, elecList, waterList, mode } = this.state
+        let usageList = usageType ? waterList : elecList
+        if (usageList.length === 0) {
+            this.chart && this.chart.clear()
+            return true
+        }
+
+        let timePeriod = mode && !usageType ? 24 : 7
+        let FORMAT = mode && !usageType ? 'HH' : 'MM-DD'
+        let cat = usageType ? '水' : '电'
+        let unit = usageType ? '吨' : '度'
         let dayList = [],
             dataList = []
-        let elecList = usageList
 
-        for (let i = 0; i < elecList.length; i++) {
-            dayList.unshift(elecList[i].datatime.substr(5, 5))
-            dataList.unshift(elecList[i].zong)
-        }
+        usageList.map(item => {
+            dayList.unshift(dayjs(item.datatime).format(FORMAT))
+            dataList.unshift(usageType ? item.used : item.zong)
+        })
         // 不足7天/24小时，在前部填充空值
-        if (elecList.length < timePeriod) {
-            let addNum = timePeriod - elecList.length
+        if (usageList.length < timePeriod) {
+            let addNum = timePeriod - usageList.length
             for (let j = 0; j < addNum; j++) {
                 dayList.unshift('')
                 dataList.unshift('')
@@ -44,7 +62,7 @@ class Usage extends React.Component {
 
         let option = {
             title: {
-                text: `最近${!type && mode ? 3 : 30}天用${cat}量(${unit})`,
+                text: `最近${!usageType && mode ? 3 : 30}天用${cat}量(${unit})`,
                 left: 'center',
                 top: 10,
                 textStyle: {
@@ -120,41 +138,118 @@ class Usage extends React.Component {
                 }
             ]
         }
-        Chart.buildChart(root, option)
+        this.chart = Chart.buildChart(this.chartRef.current, option)
     }
 
-    render() {
-        let list = this.state.usageList.map(function build(item) {
+    buildTable() {
+        let { usageType, elecList, waterList, type } = this.state
+        let usageList = usageType ? waterList : elecList
+        let list = usageList.map(function build(item) {
             return (
                 <List.Item key={item.datatime}>
                     <div className='list-row'>
                         <div>{dayjs(item.datatime).format('MM-DD')}</div>
-                        <div>{item.zong.toFixed(2)}</div>
-                        <div>{item.jian.toFixed(2)}</div>
-                        <div>{item.feng.toFixed(2)}</div>
-                        <div>{item.ping.toFixed(2)}</div>
-                        <div>{item.gu.toFixed(2)}</div>
+                        {usageType ? (
+                            <div>{item.used.toFixed(2)}</div>
+                        ) : (
+                            <div>{item.zong.toFixed(2)}</div>
+                        )}
+                        {usageType || type > 1 ? null : (
+                            <React.Fragment>
+                                <div>{item.jian.toFixed(2)}</div>
+                                <div>{item.feng.toFixed(2)}</div>
+                                <div>{item.ping.toFixed(2)}</div>
+                                <div>{item.gu.toFixed(2)}</div>
+                            </React.Fragment>
+                        )}
                     </div>
                 </List.Item>
             )
         })
+        return list
+    }
+
+    async queryData(newMode) {
+        let { mode } = this.state
+        let { data } = await Elec.usage.query({
+            mode: newMode !== undefined ? newMode : mode,
+            customerid: localStorage.customerId
+        })
+        let { dayUseList: elec, dayWaterList: water, prepayType } = data.data
+        if (newMode !== undefined) {
+            this.setState({
+                elecList: elec,
+                waterList: water,
+                mode: newMode
+            })
+        } else {
+            this.setState({
+                elecList: elec,
+                waterList: water,
+                usageType: elec.length === 0 && water.length > 0 ? 1 : 0,
+                type: prepayType,
+                single: !(elec.length > 0 && water.length > 0)
+            })
+        }
+    }
+
+    componentDidMount() {
+        this.queryData()
+    }
+
+    render() {
+        let { usageType, single, type, mode } = this.state
+        let clear = this.chartRef.current && this.buildChart()
+        let list = this.buildTable()
         return (
             <div className='page-usage'>
                 <SegmentedControl
-                    className='segment-control'
+                    selectedIndex={usageType}
+                    className={classNames('segment-control', {
+                        hide: single
+                    })}
                     values={['用电分析', '用水分析']}
                     onChange={this.handleUsageTypeChange}
                 />
-                <div id='usage-chart' className='chart-root' />
+                <Switch
+                    className={classNames('mode-switch', {
+                        hide: usageType > 0
+                    })}
+                    checked={mode}
+                    onLabel='时'
+                    offLabel='天'
+                    onClick={this.handleModeChange}
+                />
+                {clear && (
+                    <Empty style={{ height: '216px' }} className='empty' />
+                )}
+                <div
+                    className={classNames('chart-root', {
+                        hide: clear
+                    })}
+                    ref={this.chartRef}
+                />
                 <div className='list-header'>
                     <h3>日期</h3>
-                    <h3>总</h3>
-                    <h3>尖</h3>
-                    <h3>峰</h3>
-                    <h3>平</h3>
-                    <h3>谷</h3>
+                    {usageType ? (
+                        <h3>用水量</h3>
+                    ) : (
+                        <h3>{type > 1 ? '用电量' : '总'}</h3>
+                    )}
+                    {usageType || type > 1 ? null : (
+                        <React.Fragment>
+                            <h3>尖</h3>
+                            <h3>峰</h3>
+                            <h3>平</h3>
+                            <h3>谷</h3>
+                        </React.Fragment>
+                    )}
                 </div>
-                <List>{list}</List>
+                {list.length > 0 ? (
+                    <List className={single ? 'non-seg' : ''}>{list}</List>
+                ) : (
+                    <Empty className='empty' />
+                )}
             </div>
         )
     }
