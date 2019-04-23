@@ -1,6 +1,7 @@
 import React from 'react'
 import { SegmentedControl, List } from 'antd-mobile'
 import { Switch, Route } from 'react-router-dom'
+import classNames from 'classnames'
 import dayjs from 'dayjs'
 import Detail from './detail'
 import './index.less'
@@ -150,7 +151,9 @@ class Bill extends React.Component {
             <div className='page-bill'>
                 <SegmentedControl
                     selectedIndex={billType}
-                    className={`segment-control ${single ? 'hide' : ''}`}
+                    className={classNames('segment-control', {
+                        hide: single
+                    })}
                     values={['电费账单', '水费账单']}
                     onChange={this.handleBillTypeChange}
                 />

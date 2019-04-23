@@ -1,6 +1,7 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { List, InputItem, Button } from 'antd-mobile'
+import classNames from 'classnames'
 import Guide from './guide'
 import './index.less'
 import Avatar from '../../static/img/login.jpg'
@@ -132,7 +133,11 @@ class Login extends React.Component {
                 >
                     登录
                 </Button>
-                <p className={`error ${this.state.error ? 'show' : ''}`}>
+                <p
+                    className={classNames('error', {
+                        show: this.state.error
+                    })}
+                >
                     {this.state.errMsg}
                 </p>
             </div>
