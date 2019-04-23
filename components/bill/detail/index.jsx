@@ -11,12 +11,14 @@ class Detail extends React.Component {
         this.state = {
             total: null,
             detail: [],
-            checked: true
+            checked: true,
+            error: false,
+            errmsg: ''
         }
     }
 
     async componentDidMount() {
-        let { location, history } = this.props
+        let { location } = this.props
         let { time, billType, type } = location.state
         let api = type > 1 ? Elec.icmBillDetail : Elec.billDetail
         let pType = type > 1 ? type : billType + 1
@@ -26,9 +28,7 @@ class Detail extends React.Component {
             type: pType
         })
         if (data.errcode !== 0) {
-            Modal.alert('操作失败', data.errmsg, [
-                { text: '返回', onPress: history.goBack }
-            ])
+            this.setState({ error: true, errmsg: data.errmsg })
         } else {
             let detail
             switch (type) {
@@ -49,10 +49,20 @@ class Detail extends React.Component {
     }
 
     render() {
-        let { current, billType, type } = this.props.location.state
+        let { location, history } = this.props
+        let { current, billType, type } = location.state
         let { total, detail, checked } = this.state
         return (
             <div className='usage-detail'>
+                <Modal
+                    title='操作失败'
+                    visible={this.state.error}
+                    maskClosable={false}
+                    transparent
+                    footer={[{ text: '返回', onPress: history.goBack }]}
+                >
+                    {this.state.errmsg}
+                </Modal>
                 {buildTop({
                     obj: total,
                     billType,
