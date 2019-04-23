@@ -149,7 +149,7 @@ class Bill extends React.Component {
         return (
             <div className='page-bill'>
                 <SegmentedControl
-                    selectedIndex={this.state.billType}
+                    selectedIndex={billType}
                     className={`segment-control ${single ? 'hide' : ''}`}
                     values={['电费账单', '水费账单']}
                     onChange={this.handleBillTypeChange}
