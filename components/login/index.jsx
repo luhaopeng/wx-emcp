@@ -20,8 +20,8 @@ class Login extends React.Component {
             sent: false,
             sentBtnLabel: '获取验证码'
         }
-        let { code } = queryString(props.location.search)
         if (!isDev && isWeChat && !localStorage.openId) {
+            let { code } = queryString(props.location.search)
             if (!code) {
                 window.location.href = authUrl
             } else {
