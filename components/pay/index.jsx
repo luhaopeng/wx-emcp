@@ -39,11 +39,11 @@ class Pay extends React.Component {
     }
 
     handleOptionClick = money => {
-        console.log('money: %d', money) // eslint-disable-line
+        this.queryOrderId(money)
     }
 
     handleNextClick = () => {
-        this.props.history.push('/paid')
+        this.queryOrderId(this.state.customInput)
     }
 
     handleAgreeChange = e => {
@@ -111,6 +111,103 @@ class Pay extends React.Component {
             meters: icmList,
             selectedMeter: icmList[0]
         })
+    }
+
+    queryOrderId = async money => {
+        let { type, payType, selectedMeter } = this.state
+        let api
+        switch (type) {
+            case 3:
+                api = PayApi.esamId
+                break
+            case 2:
+                api = PayApi.icmId
+                break
+            case 1:
+            default:
+                api = PayApi.id
+                break
+        }
+        let { data } = await api.query(
+            {
+                customerid: localStorage.customerId,
+                amount: money,
+                tool: payType,
+                icmid: selectedMeter && selectedMeter.pointid
+            },
+            { timeout: 90000 }
+        )
+        if (data.errcode !== 0) {
+            Toast.fail(data.errmsg)
+        } else {
+            this.queryPay(data.data.rechargeId)
+        }
+    }
+
+    queryPay = async id => {
+        let { type, payType } = this.state
+        let { history } = this.props
+        if (payType - 1) {
+            // redirect alipay
+            let to = {
+                pathname: '/pay/redirect',
+                state: { type, id }
+            }
+            history.push(to)
+        }
+
+        let api
+        switch (type) {
+            case 3:
+                api = PayApi.esamPay
+                break
+            case 2:
+                api = PayApi.icmPay
+                break
+            case 1:
+            default:
+                api = PayApi.pay
+                break
+        }
+
+        let { data } = await api.query({
+            rechargeid: id,
+            openid: localStorage.openId
+        })
+        if (data.errcode !== 0) {
+            Toast.fail(data.errmsg)
+        } else {
+            // wechat or icbc-aggregate
+            let { form, wxData } = data.data
+            if (form) {
+                // icbc-aggregate form
+                document.body.innerHTML = form
+                let scripts = document.querySelector('script')
+                for (let i = 0; i < scripts.length; i++) {
+                    eval(scripts[i].innerHTML)
+                }
+            } else if (wxData.result_code === 'SUCCESS') {
+                // eslint-disable-next-line no-undef
+                wx.chooseWXPay({
+                    appId: wxData.appid,
+                    timestamp: wxData.timeStamp,
+                    nonceStr: wxData.nonce_str,
+                    package: wxData.packageStr,
+                    signType: wxData.signType,
+                    paySign: wxData.sign,
+                    success: () => {
+                        // redirect to result
+                        let to = {
+                            pathname: '/pay/result',
+                            state: { type, id }
+                        }
+                        history.push(to)
+                    }
+                })
+            } else {
+                Toast.fail(wxData.return_msg)
+            }
+        }
     }
 
     buildPickerList = (list, type) => {
@@ -303,12 +400,13 @@ class Pay extends React.Component {
                     </section>
                     <section>
                         <Button
+                            disabled={!customInput || !parseFloat(customInput)}
                             type='primary'
                             className='next-btn'
                             activeClassName='active'
                             onClick={this.handleNextClick}
                         >
-                            下一步
+                            {payType - 1 ? '下一步' : '支付'}
                         </Button>
                     </section>
                 </div>
