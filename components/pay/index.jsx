@@ -1,7 +1,16 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
-import { Button, List, Radio, Modal, Checkbox, Picker } from 'antd-mobile'
+import {
+    Button,
+    List,
+    Radio,
+    Modal,
+    Checkbox,
+    Picker,
+    Toast
+} from 'antd-mobile'
 import Icon from '../icon'
+import classNames from 'classnames'
 import './index.less'
 import { Pay as PayApi, Wechat, Mine } from '../../api/url'
 import { isDev, isTest, isWeChat } from '../../util/constants'
@@ -22,17 +31,15 @@ class Pay extends React.Component {
             protocol: false,
             agreed: false,
             type: 1, // 1 regular; 2 icm; 3 esam
-            account: 0,
-            meters: []
+            account: null,
+            meters: [],
+            selectedMeter: null,
+            customInput: ''
         }
     }
 
-    handleOptionClick = () => {
-        if (this.state.payType === 1) {
-            this.props.history.push('/pay/result')
-        } else {
-            this.props.history.push('/pay/redirect')
-        }
+    handleOptionClick = money => {
+        console.log('money: %d', money) // eslint-disable-line
     }
 
     handleNextClick = () => {
@@ -47,6 +54,13 @@ class Pay extends React.Component {
         if (this.state.agreed) {
             this.setState({ protocol: false })
             localStorage.protocol = true
+        }
+    }
+
+    hanldeCustomInput = e => {
+        let value = e.target.value.replace(/^\.$/, '0.')
+        if (!value || /^(0|[1-9]\d*)(\.\d{0,2})?$/.test(value)) {
+            this.setState({ customInput: value })
         }
     }
 
@@ -94,20 +108,26 @@ class Pay extends React.Component {
         this.setState({
             type: prepayType,
             account,
-            meters: icmList
+            meters: icmList,
+            selectedMeter: icmList[0]
         })
     }
 
     buildPickerList = (list, type) => {
-        let data = list.map(item => {
+        let data = list.map((item, idx) => {
             let end = type > 2 ? '元' : `度 - ${item.price.toFixed(2)}元/度`
             let label = `${item.pointname} - ${item.remain.toFixed(2)}${end}`
-            return { label, value: item.pointid }
+            return { label, value: idx }
         })
         return [data]
     }
 
     componentDidMount() {
+        // wechat pay detect
+        if (!isWeChat) {
+            Toast.fail('您不在微信浏览器中，无法使用微信支付')
+            this.setState({ payType: 2 })
+        }
         // config wechat jsapi
         if (!isDev && isWeChat) {
             this.configWechatJsApi()
@@ -118,24 +138,22 @@ class Pay extends React.Component {
 
     render() {
         let {
+            payType,
             forbidden,
             protocol,
             agreed,
             aliDiscount,
             wxDiscount,
             type,
-            meters
+            meters,
+            selectedMeter,
+            account,
+            customInput
         } = this.state
         let wxTip = `(需收取${((1 - wxDiscount) * 100).toFixed(1)}%手续费)`
         let aliTip = `(需收取${((1 - aliDiscount) * 100).toFixed(1)}%手续费)`
-        let pickerData = null,
-            first = null
-        if (type > 1) {
-            let item = meters[0]
-            pickerData = this.buildPickerList(meters, type)
-            let end = type > 2 ? '元' : `度 - ${item.price.toFixed(2)}元/度`
-            first = `${item.pointname} - ${item.remain.toFixed(2)}${end}`
-        }
+        let curPrice = type === 2 ? selectedMeter.price : 1.0
+        let curDis = payType - 1 ? aliDiscount : wxDiscount
         return (
             <div className='page-pay'>
                 <Modal
@@ -174,15 +192,34 @@ class Pay extends React.Component {
                     <p>{type > 1 ? '购电电表' : '账户余额 (元)'}</p>
                     {type > 1 ? (
                         <Picker
-                            data={pickerData}
+                            data={this.buildPickerList(meters, type)}
                             title='选择电表'
                             cols={1}
                             cascade={false}
+                            onOk={val => {
+                                this.setState({ selectedMeter: meters[val[0]] })
+                            }}
                         >
-                            <h1 className='picker-selected'>{first}</h1>
+                            <div className='picker-selected'>
+                                <h3>{selectedMeter.pointname}</h3>
+                                <h3>—</h3>
+                                <h3>
+                                    {selectedMeter.remain.toFixed(2)}
+                                    {type === 2 ? '度' : '元'}
+                                </h3>
+                                {type === 2 ? (
+                                    <React.Fragment>
+                                        <h3>—</h3>
+                                        <h3>
+                                            {selectedMeter.price.toFixed(2)}
+                                            元/度
+                                        </h3>
+                                    </React.Fragment>
+                                ) : null}
+                            </div>
                         </Picker>
                     ) : (
-                        <h1>1925.71</h1>
+                        <h1>{account && account.usablemoney.toFixed(2)}</h1>
                     )}
                 </div>
                 <div className='content'>
@@ -190,6 +227,7 @@ class Pay extends React.Component {
                         <h3>支付方式</h3>
                         <List>
                             <Radio.RadioItem
+                                disabled={!isWeChat}
                                 thumb={
                                     <Icon
                                         size='sm'
@@ -199,7 +237,7 @@ class Pay extends React.Component {
                                         }
                                     />
                                 }
-                                checked={this.state.payType === 1}
+                                checked={payType === 1}
                                 onChange={() => {
                                     this.setState({ payType: 1 })
                                 }}
@@ -216,7 +254,7 @@ class Pay extends React.Component {
                                         }
                                     />
                                 }
-                                checked={this.state.payType === 2}
+                                checked={payType === 2}
                                 onChange={() => {
                                     this.setState({ payType: 2 })
                                 }}
@@ -232,7 +270,9 @@ class Pay extends React.Component {
                                 return (
                                     <Option
                                         key={val}
-                                        price={val}
+                                        money={val}
+                                        price={curPrice}
+                                        discount={curDis}
                                         onClick={this.handleOptionClick}
                                     />
                                 )
@@ -245,8 +285,21 @@ class Pay extends React.Component {
                                     require('../../static/img/yuan.svg').default
                                 }
                             />
-                            <input type='number' placeholder='其他金额' />
+                            <input
+                                type='text'
+                                value={customInput}
+                                placeholder='其他金额'
+                                onChange={this.hanldeCustomInput}
+                            />
                         </div>
+                        <p
+                            className={classNames('custom-amount', {
+                                hide: !customInput
+                            })}
+                        >
+                            可得{(curPrice * curDis * customInput).toFixed(2)}
+                            {type === 2 ? '度' : '元'}
+                        </p>
                     </section>
                     <section>
                         <Button
