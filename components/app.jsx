@@ -10,6 +10,7 @@ import PageLogin from './login'
 import PageHistory from './user/history'
 import PageMeters from './user/meterList'
 import PagePaid from './pay/done'
+import PageRedirect from './pay/redirect'
 import Icon from './icon'
 import billO from '../static/img/tabbar/bill-o.svg'
 import bill from '../static/img/tabbar/bill.svg'
@@ -93,6 +94,7 @@ class App extends React.Component {
                     <AuthRoute path='/usage' component={PageUsage} />
                     <Route path='/login' component={PageLogin} />
                     <Route path='/paid' component={PagePaid} />
+                    <Route path='/redirect' component={PageRedirect} />
                 </Switch>
 
                 <Switch>

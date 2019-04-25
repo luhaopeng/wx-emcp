@@ -16,7 +16,6 @@ import { Pay as PayApi, Wechat, Mine } from '../../api/url'
 import { isDev, isTest, isWeChat } from '../../util/constants'
 import OptionGroup from './option'
 import Result from './result'
-import Redirect from './redirect'
 
 const Option = OptionGroup.Item
 
@@ -150,7 +149,7 @@ class Pay extends React.Component {
         if (payType - 1) {
             // redirect alipay
             let to = {
-                pathname: '/pay/redirect',
+                pathname: '/redirect',
                 state: { type, id }
             }
             history.push(to)
@@ -419,7 +418,6 @@ const Render = () => (
     <Switch>
         <Route exact path='/pay' component={Pay} />
         <Route path='/pay/result' component={Result} />
-        <Route path='/pay/redirect' component={Redirect} />
     </Switch>
 )
 

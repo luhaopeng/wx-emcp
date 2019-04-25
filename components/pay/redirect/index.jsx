@@ -1,18 +1,48 @@
 import React from 'react'
-import { Button } from 'antd-mobile'
+import { Button, Toast } from 'antd-mobile'
 import { isWeChat, isIOS } from '../../../util/constants'
 import './index.less'
 import android from '../../../static/img/tip_android.png'
 import ios from '../../../static/img/tip_ios.png'
+import { Pay } from '../../../api/url'
 
 class Redirect extends React.Component {
     handleDoneClick = () => {
-        this.props.history.push('/pay/result')
+        let { history, location } = this.props
+        let { type, id } = location.state
+        let to = {
+            pathname: '/pay/result',
+            state: { type, id }
+        }
+        history.push(to)
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         if (!isWeChat) {
-            console.log('执行alipay') // eslint-disable-line
+            let { type, id } = this.props.location.state
+            let api
+            switch (type) {
+                case 3:
+                    api = Pay.esamPay
+                    break
+                case 2:
+                    api = Pay.icmPay
+                    break
+                case 1:
+                default:
+                    api = Pay.pay
+                    break
+            }
+            let { data } = await api.query({ rechargeid: id })
+            if (data.errcode !== 0) {
+                Toast.fail(data.errmsg)
+            } else {
+                document.body.innerHTML = data.data.form
+                let scripts = document.querySelector('script')
+                for (let i = 0; i < scripts.length; i++) {
+                    eval(scripts[i].innerHTML)
+                }
+            }
         }
     }
 

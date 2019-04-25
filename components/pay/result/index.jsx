@@ -2,6 +2,7 @@ import React from 'react'
 import { Button } from 'antd-mobile'
 import Icon from '../../icon'
 import './index.less'
+import { Pay } from '../../../api/url'
 
 const ResultEnum = {
     regular: {
@@ -123,6 +124,16 @@ function categorize({ type, recharge, operate }) {
 }
 
 class PayResult extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            status: 'query',
+            title: '查询中',
+            message: () => {},
+            remain: 0
+        }
+    }
+
     handleRedirectUserClick = () => {
         this.props.history.push('/')
     }
@@ -131,12 +142,21 @@ class PayResult extends React.Component {
         this.props.history.push('/pay')
     }
 
-    render() {
-        let type = 1
-        let recharge = 1
-        let operate = 1
-        let { cat, status } = categorize({ type, recharge, operate })
+    async componentDidMount() {
+        let { type, id } = this.props.location.state
+        let { data } = await Pay.result.query({ rechargeid: id, type })
+        let { rechargeResult, operateResult, remain } = data.data
+        let { cat, status } = categorize({
+            type,
+            rechargeResult,
+            operateResult
+        })
         let { title, message } = ResultEnum[cat][status]
+        this.setState({ status, title, message, remain })
+    }
+
+    render() {
+        let { status, title, message, remain } = this.state
         return (
             <div className='page-result'>
                 <Icon
@@ -147,7 +167,7 @@ class PayResult extends React.Component {
                     }
                 />
                 <h2>{title}</h2>
-                {message(120)}
+                {message(remain)}
                 <footer>
                     <Button
                         type='primary'
