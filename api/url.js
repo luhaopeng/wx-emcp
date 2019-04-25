@@ -58,13 +58,9 @@ const Pay = {
     result: new Request('/pay_rechargeResult.action')
 }
 
-const Test = {
-    empty: new Request('/test_nullMethod.action')
-}
-
 const Wechat = {
     auth: new Request('/wechat_authorize.action', prodUrl),
     config: new Request('/wechat_wxConfig.action', prodUrl)
 }
 
-export { Elec, Mine, Pay, Test, Wechat }
+export { Elec, Mine, Pay, Wechat }
