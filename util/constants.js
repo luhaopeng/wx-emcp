@@ -4,6 +4,7 @@ const detect = new MobileDetect(window.navigator.userAgent)
 // env
 const isDev = process.env.NODE_ENV === 'development'
 const isTest = process.env.NODE_ENV === 'test'
+const isHaina = process.env.NODE_ENV === 'haina'
 
 // platform
 const isWeChat = detect.match(/micromessenger/i)
@@ -36,4 +37,4 @@ const authUrl =
 const urlPrefix = isDev ? devUrl : isTest ? testUrl : prodUrl
 const basename = isDev ? devBase : isTest ? testBase : prodBase
 
-export { urlPrefix, basename, authUrl, isWeChat, isIOS, isDev, isTest, prodUrl }
+export { urlPrefix, basename, authUrl, prodUrl, isWeChat, isIOS, isDev, isTest, isHaina }

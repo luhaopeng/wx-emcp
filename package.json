@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "webpack-dev-server --config config/webpack.dev.config.js",
     "build": "webpack --config config/webpack.prod.config.js",
-    "build-test": "webpack --config config/webpack.test.config.js"
+    "build-test": "webpack --config config/webpack.test.config.js",
+    "build-haina": "webpack --config config/webpack.haina.config.js"
   },
   "homepage": ".",
   "author": "luhaopeng",
