@@ -2,11 +2,12 @@ const merge = require('webpack-merge')
 const base = require('./webpack.base.config.js')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = merge(base, {
   mode: 'production',
   output: {
-    publicPath: '/wxemcp/'
+    publicPath: '/wxemcp/test/'
   },
   module: {
     rules: [
@@ -30,7 +31,12 @@ module.exports = merge(base, {
       }
     ]
   },
-  plugins: [new CleanWebpackPlugin()],
+  plugins: [
+    new CleanWebpackPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('test')
+    })
+  ],
   optimization: {
     splitChunks: {
       chunks: 'all'
