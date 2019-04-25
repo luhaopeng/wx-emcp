@@ -12,9 +12,15 @@ class Guide extends React.Component {
         }
     }
 
-    handleBindClick = () => {
-        localStorage.customerId = this.state.selectedId
+    handleBindClick = async () => {
+        let { selectedId } = this.state
         let { history, location } = this.props
+        localStorage.customerId = selectedId
+        await Mine.bind.query({
+            openid: localStorage.openId,
+            customerid: selectedId
+        })
+
         let { from } = location.state || { from: { pathname: '/' } }
         history.replace(from)
     }

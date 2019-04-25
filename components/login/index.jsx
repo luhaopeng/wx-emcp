@@ -74,7 +74,15 @@ class Login extends React.Component {
             // success
             let customers = data.data.customerEnts
             if (customers.length === 1) {
-                localStorage.customerId = customers[0].customerid
+                let id = customers[0].customerid
+                localStorage.customerId = id
+
+                // bind
+                await Mine.bind.query({
+                    openid: localStorage.openId,
+                    customerid: id
+                })
+
                 // redirect
                 let { history, location } = this.props
                 let { from } = location.state || { from: { pathname: '/' } }

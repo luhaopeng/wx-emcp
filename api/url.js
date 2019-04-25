@@ -42,7 +42,9 @@ const Mine = {
     balance: new Request('/mine_balance.action'),
     history: new Request('/mine_rechargeHistory.action'),
     login: new Request('/mine_login.action'),
-    sms: new Request('/mine_sendSms.action')
+    sms: new Request('/mine_sendSms.action'),
+    bind: new Request('/mine_bind.action'),
+    unbind: new Request('/mine_unbind.action')
 }
 
 const Pay = {
