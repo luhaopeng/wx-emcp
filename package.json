@@ -12,6 +12,7 @@
   "devDependencies": {
     "@babel/core": "^7.4.0",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
     "autoprefixer": "^9.5.0",
     "babel-eslint": "^10.0.1",
@@ -36,6 +37,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.4.3",
     "@hot-loader/react-dom": "^16.8.6",
     "antd-mobile": "^2.2.11",
     "axios": "^0.18.0",

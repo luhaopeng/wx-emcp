@@ -65,7 +65,7 @@ class Pay extends React.Component {
 
     configWechatJsApi = async () => {
         let { data } = await Wechat.config.query({
-            url: window.location.href
+            url: window.location.href.split('#')[0]
         })
         // eslint-disable-next-line no-undef
         wx.config({
@@ -108,7 +108,7 @@ class Pay extends React.Component {
             type: prepayType,
             account,
             meters: icmList,
-            selectedMeter: icmList[0]
+            selectedMeter: icmList && icmList[0]
         })
     }
 
@@ -314,9 +314,7 @@ class Pay extends React.Component {
                                 ) : null}
                             </div>
                         </Picker>
-                    ) : (
-                        <h1>{account && account.usablemoney.toFixed(2)}</h1>
-                    )}
+                    ) : <h1>{account && account.usablemoney.toFixed(2)}</h1>}
                 </div>
                 <div className='content'>
                     <section>

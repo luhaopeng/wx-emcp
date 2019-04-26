@@ -21,11 +21,13 @@ class Login extends React.Component {
             sentBtnLabel: '获取验证码'
         }
         if (!isDev && isWeChat && !localStorage.openId) {
-            let { code } = queryString(props.location.search)
-            if (!code) {
+            if (!localStorage.getting) {
+                localStorage.getting = true
                 window.location.href = authUrl
             } else {
+                let { code } = queryString.parse(window.location.search)
                 this.code = code
+                localStorage.removeItem('getting')
             }
         }
     }

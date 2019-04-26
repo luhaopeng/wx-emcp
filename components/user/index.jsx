@@ -38,7 +38,8 @@ class User extends React.Component {
 
     handleSignOut = async () => {
         localStorage.clear()
-        await Mine.unbind({ openid: localStorage.openId })
+        await Mine.unbind.query({ openid: localStorage.openId })
+        this.props.history.go(0)
     }
 
     handleMeterListClick = () => {

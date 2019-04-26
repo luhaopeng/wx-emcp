@@ -5,7 +5,7 @@ const path = require('path')
 module.exports = {
   target: 'web',
   context: path.resolve(__dirname, '../'),
-  entry: path.resolve(__dirname, '../src/index.js'),
+  entry: ['@babel/polyfill', path.resolve(__dirname, '../src/index.js')],
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: '[name]_[hash].js'
