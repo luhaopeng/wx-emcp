@@ -13,7 +13,7 @@ let isIOS = detect.match(/iphone|ipad|ipod/i)
 // appid
 const appid = 'wx9881a033828453e0'
 
-// url
+// api url prefix
 const devUrl = 'http://localhost:8080/wxemcp'
 const testUrl = 'http://testpay.pwpa.energyman.cn:8022/wxemcp'
 const prodUrl = 'http://hl.energyman.cn/wxemcp'
@@ -31,7 +31,7 @@ const authUrl =
     appid +
     '&redirect_uri=' +
     encodeURIComponent(isTest ? testRedirect : prodUrl) +
-    '&response_type=code&scope=snsapi_base#wechat_redirect'
+    '&response_type=code&state=1&scope=snsapi_base#wechat_redirect'
 
 // export
 const urlPrefix = isDev ? devUrl : isTest ? testUrl : prodUrl
