@@ -2,12 +2,10 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { List, InputItem, Button } from 'antd-mobile'
 import classNames from 'classnames'
-import queryString from 'query-string'
 import Guide from './guide'
 import './index.less'
 import Avatar from '../../static/img/login.jpg'
-import { Mine, Wechat } from '../../api/url'
-import { isWeChat, isDev, authUrl } from '../../util/constants'
+import { Mine } from '../../api/url'
 
 class Login extends React.Component {
     constructor(props) {
@@ -19,16 +17,6 @@ class Login extends React.Component {
             errMsg: '',
             sent: false,
             sentBtnLabel: '获取验证码'
-        }
-        if (!isDev && isWeChat && !localStorage.openId) {
-            if (!localStorage.getting) {
-                localStorage.getting = true
-                window.location.href = authUrl
-            } else {
-                let { code } = queryString.parse(window.location.search)
-                this.code = code
-                localStorage.removeItem('getting')
-            }
         }
     }
 
@@ -68,6 +56,11 @@ class Login extends React.Component {
         // get params
         let { phone, code } = this.state
         phone = phone.replace(/\s/g, '')
+        // empty check
+        if (!phone || !code) {
+            this.setState({ error: true, errMsg: '请填写完整' })
+            return
+        }
         // login
         let { data } = await Mine.login.query({ phone, code })
         if (data.errcode !== 0) {
@@ -110,13 +103,6 @@ class Login extends React.Component {
 
     handleCodeChange = code => {
         this.setState({ code })
-    }
-
-    async componentDidMount() {
-        if (!isDev && isWeChat && !localStorage.openId && this.code) {
-            let { data } = await Wechat.auth.query({ code: this.code })
-            localStorage.openId = data.data.openId
-        }
     }
 
     render() {

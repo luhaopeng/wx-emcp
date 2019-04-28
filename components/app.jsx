@@ -1,6 +1,9 @@
 import React from 'react'
 import { hot } from 'react-hot-loader/root'
 import { Switch, Route, Link, Redirect } from 'react-router-dom'
+import queryString from 'query-string'
+import { isWeChat, isDev, authUrl } from '../util/constants'
+import { Wechat } from '../api/url'
 import TabBar from './tabbar'
 import PageUser from './user'
 import PagePay from './pay'
@@ -82,6 +85,27 @@ const AuthRoute = ({ component: Component, ...rest }) => {
 }
 
 class App extends React.Component {
+    constructor(props) {
+        super(props)
+        if (!isDev && isWeChat && !localStorage.openId) {
+            if (!localStorage.getting) {
+                localStorage.getting = true
+                window.location.href = authUrl
+            } else {
+                let { code } = queryString.parse(window.location.search)
+                this.code = code
+                localStorage.removeItem('getting')
+            }
+        }
+    }
+
+    async componentDidMount() {
+        if (!isDev && isWeChat && !localStorage.openId && this.code) {
+            let { data } = await Wechat.auth.query({ code: this.code })
+            localStorage.openId = data.data.openId
+        }
+    }
+
     render() {
         return (
             <div>
