@@ -147,12 +147,9 @@ class Pay extends React.Component {
         let { type, payType } = this.state
         let { history } = this.props
         if (payType - 1) {
-            // redirect alipay
-            let to = {
-                pathname: '/redirect',
-                state: { type, id }
-            }
-            history.push(to)
+            let prefix = window.location.href.split('#')[0]
+            window.location.href = `${prefix}redirect.html?type=${type}&id=${id}`
+            return
         }
 
         let api
@@ -181,7 +178,7 @@ class Pay extends React.Component {
             if (form) {
                 // icbc-aggregate form
                 document.body.innerHTML = form
-                let scripts = document.querySelector('script')
+                let scripts = document.querySelectorAll('script')
                 for (let i = 0; i < scripts.length; i++) {
                     eval(scripts[i].innerHTML)
                 }
@@ -314,7 +311,9 @@ class Pay extends React.Component {
                                 ) : null}
                             </div>
                         </Picker>
-                    ) : <h1>{account && account.usablemoney.toFixed(2)}</h1>}
+                    ) : (
+                        <h1>{account && account.usablemoney.toFixed(2)}</h1>
+                    )}
                 </div>
                 <div className='content'>
                     <section>

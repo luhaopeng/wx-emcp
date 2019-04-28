@@ -5,7 +5,10 @@ const path = require('path')
 module.exports = {
   target: 'web',
   context: path.resolve(__dirname, '../'),
-  entry: ['@babel/polyfill', path.resolve(__dirname, '../src/index.js')],
+  entry: {
+    main: path.resolve(__dirname, '../src/index.js'),
+    redirect: path.resolve(__dirname, '../src/redirect.js')
+  },
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: '[name]_[hash].js'
@@ -38,7 +41,14 @@ module.exports = {
     new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
       favicon: path.resolve(__dirname, '../static/favicon.ico'),
-      template: path.resolve(__dirname, '../static/template.html')
+      template: path.resolve(__dirname, '../static/template.html'),
+      excludeChunks: ['redirect']
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'redirect.html',
+      favicon: path.resolve(__dirname, '../static/favicon.ico'),
+      template: path.resolve(__dirname, '../static/template-redirect.html'),
+      excludeChunks: ['main']
     })
   ],
   resolve: {

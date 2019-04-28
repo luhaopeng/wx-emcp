@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Toast } from 'antd-mobile'
+import queryString from 'query-string'
 import { isWeChat, isIOS } from '../../../util/constants'
 import './index.less'
 import android from '../../../static/img/tip_android.png'
@@ -8,18 +9,15 @@ import { Pay } from '../../../api/url'
 
 class Redirect extends React.Component {
     handleDoneClick = () => {
-        let { history, location } = this.props
-        let { type, id } = location.state
-        let to = {
-            pathname: '/pay/result',
-            state: { type, id }
-        }
-        history.push(to)
+        let {search,href} = window.location
+        let { type, id } = queryString.parse(search)
+        let prefix = href.split('redirect')[0]
+        window.location.href = `${prefix}#/pay/result?type=${type}&id=${id}`
     }
 
     async componentDidMount() {
         if (!isWeChat) {
-            let { type, id } = this.props.location.state
+            let { type, id } = queryString.parse(window.location.search)
             let api
             switch (type) {
                 case 3:
@@ -38,7 +36,7 @@ class Redirect extends React.Component {
                 Toast.fail(data.errmsg)
             } else {
                 document.body.innerHTML = data.data.form
-                let scripts = document.querySelector('script')
+                let scripts = document.querySelectorAll('script')
                 for (let i = 0; i < scripts.length; i++) {
                     eval(scripts[i].innerHTML)
                 }

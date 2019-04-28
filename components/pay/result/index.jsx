@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from 'antd-mobile'
+import queryString from 'query-string'
 import Icon from '../../icon'
 import './index.less'
 import { Pay } from '../../../api/url'
@@ -143,15 +144,16 @@ class PayResult extends React.Component {
     }
 
     async componentDidMount() {
-        let { type, id } = this.props.location.state
+        let { type, id } = queryString.parse(this.props.location.search)
         let { data } = await Pay.result.query({ rechargeid: id, type })
         let { rechargeResult, operateResult, remain } = data.data
         let { cat, status } = categorize({
             type,
-            rechargeResult,
-            operateResult
+            recharge: rechargeResult,
+            operate: operateResult
         })
-        let { title, message } = ResultEnum[cat][status]
+        let result = ResultEnum[cat][status]
+        let { title, message } = result
         this.setState({ status, title, message, remain })
     }
 
