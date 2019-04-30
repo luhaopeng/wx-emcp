@@ -5,7 +5,8 @@ import classNames from 'classnames'
 import Guide from './guide'
 import './index.less'
 import Avatar from '../../static/img/login.jpg'
-import { Mine } from '../../api/url'
+import { Mine, Haina } from '../../api/url'
+import { isWeChat, isProd, isTest, isHaina } from '../../util/constants'
 
 class Login extends React.Component {
     constructor(props) {
@@ -73,10 +74,19 @@ class Login extends React.Component {
                 localStorage.customerId = id
 
                 // bind
-                await Mine.bind.query({
-                    openid: localStorage.openId,
-                    customerid: id
-                })
+                if (isWeChat) {
+                    if (isProd || isTest) {
+                        await Mine.bind.query({
+                            openid: localStorage.openId,
+                            customerid: id
+                        })
+                    } else if (isHaina) {
+                        await Haina.bind.query({
+                            residentid: localStorage.residentId,
+                            customerid: id
+                        })
+                    }
+                }
 
                 // redirect
                 let { history, location } = this.props

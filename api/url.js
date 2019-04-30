@@ -64,7 +64,8 @@ const Wechat = {
 }
 
 const Haina = {
-    auth: new Request('/haina_authorize.action')
+    auth: new Request('/haina_authorize.action'),
+    bind: new Request('/haina_bind.action')
 }
 
 export { Elec, Mine, Pay, Wechat, Haina }

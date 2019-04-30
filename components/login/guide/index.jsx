@@ -1,7 +1,8 @@
 import React from 'react'
 import { List, Radio, Button } from 'antd-mobile'
 import './index.less'
-import { Mine } from '../../../api/url'
+import { Mine, Haina } from '../../../api/url'
+import { isWeChat, isProd, isTest, isHaina } from '../../../util/constants'
 
 class Guide extends React.Component {
     constructor(props) {
@@ -16,10 +17,21 @@ class Guide extends React.Component {
         let { selectedId } = this.state
         let { history, location } = this.props
         localStorage.customerId = selectedId
-        await Mine.bind.query({
-            openid: localStorage.openId,
-            customerid: selectedId
-        })
+
+        // bind
+        if (isWeChat) {
+            if (isProd || isTest) {
+                await Mine.bind.query({
+                    openid: localStorage.openId,
+                    customerid: selectedId
+                })
+            } else if (isHaina) {
+                await Haina.bind.query({
+                    residentid: localStorage.residentId,
+                    customerid: selectedId
+                })
+            }
+        }
 
         let { from } = location.state || { from: { pathname: '/' } }
         history.replace(from)
