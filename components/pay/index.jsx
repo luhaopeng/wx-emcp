@@ -13,7 +13,7 @@ import Icon from '../icon'
 import classNames from 'classnames'
 import './index.less'
 import { Pay as PayApi, Wechat, Mine } from '../../api/url'
-import { isDev, isTest, isWeChat } from '../../util/constants'
+import { isDev, isTest, isHaina, isWeChat } from '../../util/constants'
 import OptionGroup from './option'
 import Result from './result'
 
@@ -247,6 +247,17 @@ class Pay extends React.Component {
         let aliTip = `(需收取${((1 - aliDiscount) * 100).toFixed(1)}%手续费)`
         let curPrice = type === 2 ? selectedMeter.price : 1.0
         let curDis = payType - 1 ? aliDiscount : wxDiscount
+        let income
+        if (type === 2) {
+            income = Math.floor((customInput * curDis) / curPrice) + ' 度'
+        } else {
+            let calc = Math.floor(customInput * curDis * 100) / 100
+            if (parseFloat(customInput) > 0 && calc === 0) {
+                income = '0.01 元'
+            } else {
+                income = calc + ' 元'
+            }
+        }
         return (
             <div className='page-pay'>
                 <Modal
@@ -316,46 +327,48 @@ class Pay extends React.Component {
                     )}
                 </div>
                 <div className='content'>
-                    <section>
-                        <h3>支付方式</h3>
-                        <List>
-                            <Radio.RadioItem
-                                disabled={!isWeChat}
-                                thumb={
-                                    <Icon
-                                        size='sm'
-                                        svg={
-                                            require('../../static/img/wechat.svg')
-                                                .default
-                                        }
-                                    />
-                                }
-                                checked={payType === 1}
-                                onChange={() => {
-                                    this.setState({ payType: 1 })
-                                }}
-                            >
-                                微信支付 {wxDiscount < 1 ? wxTip : null}
-                            </Radio.RadioItem>
-                            <Radio.RadioItem
-                                thumb={
-                                    <Icon
-                                        size='sm'
-                                        svg={
-                                            require('../../static/img/alipay.svg')
-                                                .default
-                                        }
-                                    />
-                                }
-                                checked={payType === 2}
-                                onChange={() => {
-                                    this.setState({ payType: 2 })
-                                }}
-                            >
-                                支付宝 {aliDiscount < 1 ? aliTip : null}
-                            </Radio.RadioItem>
-                        </List>
-                    </section>
+                    {isHaina ? null : (
+                        <section>
+                            <h3>支付方式</h3>
+                            <List>
+                                <Radio.RadioItem
+                                    disabled={!isWeChat}
+                                    thumb={
+                                        <Icon
+                                            size='sm'
+                                            svg={
+                                                require('../../static/img/wechat.svg')
+                                                    .default
+                                            }
+                                        />
+                                    }
+                                    checked={payType === 1}
+                                    onChange={() => {
+                                        this.setState({ payType: 1 })
+                                    }}
+                                >
+                                    微信支付 {wxDiscount < 1 ? wxTip : null}
+                                </Radio.RadioItem>
+                                <Radio.RadioItem
+                                    thumb={
+                                        <Icon
+                                            size='sm'
+                                            svg={
+                                                require('../../static/img/alipay.svg')
+                                                    .default
+                                            }
+                                        />
+                                    }
+                                    checked={payType === 2}
+                                    onChange={() => {
+                                        this.setState({ payType: 2 })
+                                    }}
+                                >
+                                    支付宝 {aliDiscount < 1 ? aliTip : null}
+                                </Radio.RadioItem>
+                            </List>
+                        </section>
+                    )}
                     <section>
                         <h3>充值金额</h3>
                         <OptionGroup>
@@ -383,6 +396,9 @@ class Pay extends React.Component {
                                 value={customInput}
                                 placeholder='其他金额'
                                 onChange={this.hanldeCustomInput}
+                                onBlur={() => {
+                                    window.scroll(0, 0)
+                                }}
                             />
                         </div>
                         <p
@@ -390,8 +406,7 @@ class Pay extends React.Component {
                                 hide: !customInput
                             })}
                         >
-                            可得{(curPrice * curDis * customInput).toFixed(2)}
-                            {type === 2 ? '度' : '元'}
+                            可得{income}
                         </p>
                     </section>
                     <section>
