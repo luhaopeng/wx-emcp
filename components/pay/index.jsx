@@ -13,7 +13,7 @@ import Icon from '../icon'
 import classNames from 'classnames'
 import './index.less'
 import { Pay as PayApi, Wechat, Mine } from '../../api/url'
-import { isDev, isTest, isHaina, isWeChat } from '../../util/constants'
+import { isDev, isTest, isWeChat } from '../../util/constants'
 import OptionGroup from './option'
 import Result from './result'
 
@@ -23,6 +23,7 @@ class Pay extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            channel: 1, // 1 regular; 2 icbc; 3 cmbc; 4 haina
             payType: 1,
             forbidden: false,
             aliDiscount: 1,
@@ -87,7 +88,8 @@ class Pay extends React.Component {
             // 0 able; 1 forbidden
             this.setState({ forbidden: !!canOnlineRecharge })
             return false
-        } else if (entPay && entPay.isUseDiscount) {
+        }
+        if (entPay.useDiscount) {
             this.setState({
                 aliDiscount: entPay.alipayDiscount,
                 wxDiscount: entPay.wechatDiscount
@@ -96,6 +98,7 @@ class Pay extends React.Component {
                 this.setState({ protocol: true })
             }
         }
+        this.setState({ channel: entPay.payChannel })
         return true
     }
 
@@ -215,6 +218,83 @@ class Pay extends React.Component {
         return [data]
     }
 
+    buildPayMethod = () => {
+        let { channel, payType, aliDiscount, wxDiscount } = this.state
+        let wxTip = `(需收取${((1 - wxDiscount) * 100).toFixed(1)}%手续费)`
+        let aliTip = `(需收取${((1 - aliDiscount) * 100).toFixed(1)}%手续费)`
+        if (channel > 1) {
+            this.setState({ payType: 1 })
+            return (
+                <section>
+                    <h3>支付方式</h3>
+                    <List>
+                        <Radio.RadioItem
+                            disabled={!isWeChat}
+                            thumb={
+                                <Icon
+                                    size='sm'
+                                    svg={
+                                        require('../../static/img/wechat.svg')
+                                            .default
+                                    }
+                                />
+                            }
+                            checked={payType === 1}
+                            onChange={() => {
+                                this.setState({ payType: 1 })
+                            }}
+                        >
+                            微信支付 {wxDiscount < 1 ? wxTip : null}
+                        </Radio.RadioItem>
+                    </List>
+                </section>
+            )
+        } else {
+            return (
+                <section>
+                    <h3>支付方式</h3>
+                    <List>
+                        <Radio.RadioItem
+                            disabled={!isWeChat}
+                            thumb={
+                                <Icon
+                                    size='sm'
+                                    svg={
+                                        require('../../static/img/wechat.svg')
+                                            .default
+                                    }
+                                />
+                            }
+                            checked={payType === 1}
+                            onChange={() => {
+                                this.setState({ payType: 1 })
+                            }}
+                        >
+                            微信支付 {wxDiscount < 1 ? wxTip : null}
+                        </Radio.RadioItem>
+                        <Radio.RadioItem
+                            thumb={
+                                <Icon
+                                    size='sm'
+                                    svg={
+                                        require('../../static/img/alipay.svg')
+                                            .default
+                                    }
+                                />
+                            }
+                            checked={payType === 2}
+                            onChange={() => {
+                                this.setState({ payType: 2 })
+                            }}
+                        >
+                            支付宝 {aliDiscount < 1 ? aliTip : null}
+                        </Radio.RadioItem>
+                    </List>
+                </section>
+            )
+        }
+    }
+
     componentDidMount() {
         // wechat pay detect
         if (!isWeChat) {
@@ -243,8 +323,7 @@ class Pay extends React.Component {
             account,
             customInput
         } = this.state
-        let wxTip = `(需收取${((1 - wxDiscount) * 100).toFixed(1)}%手续费)`
-        let aliTip = `(需收取${((1 - aliDiscount) * 100).toFixed(1)}%手续费)`
+
         let curPrice = type === 2 ? selectedMeter.price : 1.0
         let curDis = payType - 1 ? aliDiscount : wxDiscount
         let income
@@ -327,48 +406,7 @@ class Pay extends React.Component {
                     )}
                 </div>
                 <div className='content'>
-                    {isHaina ? null : (
-                        <section>
-                            <h3>支付方式</h3>
-                            <List>
-                                <Radio.RadioItem
-                                    disabled={!isWeChat}
-                                    thumb={
-                                        <Icon
-                                            size='sm'
-                                            svg={
-                                                require('../../static/img/wechat.svg')
-                                                    .default
-                                            }
-                                        />
-                                    }
-                                    checked={payType === 1}
-                                    onChange={() => {
-                                        this.setState({ payType: 1 })
-                                    }}
-                                >
-                                    微信支付 {wxDiscount < 1 ? wxTip : null}
-                                </Radio.RadioItem>
-                                <Radio.RadioItem
-                                    thumb={
-                                        <Icon
-                                            size='sm'
-                                            svg={
-                                                require('../../static/img/alipay.svg')
-                                                    .default
-                                            }
-                                        />
-                                    }
-                                    checked={payType === 2}
-                                    onChange={() => {
-                                        this.setState({ payType: 2 })
-                                    }}
-                                >
-                                    支付宝 {aliDiscount < 1 ? aliTip : null}
-                                </Radio.RadioItem>
-                            </List>
-                        </section>
-                    )}
+                    {this.buildPayMethod()}
                     <section>
                         <h3>充值金额</h3>
                         <OptionGroup>
