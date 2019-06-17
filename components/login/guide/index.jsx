@@ -1,5 +1,5 @@
 import React from 'react'
-import { List, Radio, Button } from 'antd-mobile'
+import { List, Radio, Button, Toast } from 'antd-mobile'
 import './index.less'
 import { Mine, Haina } from '../../../api/url'
 import { isWeChat, isProd, isTest, isHaina } from '../../../util/constants'
@@ -39,7 +39,9 @@ class Guide extends React.Component {
 
     async componentDidMount() {
         let { relog, phone } = localStorage
+        Toast.loading('获取列表...', 0)
         let { data } = await Mine.login.query({ relog, phone })
+        Toast.hide()
         if (data.errcode === 0) {
             let array = data.data.customerEnts
             let records = array.map(item => {

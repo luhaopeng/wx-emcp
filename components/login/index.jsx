@@ -1,6 +1,6 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
-import { List, InputItem, Button } from 'antd-mobile'
+import { List, InputItem, Button, Toast } from 'antd-mobile'
 import classNames from 'classnames'
 import Guide from './guide'
 import './index.less'
@@ -17,7 +17,8 @@ class Login extends React.Component {
             error: false,
             errMsg: '',
             sent: false,
-            sentBtnLabel: '获取验证码'
+            sentBtnLabel: '获取验证码',
+            loading: false
         }
     }
 
@@ -53,20 +54,21 @@ class Login extends React.Component {
 
     handleLogin = async () => {
         // hide error msg
-        this.setState({ error: false })
+        this.setState({ error: false, loading: true })
         // get params
         let { phone, code } = this.state
         phone = phone.replace(/\s/g, '')
         // empty check
         if (!phone || !code) {
-            this.setState({ error: true, errMsg: '请填写完整' })
+            this.setState({ error: true, errMsg: '请填写完整', loading: false })
             return
         }
         // login
         let { data } = await Mine.login.query({ phone, code })
         if (data.errcode !== 0) {
-            this.setState({ error: true, errMsg: data.errmsg })
+            this.setState({ error: true, errMsg: data.errmsg, loading: false })
         } else {
+            this.setState({ loading: false })
             // success
             let customers = data.data.customerEnts
             if (customers.length === 1) {
@@ -118,7 +120,9 @@ class Login extends React.Component {
     async componentDidMount() {
         let { openId } = localStorage
         if (openId) {
+            Toast.loading('尝试自动登录...', 0)
             let { data } = await Mine.autoLogin.query({ openid: openId })
+            Toast.hide()
             let { customerid, multiple, phone } = data.data
             if (customerid) {
                 localStorage.customerId = customerid
@@ -167,6 +171,7 @@ class Login extends React.Component {
                     </InputItem>
                 </List>
                 <Button
+                    loading={this.state.loading}
                     className='login-btn'
                     type='primary'
                     onClick={this.handleLogin}

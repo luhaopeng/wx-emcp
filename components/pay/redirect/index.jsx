@@ -9,7 +9,7 @@ import { Pay } from '../../../api/url'
 
 class Redirect extends React.Component {
     handleDoneClick = () => {
-        let {search,href} = window.location
+        let { search, href } = window.location
         let { type, id } = queryString.parse(search)
         let prefix = href.split('redirect')[0]
         window.location.href = `${prefix}#/pay/result?type=${type}&id=${id}`
@@ -31,7 +31,9 @@ class Redirect extends React.Component {
                     api = Pay.pay
                     break
             }
+            Toast.loading('请求支付...', 0)
             let { data } = await api.query({ rechargeid: id })
+            Toast.hide()
             if (data.errcode !== 0) {
                 Toast.fail(data.errmsg)
             } else {

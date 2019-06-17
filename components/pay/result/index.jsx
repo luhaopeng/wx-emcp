@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from 'antd-mobile'
+import { Button, Toast } from 'antd-mobile'
 import queryString from 'query-string'
 import Icon from '../../icon'
 import './index.less'
@@ -145,7 +145,9 @@ class PayResult extends React.Component {
 
     async componentDidMount() {
         let { type, id } = queryString.parse(this.props.location.search)
+        Toast.loading('查询中...', 0)
         let { data } = await Pay.result.query({ rechargeid: id, type })
+        Toast.hide()
         let { rechargeResult, operateResult, remain } = data.data
         let { cat, status } = categorize({
             type,

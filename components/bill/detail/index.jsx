@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal } from 'antd-mobile'
+import { Modal, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
 import { Elec } from '../../../api/url'
 import './index.less'
@@ -22,11 +22,13 @@ class Detail extends React.Component {
         let { time, billType, type } = location.state
         let api = type > 1 ? Elec.icmBillDetail : Elec.billDetail
         let pType = type > 1 ? type : billType + 1
+        Toast.loading('加载中...', 0)
         let { data } = await api.query({
             customerid: localStorage.customerId,
             date: dayjs(time).format('YYYY-MM'),
             type: pType
         })
+        Toast.hide()
         if (data.errcode !== 0) {
             this.setState({ error: true, errmsg: data.errmsg })
         } else {

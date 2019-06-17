@@ -1,5 +1,5 @@
 import React from 'react'
-import { List } from 'antd-mobile'
+import { List, Toast } from 'antd-mobile'
 import './index.less'
 import { Mine } from '../../../api/url'
 
@@ -13,9 +13,11 @@ class MeterList extends React.Component {
     }
 
     async componentDidMount() {
+        Toast.loading('加载中...', 0)
         let { data } = await Mine.balance.query({
             customerid: localStorage.customerId
         })
+        Toast.hide()
         let { prepayType, icmList } = data.data
         let meters = icmList.map(meter => ({
             name: meter.pointname,

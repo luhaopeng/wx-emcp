@@ -1,5 +1,5 @@
 import React from 'react'
-import { SegmentedControl, List } from 'antd-mobile'
+import { SegmentedControl, List, Toast } from 'antd-mobile'
 import { Switch, Route } from 'react-router-dom'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
@@ -23,6 +23,7 @@ class Bill extends React.Component {
             pastWater: []
         }
         this.num = 0
+        this.queryCount = 0
     }
 
     handleBillTypeChange = e => {
@@ -40,9 +41,15 @@ class Bill extends React.Component {
     }
 
     queryCurrent = async () => {
+        if (!this.queryCount++) {
+            Toast.loading('加载中...', 0)
+        }
         let { data } = await Elec.curBill.query({
             customerid: localStorage.customerId
         })
+        if (!--this.queryCount) {
+            Toast.hide()
+        }
 
         if (data.errcode === 0) {
             let { prepayType, curMonth, curMonthWater } = data.data
@@ -60,10 +67,16 @@ class Bill extends React.Component {
         if (this.state.done) {
             return
         }
+        if (!this.queryCount++) {
+            Toast.loading('加载中...', 0)
+        }
         let { data } = await Elec.billList.query({
             customerid: localStorage.customerId,
-            num: this.num++
+            num: ++this.num
         })
+        if (!--this.queryCount) {
+            Toast.hide()
+        }
         if (data.errcode !== 0) {
             this.setState({ done: true })
         } else {

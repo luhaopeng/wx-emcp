@@ -103,9 +103,11 @@ class Pay extends React.Component {
     }
 
     queryBalance = async () => {
+        Toast.loading('加载中...', 0)
         let { data } = await Mine.balance.query({
             customerid: localStorage.customerId
         })
+        Toast.hide()
         let { prepayType, account, icmList } = data.data
         this.setState({
             type: prepayType,
@@ -130,6 +132,7 @@ class Pay extends React.Component {
                 api = PayApi.id
                 break
         }
+        Toast.loading('请求支付...', 0)
         let { data } = await api.query(
             {
                 customerid: localStorage.customerId,
@@ -150,6 +153,7 @@ class Pay extends React.Component {
         let { type, payType } = this.state
         let { history } = this.props
         if (payType - 1) {
+            Toast.hide()
             let prefix = window.location.href.split('#')[0]
             window.location.href = `${prefix}redirect.html?type=${type}&id=${id}`
             return
@@ -173,6 +177,7 @@ class Pay extends React.Component {
             rechargeid: id,
             openid: localStorage.openId
         })
+        Toast.hide()
         if (data.errcode !== 0) {
             Toast.fail(data.errmsg)
         } else {

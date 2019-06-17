@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from 'antd-mobile'
+import { Button, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
 import Icon from '../icon'
 import './index.less'
@@ -37,7 +37,12 @@ class User extends React.Component {
     }
 
     handleSignOut = async () => {
+        // open toast
+        Toast.loading('加载中...', 0)
         await Mine.unbind.query({ openid: localStorage.openId })
+        // close toast
+        Toast.hide()
+
         localStorage.clear()
         window.location.reload()
     }
@@ -49,6 +54,9 @@ class User extends React.Component {
     }
 
     async componentDidMount() {
+        // open toast
+        Toast.loading('加载中...', 0)
+        // query data
         let { customerId } = localStorage
         let resBasic = await Mine.basic.query({ customerid: customerId })
         let { customer } = resBasic.data.data
@@ -58,6 +66,8 @@ class User extends React.Component {
             customerid: customerId,
             num: -1
         })
+        // close toast
+        Toast.hide()
 
         // process balance
         let balance = 0

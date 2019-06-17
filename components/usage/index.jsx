@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { List, SegmentedControl } from 'antd-mobile'
+import { List, SegmentedControl, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
 import './index.less'
 import Chart from './chart'
@@ -171,10 +171,12 @@ class Usage extends React.Component {
 
     async queryData(newMode) {
         let { mode } = this.state
+        Toast.loading('加载中...', 0)
         let { data } = await Elec.usage.query({
             mode: newMode !== undefined ? newMode : mode,
             customerid: localStorage.customerId
         })
+        Toast.hide()
         let { dayUseList: elec, dayWaterList: water, prepayType } = data.data
         if (newMode !== undefined) {
             this.setState({

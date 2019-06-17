@@ -1,5 +1,5 @@
 import React from 'react'
-import { List } from 'antd-mobile'
+import { List, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
 import './index.less'
 import { Mine } from '../../../api/url'
@@ -23,11 +23,16 @@ class History extends React.Component {
         if (this.state.done) {
             return
         }
+        // open toast
+        Toast.loading('加载中...', 0)
+        // query data
         let { customerId } = localStorage
         let { data } = await Mine.history.query({
             customerid: customerId,
             num: this.num++
         })
+        // close toast
+        Toast.hide()
         if (data.errcode !== 0) {
             this.setState({ done: true })
         } else {
