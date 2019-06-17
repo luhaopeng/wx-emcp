@@ -2,8 +2,8 @@ import React from 'react'
 import { hot } from 'react-hot-loader/root'
 import { Switch, Route, Link, Redirect } from 'react-router-dom'
 import queryString from 'query-string'
-import { isWeChat, isDev, authUrl } from '../util/constants'
-import { Wechat } from '../api/url'
+import { isWeChat, isProd, isTest, isHaina, authUrl } from '../util/constants'
+import { Wechat, Haina } from '../api/url'
 import TabBar from './tabbar'
 import PageUser from './user'
 import PagePay from './pay'
@@ -87,22 +87,34 @@ const AuthRoute = ({ component: Component, ...rest }) => {
 class App extends React.Component {
     constructor(props) {
         super(props)
-        if (!isDev && isWeChat && !localStorage.openId) {
-            if (!localStorage.getting) {
-                localStorage.getting = true
-                window.location.href = authUrl
-            } else {
-                let { code } = queryString.parse(window.location.search)
-                this.code = code
-                localStorage.removeItem('getting')
+        if (isWeChat) {
+            if ((isProd || isTest) && !localStorage.openId) {
+                if (!localStorage.getting) {
+                    localStorage.getting = true
+                    window.location.href = authUrl
+                } else {
+                    let { code } = queryString.parse(window.location.search)
+                    this.code = code
+                    localStorage.removeItem('getting')
+                }
+            } else if (isHaina && !localStorage.residentId) {
+                let { resident_code } = queryString.parse(
+                    window.location.search
+                )
+                this.code = resident_code
             }
         }
     }
 
     async componentDidMount() {
-        if (!isDev && isWeChat && !localStorage.openId && this.code) {
-            let { data } = await Wechat.auth.query({ code: this.code })
-            localStorage.openId = data.data.openId
+        if (isWeChat && this.code) {
+            if ((isProd || isTest) && !localStorage.openId) {
+                let { data } = await Wechat.auth.query({ code: this.code })
+                localStorage.openId = data.data.openId
+            } else if (isHaina && !localStorage.residentId) {
+                let { data } = await Haina.auth.query({ code: this.code })
+                localStorage.residentId = data.data.residentId
+            }
         }
     }
 

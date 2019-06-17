@@ -30,32 +30,33 @@ class Request {
 }
 
 const Elec = {
-    curBill: new Request('/elec_curMonthBill.action'),
-    billList: new Request('/elec_monthBillList.action'),
-    billDetail: new Request('/elec_billDetail.action'),
-    icmBillDetail: new Request('/elec_icmBillDetail.action'),
-    usage: new Request('/elec_usage.action')
+    curBill: new Request('/elec/curMonthBill'),
+    billList: new Request('/elec/monthBillList'),
+    billDetail: new Request('/elec/billDetail'),
+    icmBillDetail: new Request('/elec/icmBillDetail'),
+    usage: new Request('/elec/usage')
 }
 
 const Mine = {
-    basic: new Request('/mine_basicInfo.action'),
-    balance: new Request('/mine_balance.action'),
-    history: new Request('/mine_rechargeHistory.action'),
-    login: new Request('/mine_login.action'),
-    sms: new Request('/mine_sendSms.action'),
-    bind: new Request('/mine_bind.action'),
-    unbind: new Request('/mine_unbind.action')
+    basic: new Request('/mine/basicInfo'),
+    balance: new Request('/mine/balance'),
+    history: new Request('/mine/rechargeHistory'),
+    login: new Request('/mine/login'),
+    autoLogin: new Request('/mine/autoLogin'),
+    sms: new Request('/mine/sendSms'),
+    bind: new Request('/mine/bind'),
+    unbind: new Request('/mine/unbind')
 }
 
 const Pay = {
-    able: new Request('/pay_canRecharge.action'),
-    id: new Request('/pay_rechargeId.action'),
-    icmId: new Request('/pay_icmRechargeId.action'),
-    esamId: new Request('/pay_esamRechargeId.action'),
-    pay: new Request('/pay_recharge.action'),
-    icmPay: new Request('/pay_icmRecharge.action'),
-    esamPay: new Request('/pay_esamRecharge.action'),
-    result: new Request('/pay_rechargeResult.action')
+    able: new Request('/pay/canRecharge'),
+    id: new Request('/pay/rechargeId'),
+    icmId: new Request('/pay/icmRechargeId'),
+    esamId: new Request('/pay/esamRechargeId'),
+    pay: new Request('/pay/recharge'),
+    icmPay: new Request('/pay/icmRecharge'),
+    esamPay: new Request('/pay/esamRecharge'),
+    result: new Request('/pay/rechargeResult')
 }
 
 const Wechat = {
@@ -63,4 +64,9 @@ const Wechat = {
     config: new Request('/wechat_wxConfig.action', prodUrl)
 }
 
-export { Elec, Mine, Pay, Wechat }
+const Haina = {
+    auth: new Request('/haina/authorize'),
+    bind: new Request('/haina/bind')
+}
+
+export { Elec, Mine, Pay, Wechat, Haina }

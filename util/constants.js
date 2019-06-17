@@ -3,6 +3,7 @@ const detect = new MobileDetect(window.navigator.userAgent)
 
 // env
 const isDev = process.env.NODE_ENV === 'development'
+const isProd = process.env.NODE_ENV === 'production'
 const isTest = process.env.NODE_ENV === 'test'
 const isHaina = process.env.NODE_ENV === 'haina'
 
@@ -20,11 +21,11 @@ const prodUrl = 'http://hl.energyman.cn/wxemcp'
 
 // basename
 const devBase = '/'
-const testBase = '/wxemcp/test'
+const testBase = '/wxemcp/jsp/test'
 const prodBase = '/wxemcp'
 
 // redirect
-const testRedirect = `${prodUrl}/test`
+const testRedirect = `${prodUrl}/jsp/test`
 // wechat auth url
 const authUrl =
     'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' +
@@ -37,4 +38,15 @@ const authUrl =
 const urlPrefix = isDev ? devUrl : isTest ? testUrl : prodUrl
 const basename = isDev ? devBase : isTest ? testBase : prodBase
 
-export { urlPrefix, basename, authUrl, prodUrl, isWeChat, isIOS, isDev, isTest, isHaina }
+export {
+    urlPrefix,
+    basename,
+    authUrl,
+    prodUrl,
+    isWeChat,
+    isIOS,
+    isDev,
+    isProd,
+    isTest,
+    isHaina
+}

@@ -37,8 +37,8 @@ class User extends React.Component {
     }
 
     handleSignOut = async () => {
-        localStorage.clear()
         await Mine.unbind.query({ openid: localStorage.openId })
+        localStorage.clear()
         window.location.reload()
     }
 

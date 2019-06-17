@@ -5,7 +5,8 @@ import classNames from 'classnames'
 import Guide from './guide'
 import './index.less'
 import Avatar from '../../static/img/login.jpg'
-import { Mine } from '../../api/url'
+import { Mine, Haina } from '../../api/url'
+import { isWeChat, isProd, isTest, isHaina } from '../../util/constants'
 
 class Login extends React.Component {
     constructor(props) {
@@ -73,10 +74,19 @@ class Login extends React.Component {
                 localStorage.customerId = id
 
                 // bind
-                await Mine.bind.query({
-                    openid: localStorage.openId,
-                    customerid: id
-                })
+                if (isWeChat) {
+                    if (isProd || isTest) {
+                        await Mine.bind.query({
+                            openid: localStorage.openId,
+                            customerid: id
+                        })
+                    } else if (isHaina) {
+                        await Haina.bind.query({
+                            residentid: localStorage.residentId,
+                            customerid: id
+                        })
+                    }
+                }
 
                 // redirect
                 let { history, location } = this.props
@@ -90,7 +100,7 @@ class Login extends React.Component {
                 let { history, location } = this.props
                 let to = {
                     pathname: '/login/guide',
-                    state: { from: location.state.from || { pathname: '/' } }
+                    state: location.state || { from: { pathname: '/' } }
                 }
                 history.replace(to)
             }
@@ -103,6 +113,23 @@ class Login extends React.Component {
 
     handleCodeChange = code => {
         this.setState({ code })
+    }
+
+    async componentDidMount() {
+        let { openId } = localStorage
+        if (openId) {
+            let { data } = await Mine.autoLogin.query({ openid: openId })
+            let { customerid, multiple, phone } = data.data
+            if (customerid) {
+                localStorage.customerId = customerid
+                localStorage.relog = multiple
+                localStorage.phone = phone
+                // redirect
+                let { history, location } = this.props
+                let { from } = location.state || { from: { pathname: '/' } }
+                history.replace(from)
+            }
+        }
     }
 
     render() {
