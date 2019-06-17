@@ -100,7 +100,7 @@ class Login extends React.Component {
                 let { history, location } = this.props
                 let to = {
                     pathname: '/login/guide',
-                    state: { from: location.state.from || { pathname: '/' } }
+                    state: location.state || { from: { pathname: '/' } }
                 }
                 history.replace(to)
             }
@@ -113,6 +113,23 @@ class Login extends React.Component {
 
     handleCodeChange = code => {
         this.setState({ code })
+    }
+
+    async componentDidMount() {
+        let { openId } = localStorage
+        if (openId) {
+            let { data } = await Mine.autoLogin.query({ openid: openId })
+            let { customerid, multiple, phone } = data.data
+            if (customerid) {
+                localStorage.customerId = customerid
+                localStorage.relog = multiple
+                localStorage.phone = phone
+                // redirect
+                let { history, location } = this.props
+                let { from } = location.state || { from: { pathname: '/' } }
+                history.replace(from)
+            }
+        }
     }
 
     render() {
