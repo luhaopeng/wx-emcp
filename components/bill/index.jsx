@@ -72,7 +72,7 @@ class Bill extends React.Component {
         }
         let { data } = await Elec.billList.query({
             customerid: localStorage.customerId,
-            num: ++this.num
+            num: this.num++
         })
         if (!--this.queryCount) {
             Toast.hide()
