@@ -88,7 +88,7 @@ function singlet({ obj, billType }) {
                         <td>{(obj.startbmzongzy * 1).toFixed(2)}</td>
                         <td>{(obj.endbmzongzy * 1).toFixed(2)}</td>
                         <td>{obj.rate}</td>
-                        <td>{(obj.pricerule.value1 * 1).toFixed(2)}</td>
+                        <td>{obj.pricerule.value1}</td>
                         <td>{(obj.energyzong * 1).toFixed(2)}</td>
                     </tr>
                     <tr>
@@ -154,28 +154,28 @@ function rating({ obj }) {
                         <th>尖</th>
                         <td>{(obj.startbmjianzy * 1).toFixed(2)}</td>
                         <td>{(obj.endbmjianzy * 1).toFixed(2)}</td>
-                        <td>{(obj.pricerule.value1 * 1).toFixed(2)}</td>
+                        <td>{obj.pricerule.value1}</td>
                         <td>{(obj.energyjian * 1).toFixed(2)}</td>
                     </tr>
                     <tr>
                         <th>峰</th>
                         <td>{(obj.startbmfengzy * 1).toFixed(2)}</td>
                         <td>{(obj.endbmfengzy * 1).toFixed(2)}</td>
-                        <td>{(obj.pricerule.value2 * 1).toFixed(2)}</td>
+                        <td>{obj.pricerule.value2}</td>
                         <td>{(obj.energyfeng * 1).toFixed(2)}</td>
                     </tr>
                     <tr>
                         <th>平</th>
                         <td>{(obj.startbmpingzy * 1).toFixed(2)}</td>
                         <td>{(obj.endbmpingzy * 1).toFixed(2)}</td>
-                        <td>{(obj.pricerule.value3 * 1).toFixed(2)}</td>
+                        <td>{obj.pricerule.value3}</td>
                         <td>{(obj.energyping * 1).toFixed(2)}</td>
                     </tr>
                     <tr>
                         <th>谷</th>
                         <td>{(obj.startbmguzy * 1).toFixed(2)}</td>
                         <td>{(obj.endbmguzy * 1).toFixed(2)}</td>
-                        <td>{(obj.pricerule.value4 * 1).toFixed(2)}</td>
+                        <td>{obj.pricerule.value4}</td>
                         <td>{(obj.energygu * 1).toFixed(2)}</td>
                     </tr>
                     <tr>
@@ -229,7 +229,7 @@ function stair({ obj, billType }) {
             let usage = obj.energyzong - energyList[idx]
             return (
                 <p key={idx}>
-                    第{chineseNum[idx]}阶梯{type}价{price.toFixed(2)}元/{unit},
+                    第{chineseNum[idx]}阶梯{type}价{price}元/{unit},
                     已用{(usage > 0 ? usage : 0).toFixed(2)}
                 </p>
             )
@@ -245,7 +245,7 @@ function stair({ obj, billType }) {
             }
             return (
                 <p key={idx}>
-                    第{chineseNum[idx]}阶梯{type}价{price.toFixed(2)}元/{unit},
+                    第{chineseNum[idx]}阶梯{type}价{price}元/{unit},
                     基数{base.toFixed(2)}, 已用{usage.toFixed(2)}
                 </p>
             )
