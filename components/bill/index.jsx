@@ -31,11 +31,11 @@ class Bill extends React.Component {
         this.setState({ billType: idx })
     }
 
-    handleListClick = (time, current = false) => {
-        let { billType, type } = this.state
+    handleListClick = (time) => {
+        let { billType } = this.state
         let to = {
             pathname: '/bill/detail',
-            state: { time, current, billType, type }
+            state: { time, billType }
         }
         this.props.history.push(to)
     }
@@ -184,7 +184,7 @@ class Bill extends React.Component {
                             className='cur'
                             onClick={() => {
                                 if (cur) {
-                                    this.handleListClick(cur.updatetime, true)
+                                    this.handleListClick(cur.updatetime)
                                 }
                             }}
                         >

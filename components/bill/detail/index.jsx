@@ -9,8 +9,9 @@ class Detail extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            total: null,
+            top: null,
             detail: [],
+            prepayType: 1, // 1 regular; 2 icm; 3 esam
             checked: true,
             error: false,
             errmsg: ''
@@ -19,41 +20,26 @@ class Detail extends React.Component {
 
     async componentDidMount() {
         let { location } = this.props
-        let { time, billType, type } = location.state
-        let api = type > 1 ? Elec.icmBillDetail : Elec.billDetail
-        let pType = type > 1 ? type : billType + 1
+        let { time, billType } = location.state
         Toast.loading('加载中...', 0)
-        let { data } = await api.query({
+        let { data } = await Elec.billDetail.query({
             customerid: localStorage.customerId,
             date: dayjs(time).format('YYYY-MM'),
-            type: pType
+            type: billType + 1
         })
         Toast.hide()
         if (data.errcode !== 0) {
             this.setState({ error: true, errmsg: data.errmsg })
         } else {
-            let detail
-            switch (type) {
-                case 3:
-                    detail = data.data.esamDetailList
-                    break
-                case 2:
-                    detail = data.data.icmDetailList
-                    break
-                case 1:
-                default:
-                    detail = data.data.detailList
-                    this.setState({ checked: data.data.checked })
-                    break
-            }
-            this.setState({ detail, total: data.data.total })
+            let { top, list, checked, prepayType } = data.data
+            this.setState({ prepayType, checked, top, detail: list })
         }
     }
 
     render() {
         let { location, history } = this.props
-        let { current, billType, type } = location.state
-        let { total, detail, checked } = this.state
+        let { billType } = location.state
+        let { top, detail, checked, prepayType } = this.state
         return (
             <div className='usage-detail'>
                 <Modal
@@ -66,15 +52,14 @@ class Detail extends React.Component {
                     {this.state.errmsg}
                 </Modal>
                 {buildTop({
-                    obj: total,
+                    obj: top,
                     billType,
-                    type,
-                    current,
+                    type: prepayType,
                     checked,
                     detail
                 })}
                 {detail.map(item => {
-                    return buildTable({ type, obj: item })
+                    return buildTable({ obj: item, type: prepayType,billType })
                 })}
             </div>
         )
