@@ -33,7 +33,6 @@ const Elec = {
     curBill: new Request('/elec/curMonthBill'),
     billList: new Request('/elec/monthBillList'),
     billDetail: new Request('/elec/billDetail'),
-    icmBillDetail: new Request('/elec/icmBillDetail'),
     usage: new Request('/elec/usage')
 }
 
