@@ -20,6 +20,7 @@ class Detail extends React.Component {
 
     async componentDidMount() {
         let { time, billType } = sessionStorage
+        billType = parseInt(billType)
         Toast.loading('加载中...', 0)
         let { data } = await Elec.billDetail.query({
             customerid: localStorage.customerId,
@@ -38,6 +39,7 @@ class Detail extends React.Component {
     render() {
         let { history } = this.props
         let { billType } = sessionStorage
+        billType = parseInt(billType)
         let { top, detail, checked, prepayType } = this.state
         return (
             <div className='usage-detail'>
