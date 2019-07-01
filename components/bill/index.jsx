@@ -31,13 +31,11 @@ class Bill extends React.Component {
         this.setState({ billType: idx })
     }
 
-    handleListClick = (time) => {
+    handleListClick = time => {
         let { billType } = this.state
-        let to = {
-            pathname: '/bill/detail',
-            state: { time, billType }
-        }
-        this.props.history.push(to)
+        sessionStorage.time = time
+        sessionStorage.billType = billType
+        this.props.history.push({ pathname: '/bill/detail' })
     }
 
     queryCurrent = async () => {

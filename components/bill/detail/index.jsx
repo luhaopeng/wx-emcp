@@ -19,8 +19,7 @@ class Detail extends React.Component {
     }
 
     async componentDidMount() {
-        let { location } = this.props
-        let { time, billType } = location.state
+        let { time, billType } = sessionStorage
         Toast.loading('加载中...', 0)
         let { data } = await Elec.billDetail.query({
             customerid: localStorage.customerId,
@@ -37,8 +36,8 @@ class Detail extends React.Component {
     }
 
     render() {
-        let { location, history } = this.props
-        let { billType } = location.state
+        let { history } = this.props
+        let { billType } = sessionStorage
         let { top, detail, checked, prepayType } = this.state
         return (
             <div className='usage-detail'>
@@ -59,7 +58,7 @@ class Detail extends React.Component {
                     detail
                 })}
                 {detail.map(item => {
-                    return buildTable({ obj: item, type: prepayType,billType })
+                    return buildTable({ obj: item, type: prepayType, billType })
                 })}
             </div>
         )
