@@ -89,16 +89,21 @@ class Pay extends React.Component {
             this.setState({ forbidden: !!canOnlineRecharge })
             return false
         }
+        let newState = {}
         if (entPay.useDiscount) {
-            this.setState({
+            newState = Object.assign(newState, {
                 aliDiscount: entPay.alipayDiscount,
                 wxDiscount: entPay.wechatDiscount
             })
             if (!localStorage.protocol) {
-                this.setState({ protocol: true })
+                newState = Object.assign(newState, { protocol: true })
             }
         }
-        this.setState({ channel: entPay.payChannel })
+        newState = Object.assign(newState, { channel: entPay.payChannel })
+        if (entPay.payChannel > 1) {
+            newState = Object.assign(newState, { payType: 1 })
+        }
+        this.setState(newState)
         return true
     }
 
@@ -228,7 +233,6 @@ class Pay extends React.Component {
         let wxTip = `(需收取${((1 - wxDiscount) * 100).toFixed(1)}%手续费)`
         let aliTip = `(需收取${((1 - aliDiscount) * 100).toFixed(1)}%手续费)`
         if (channel > 1) {
-            this.setState({ payType: 1 })
             return (
                 <section>
                     <h3>支付方式</h3>
