@@ -2,6 +2,7 @@ import React from 'react'
 import { hot } from 'react-hot-loader/root'
 import { Switch, Route, Link, Redirect } from 'react-router-dom'
 import queryString from 'query-string'
+import dayjs from 'dayjs'
 import { isWeChat, isProd, isTest, isHaina, authUrl } from '../util/constants'
 import { Wechat, Haina } from '../api/url'
 import TabBar from './tabbar'
@@ -67,19 +68,26 @@ const AuthRoute = ({ component: Component, ...rest }) => {
     return (
         <Route
             {...rest}
-            render={props =>
-                localStorage.customerId ? (
-                    <Component {...props} />
-                ) : (
-                    <Redirect
-                        to={{
-                            pathname: '/login',
-                            search: props.location.search,
-                            state: { from: props.location }
-                        }}
-                    />
-                )
-            }
+            render={props => {
+                let { customerId, lastLogin } = localStorage
+                if (
+                    customerId &&
+                    lastLogin &&
+                    dayjs().diff(dayjs(lastLogin), 'day') < 7
+                ) {
+                    return <Component {...props} />
+                } else {
+                    return (
+                        <Redirect
+                            to={{
+                                pathname: '/login',
+                                search: props.location.search,
+                                state: { from: props.location }
+                            }}
+                        />
+                    )
+                }
+            }}
         />
     )
 }

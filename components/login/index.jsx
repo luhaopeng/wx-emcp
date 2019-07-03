@@ -2,11 +2,14 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { List, InputItem, Button, Toast } from 'antd-mobile'
 import classNames from 'classnames'
+import dayjs from 'dayjs'
 import Guide from './guide'
 import './index.less'
 import Avatar from '../../static/img/login.jpg'
 import { Mine, Haina } from '../../api/url'
 import { isWeChat, isProd, isTest, isHaina } from '../../util/constants'
+
+const DATE = 'YYYY-MM-DD HH:mm:ss'
 
 class Login extends React.Component {
     constructor(props) {
@@ -74,6 +77,7 @@ class Login extends React.Component {
             if (customers.length === 1) {
                 let id = customers[0].customerid
                 localStorage.customerId = id
+                localStorage.lastLogin = dayjs().format(DATE)
 
                 // bind
                 if (isWeChat) {
@@ -128,6 +132,7 @@ class Login extends React.Component {
                 localStorage.customerId = customerid
                 localStorage.relog = multiple
                 localStorage.phone = phone
+                localStorage.lastLogin = dayjs().format(DATE)
                 // redirect
                 let { history, location } = this.props
                 let { from } = location.state || { from: { pathname: '/' } }

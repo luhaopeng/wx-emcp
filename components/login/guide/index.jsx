@@ -1,8 +1,11 @@
 import React from 'react'
 import { List, Radio, Button, Toast } from 'antd-mobile'
+import dayjs from 'dayjs'
 import './index.less'
 import { Mine, Haina } from '../../../api/url'
 import { isWeChat, isProd, isTest, isHaina } from '../../../util/constants'
+
+const DATE = 'YYYY-MM-DD HH:mm:ss'
 
 class Guide extends React.Component {
     constructor(props) {
@@ -17,6 +20,7 @@ class Guide extends React.Component {
         let { selectedId } = this.state
         let { history, location } = this.props
         localStorage.customerId = selectedId
+        localStorage.lastLogin = dayjs().format(DATE)
 
         // bind
         if (isWeChat) {
