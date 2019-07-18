@@ -11,6 +11,7 @@ class Detail extends React.Component {
         this.state = {
             top: null,
             detail: [],
+            changeList: [],
             prepayType: 1, // 1 regular; 2 icm; 3 esam
             checked: true,
             error: false,
@@ -31,8 +32,14 @@ class Detail extends React.Component {
         if (data.errcode !== 0) {
             this.setState({ error: true, errmsg: data.errmsg })
         } else {
-            let { top, list, checked, prepayType } = data.data
-            this.setState({ prepayType, checked, top, detail: list })
+            let { top, list, checked, prepayType, changeList } = data.data
+            this.setState({
+                prepayType,
+                checked,
+                top,
+                detail: list,
+                changeList
+            })
         }
     }
 
@@ -40,7 +47,7 @@ class Detail extends React.Component {
         let { history } = this.props
         let { billType } = sessionStorage
         billType = parseInt(billType)
-        let { top, detail, checked, prepayType } = this.state
+        let { top, detail, checked, prepayType, changeList } = this.state
         return (
             <div className='usage-detail'>
                 <Modal
@@ -54,6 +61,7 @@ class Detail extends React.Component {
                 </Modal>
                 {buildTop({
                     obj: top,
+                    changeList,
                     billType,
                     type: prepayType,
                     checked,

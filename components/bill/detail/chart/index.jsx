@@ -1,11 +1,12 @@
 import React from 'react'
 import dayjs from 'dayjs'
+import { Icon } from 'antd-mobile'
 import { Singlet, Rating, Stair } from './regular'
 
 const DATE = 'YYYY-MM-DD'
 const MONTH = 'YYYY-MM'
 
-function regularTop({ obj, detail, billType, checked }) {
+function regularTop({ obj, detail, changeList, billType, checked }) {
     if (!obj) {
         return null
     }
@@ -40,8 +41,72 @@ function regularTop({ obj, detail, billType, checked }) {
                     </tr>
                 </tbody>
             </table>
+            {changeList.length ? <Change list={changeList} /> : null}
         </div>
     )
+}
+
+class Change extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = { collapse: true }
+    }
+
+    handleCollapse = () => {
+        let { collapse } = this.state
+        this.setState({ collapse: !collapse })
+    }
+
+    componentDidMount() {
+        this.style = {
+            height: `${this.refs.content.scrollHeight}px`,
+            opacity: 1
+        }
+    }
+
+    render() {
+        let { collapse } = this.state
+        let { list } = this.props
+        return (
+            <React.Fragment>
+                <div className='panel-label' onClick={this.handleCollapse}>
+                    <p>追退详情</p>
+                    <p />
+                    <Icon
+                        type={collapse ? 'down' : 'up'}
+                        size='xs'
+                        color='#999'
+                    />
+                </div>
+                <section
+                    className='collapsible'
+                    style={collapse ? null : this.style}
+                    ref='content'
+                >
+                    <table className='top'>
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>类型</th>
+                                <th>金额</th>
+                                <th>说明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {list.map((item, idx) => (
+                                <tr key={idx}>
+                                    <td>${item.addtime.replace('T', ' ')}</td>
+                                    <td>${item.typeStr}</td>
+                                    <td>${item.money.toFixed(2)}</td>
+                                    <td>${item.remark.substr(0, 20)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </section>
+            </React.Fragment>
+        )
+    }
 }
 
 function regularTable({ obj, ...rest }) {
