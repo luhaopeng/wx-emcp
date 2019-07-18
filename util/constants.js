@@ -21,17 +21,18 @@ const prodUrl = 'http://hl.energyman.cn/wxemcp'
 
 // basename
 const devBase = '/'
-const testBase = '/wxemcp/jsp/test'
-const prodBase = '/wxemcp'
+const testBase = '/wxemcp/test'
+const prodBase = '/wxemcp/wx'
 
 // redirect
-const testRedirect = `${prodUrl}/jsp/test`
+const testRedirect = `${prodUrl}/test`
+const prodRedirect = `${prodUrl}/wx`
 // wechat auth url
 const authUrl =
     'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' +
     appid +
     '&redirect_uri=' +
-    encodeURIComponent(isTest ? testRedirect : prodUrl) +
+    encodeURIComponent(isTest ? testRedirect : prodRedirect) +
     '&response_type=code&state=1&scope=snsapi_base#wechat_redirect'
 
 // export

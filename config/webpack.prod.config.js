@@ -6,7 +6,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 module.exports = merge(base, {
   mode: 'production',
   output: {
-    publicPath: '/wxemcp/'
+    publicPath: '/wxemcp/wx/'
   },
   module: {
     rules: [

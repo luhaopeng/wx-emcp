@@ -4,7 +4,7 @@ const webpack = require('webpack')
 
 module.exports = merge(prod, {
   output: {
-    publicPath: '/wxemcp/jsp/test/'
+    publicPath: '/wxemcp/test/'
   },
   plugins: [
     new webpack.DefinePlugin({
