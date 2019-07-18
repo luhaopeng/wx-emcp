@@ -95,10 +95,10 @@ class Change extends React.Component {
                         <tbody>
                             {list.map((item, idx) => (
                                 <tr key={idx}>
-                                    <td>${item.addtime.replace('T', ' ')}</td>
-                                    <td>${item.typeStr}</td>
-                                    <td>${item.money.toFixed(2)}</td>
-                                    <td>${item.remark.substr(0, 20)}</td>
+                                    <td>{item.addtime.replace('T', ' ')}</td>
+                                    <td>{item.typeStr}</td>
+                                    <td>{item.money.toFixed(2)}</td>
+                                    <td>{item.remark.substr(0, 20)}</td>
                                 </tr>
                             ))}
                         </tbody>
