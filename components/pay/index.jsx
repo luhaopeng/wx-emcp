@@ -207,8 +207,7 @@ class Pay extends React.Component {
                     success: () => {
                         // redirect to result
                         let to = {
-                            pathname: '/pay/result',
-                            state: { type, id }
+                            pathname: `/pay/result?type=${type}&id=${id}`
                         }
                         history.push(to)
                     }
