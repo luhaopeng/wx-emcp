@@ -32,26 +32,34 @@ class Login extends React.Component {
         let { phone } = this.state
         phone = phone.replace(/\s/g, '')
         // send
-        let { data } = await Mine.sms.query({ phone })
-        if (data.errcode !== 0) {
-            this.setState({ error: true, errMsg: data.errmsg })
-        } else {
-            this.second = 60
-            this.setState({
-                sent: true,
-                sentBtnLabel: `重新发送(${this.second}秒)`
-            })
-            this.timer = setInterval(() => {
-                if (--this.second <= 0) {
-                    clearInterval(this.timer)
-                    this.second = 60
-                    this.setState({ sent: false, sentBtnLabel: '获取验证码' })
-                } else {
-                    this.setState({
-                        sentBtnLabel: `重新发送(${this.second}秒)`
-                    })
-                }
-            }, 1000)
+        try {
+            let { data } = await Mine.sms.query({ phone })
+            if (data.errcode !== 0) {
+                this.setState({ error: true, errMsg: data.errmsg })
+            } else {
+                this.second = 60
+                this.setState({
+                    sent: true,
+                    sentBtnLabel: `重新发送(${this.second}秒)`
+                })
+                this.timer = setInterval(() => {
+                    if (--this.second <= 0) {
+                        clearInterval(this.timer)
+                        this.second = 60
+                        this.setState({
+                            sent: false,
+                            sentBtnLabel: '获取验证码'
+                        })
+                    } else {
+                        this.setState({
+                            sentBtnLabel: `重新发送(${this.second}秒)`
+                        })
+                    }
+                }, 1000)
+            }
+        } catch (err) {
+            console.error(err)
+            Toast.fail('请求超时，请重试')
         }
     }
 
@@ -67,49 +75,58 @@ class Login extends React.Component {
             return
         }
         // login
-        let { data } = await Mine.login.query({ phone, code })
-        if (data.errcode !== 0) {
-            this.setState({ error: true, errMsg: data.errmsg, loading: false })
-        } else {
-            this.setState({ loading: false })
-            // success
-            let customers = data.data.customerEnts
-            if (customers.length === 1) {
-                let id = customers[0].customerid
-                localStorage.customerId = id
-                localStorage.lastLogin = dayjs().format(DATE)
-
-                // bind
-                if (isWeChat) {
-                    if (isProd || isTest) {
-                        await Mine.bind.query({
-                            openid: localStorage.openId,
-                            customerid: id
-                        })
-                    } else if (isHaina) {
-                        await Haina.bind.query({
-                            residentid: localStorage.residentId,
-                            customerid: id
-                        })
-                    }
-                }
-
-                // redirect
-                let { history, location } = this.props
-                let { from } = location.state || { from: { pathname: '/' } }
-                history.replace(from)
+        try {
+            let { data } = await Mine.login.query({ phone, code })
+            if (data.errcode !== 0) {
+                this.setState({
+                    error: true,
+                    errMsg: data.errmsg,
+                    loading: false
+                })
             } else {
-                // >1
-                localStorage.relog = true
-                localStorage.phone = phone
-                // redirect
-                let { history, location } = this.props
-                let to = {
-                    pathname: '/login/guide',
-                    state: location.state || { from: { pathname: '/' } }
+                this.setState({ loading: false })
+                // success
+                let customers = data.data.customerEnts
+                if (customers.length === 1) {
+                    let id = customers[0].customerid
+                    localStorage.customerId = id
+                    localStorage.lastLogin = dayjs().format(DATE)
+
+                    // bind
+                    if (isWeChat) {
+                        if (isProd || isTest) {
+                            await Mine.bind.query({
+                                openid: localStorage.openId,
+                                customerid: id
+                            })
+                        } else if (isHaina) {
+                            await Haina.bind.query({
+                                residentid: localStorage.residentId,
+                                customerid: id
+                            })
+                        }
+                    }
+
+                    // redirect
+                    let { history, location } = this.props
+                    let { from } = location.state || { from: { pathname: '/' } }
+                    history.replace(from)
+                } else {
+                    // >1
+                    localStorage.relog = true
+                    localStorage.phone = phone
+                    // redirect
+                    let { history, location } = this.props
+                    let to = {
+                        pathname: '/login/guide',
+                        state: location.state || { from: { pathname: '/' } }
+                    }
+                    history.replace(to)
                 }
-                history.replace(to)
             }
+        } catch (err) {
+            console.error(err)
+            this.setState({ error: true, errMsg: '请求超时' })
         }
     }
 
@@ -125,18 +142,23 @@ class Login extends React.Component {
         let { openId } = localStorage
         if (openId) {
             Toast.loading('尝试自动登录...', 0)
-            let { data } = await Mine.autoLogin.query({ openid: openId })
-            Toast.hide()
-            let { customerid, multiple, phone } = data.data
-            if (customerid) {
-                localStorage.customerId = customerid
-                localStorage.relog = multiple
-                localStorage.phone = phone
-                localStorage.lastLogin = dayjs().format(DATE)
-                // redirect
-                let { history, location } = this.props
-                let { from } = location.state || { from: { pathname: '/' } }
-                history.replace(from)
+            try {
+                let { data } = await Mine.autoLogin.query({ openid: openId })
+                Toast.hide()
+                let { customerid, multiple, phone } = data.data
+                if (customerid) {
+                    localStorage.customerId = customerid
+                    localStorage.relog = multiple
+                    localStorage.phone = phone
+                    localStorage.lastLogin = dayjs().format(DATE)
+                    // redirect
+                    let { history, location } = this.props
+                    let { from } = location.state || { from: { pathname: '/' } }
+                    history.replace(from)
+                }
+            } catch (err) {
+                console.error(err)
+                Toast.fail('请求超时')
             }
         }
     }

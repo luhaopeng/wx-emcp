@@ -146,17 +146,22 @@ class PayResult extends React.Component {
     async componentDidMount() {
         let { type, id } = queryString.parse(this.props.location.search)
         Toast.loading('查询中...', 0)
-        let { data } = await Pay.result.query({ rechargeid: id, type })
-        Toast.hide()
-        let { rechargeResult, operateResult, remain } = data.data
-        let { cat, status } = categorize({
-            type,
-            recharge: rechargeResult,
-            operate: operateResult
-        })
-        let result = ResultEnum[cat][status]
-        let { title, message } = result
-        this.setState({ status, title, message, remain })
+        try {
+            let { data } = await Pay.result.query({ rechargeid: id, type })
+            Toast.hide()
+            let { rechargeResult, operateResult, remain } = data.data
+            let { cat, status } = categorize({
+                type,
+                recharge: rechargeResult,
+                operate: operateResult
+            })
+            let result = ResultEnum[cat][status]
+            let { title, message } = result
+            this.setState({ status, title, message, remain })
+        } catch (err) {
+            console.error(err)
+            Toast.fail('查询超时，请刷新页面')
+        }
     }
 
     render() {

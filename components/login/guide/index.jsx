@@ -44,14 +44,23 @@ class Guide extends React.Component {
     async componentDidMount() {
         let { relog, phone } = localStorage
         Toast.loading('获取列表...', 0)
-        let { data } = await Mine.login.query({ relog, phone })
-        Toast.hide()
-        if (data.errcode === 0) {
-            let array = data.data.customerEnts
-            let records = array.map(item => {
-                return { id: item.customerid, hm: item.hm, company: item.ename }
-            })
-            this.setState({ selectedId: records[0].id, records })
+        try {
+            let { data } = await Mine.login.query({ relog, phone })
+            Toast.hide()
+            if (data.errcode === 0) {
+                let array = data.data.customerEnts
+                let records = array.map(item => {
+                    return {
+                        id: item.customerid,
+                        hm: item.hm,
+                        company: item.ename
+                    }
+                })
+                this.setState({ selectedId: records[0].id, records })
+            }
+        } catch (err) {
+            console.error(err)
+            Toast.fail('请求超时')
         }
     }
 

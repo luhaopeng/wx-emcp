@@ -14,16 +14,21 @@ class MeterList extends React.Component {
 
     async componentDidMount() {
         Toast.loading('加载中...', 0)
-        let { data } = await Mine.balance.query({
-            customerid: localStorage.customerId
-        })
-        Toast.hide()
-        let { prepayType, icmList } = data.data
-        let meters = icmList.map(meter => ({
-            name: meter.pointname,
-            remain: meter.remain
-        }))
-        this.setState({ meters, type: parseInt(prepayType) })
+        try {
+            let { data } = await Mine.balance.query({
+                customerid: localStorage.customerId
+            })
+            Toast.hide()
+            let { prepayType, icmList } = data.data
+            let meters = icmList.map(meter => ({
+                name: meter.pointname,
+                remain: meter.remain
+            }))
+            this.setState({ meters, type: parseInt(prepayType) })
+        } catch (err) {
+            console.error(err)
+            Toast.fail('请求超时，请刷新页面')
+        }
     }
 
     render() {

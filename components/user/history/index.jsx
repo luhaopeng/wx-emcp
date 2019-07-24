@@ -27,62 +27,72 @@ class History extends React.Component {
         Toast.loading('加载中...', 0)
         // query data
         let { customerId } = localStorage
-        let { data } = await Mine.history.query({
-            customerid: customerId,
-            num: this.num++
-        })
-        // close toast
-        Toast.hide()
-        if (data.errcode !== 0) {
-            this.setState({ done: true })
-        } else {
-            let {
-                prepayType,
-                esamRechargeHistory,
-                icmRechargeHistory,
-                rechargeHistory
-            } = data.data
-            let historySup = []
-            switch (parseInt(prepayType)) {
-                case 2:
-                    historySup = icmRechargeHistory.map(item => {
-                        let { handler, addTime, buyMoney, pointName } = item
-                        return {
-                            handler,
-                            money: buyMoney,
-                            time: addTime,
-                            name: pointName
-                        }
-                    })
-                    break
-                case 3:
-                    historySup = esamRechargeHistory.map(item => {
-                        let { handler, addTime, money, pointName } = item
-                        return {
-                            handler,
-                            money,
-                            time: addTime,
-                            name: pointName
-                        }
-                    })
-                    break
-                case 1:
-                default:
-                    historySup = rechargeHistory.map(item => {
-                        let { handler, addtime, payMoney, actualMoney } = item
-                        return {
-                            handler,
-                            time: addtime,
-                            money: actualMoney || payMoney
-                        }
-                    })
-                    break
-            }
-            let { history } = this.state
-            this.setState({
-                type: parseInt(prepayType),
-                history: history.concat(historySup)
+        try {
+            let { data } = await Mine.history.query({
+                customerid: customerId,
+                num: this.num++
             })
+            // close toast
+            Toast.hide()
+            if (data.errcode !== 0) {
+                this.setState({ done: true })
+            } else {
+                let {
+                    prepayType,
+                    esamRechargeHistory,
+                    icmRechargeHistory,
+                    rechargeHistory
+                } = data.data
+                let historySup = []
+                switch (parseInt(prepayType)) {
+                    case 2:
+                        historySup = icmRechargeHistory.map(item => {
+                            let { handler, addTime, buyMoney, pointName } = item
+                            return {
+                                handler,
+                                money: buyMoney,
+                                time: addTime,
+                                name: pointName
+                            }
+                        })
+                        break
+                    case 3:
+                        historySup = esamRechargeHistory.map(item => {
+                            let { handler, addTime, money, pointName } = item
+                            return {
+                                handler,
+                                money,
+                                time: addTime,
+                                name: pointName
+                            }
+                        })
+                        break
+                    case 1:
+                    default:
+                        historySup = rechargeHistory.map(item => {
+                            let {
+                                handler,
+                                addtime,
+                                payMoney,
+                                actualMoney
+                            } = item
+                            return {
+                                handler,
+                                time: addtime,
+                                money: actualMoney || payMoney
+                            }
+                        })
+                        break
+                }
+                let { history } = this.state
+                this.setState({
+                    type: parseInt(prepayType),
+                    history: history.concat(historySup)
+                })
+            }
+        } catch (err) {
+            console.error(err)
+            Toast.fail('请求超时')
         }
     }
 

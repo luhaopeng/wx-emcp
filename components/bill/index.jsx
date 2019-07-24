@@ -42,22 +42,28 @@ class Bill extends React.Component {
         if (!this.queryCount++) {
             Toast.loading('加载中...', 0)
         }
-        let { data } = await Elec.curBill.query({
-            customerid: localStorage.customerId
-        })
-        if (!--this.queryCount) {
-            Toast.hide()
-        }
-
-        if (data.errcode === 0) {
-            let { prepayType, curMonth, curMonthWater } = data.data
-            this.setState({
-                billType: !curMonth && curMonthWater ? 1 : 0,
-                single: !(curMonth && curMonthWater),
-                type: prepayType,
-                curElec: curMonth,
-                curWater: curMonthWater
+        try {
+            let { data } = await Elec.curBill.query({
+                customerid: localStorage.customerId
             })
+            if (!--this.queryCount) {
+                Toast.hide()
+            }
+
+            if (data.errcode === 0) {
+                let { prepayType, curMonth, curMonthWater } = data.data
+                this.setState({
+                    billType: !curMonth && curMonthWater ? 1 : 0,
+                    single: !(curMonth && curMonthWater),
+                    type: prepayType,
+                    curElec: curMonth,
+                    curWater: curMonthWater
+                })
+            }
+        } catch (err) {
+            console.error(err)
+            --this.queryCount
+            Toast.fail('请求超时')
         }
     }
 
@@ -68,36 +74,42 @@ class Bill extends React.Component {
         if (!this.queryCount++) {
             Toast.loading('加载中...', 0)
         }
-        let { data } = await Elec.billList.query({
-            customerid: localStorage.customerId,
-            num: this.num++
-        })
-        if (!--this.queryCount) {
-            Toast.hide()
-        }
-        if (data.errcode !== 0) {
-            this.setState({ done: true })
-        } else {
-            let {
-                prepayType,
-                briefList: elec,
-                briefWaterList: water
-            } = data.data
-            if (this.num > 1) {
-                let { pastElec, pastWater } = this.state
-                this.setState({
-                    pastElec: pastElec.concat(elec),
-                    pastWater: pastWater.concat(water)
-                })
-            } else {
-                this.setState({
-                    billType: elec.length === 0 && water.length > 0 ? 1 : 0,
-                    single: !(elec.length > 0 && water.length > 0),
-                    type: prepayType,
-                    pastElec: elec,
-                    pastWater: water
-                })
+        try {
+            let { data } = await Elec.billList.query({
+                customerid: localStorage.customerId,
+                num: this.num++
+            })
+            if (!--this.queryCount) {
+                Toast.hide()
             }
+            if (data.errcode !== 0) {
+                this.setState({ done: true })
+            } else {
+                let {
+                    prepayType,
+                    briefList: elec,
+                    briefWaterList: water
+                } = data.data
+                if (this.num > 1) {
+                    let { pastElec, pastWater } = this.state
+                    this.setState({
+                        pastElec: pastElec.concat(elec),
+                        pastWater: pastWater.concat(water)
+                    })
+                } else {
+                    this.setState({
+                        billType: elec.length === 0 && water.length > 0 ? 1 : 0,
+                        single: !(elec.length > 0 && water.length > 0),
+                        type: prepayType,
+                        pastElec: elec,
+                        pastWater: water
+                    })
+                }
+            }
+        } catch (err) {
+            console.error(err)
+            --this.queryCount
+            Toast.fail('请求超时')
         }
     }
 

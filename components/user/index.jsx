@@ -39,7 +39,12 @@ class User extends React.Component {
     handleSignOut = async () => {
         // open toast
         Toast.loading('加载中...', 0)
-        await Mine.unbind.query({ openid: localStorage.openId })
+        try {
+            await Mine.unbind.query({ openid: localStorage.openId })
+        } catch (err) {
+            console.error(err)
+            Toast.fail('请求超时，请重试')
+        }
         // close toast
         Toast.hide()
 
@@ -58,70 +63,82 @@ class User extends React.Component {
         Toast.loading('加载中...', 0)
         // query data
         let { customerId } = localStorage
-        let resBasic = await Mine.basic.query({ customerid: customerId })
-        let { customer } = resBasic.data.data
-        let resBalance = await Mine.balance.query({ customerid: customerId })
-        let { prepayType, icmList, account } = resBalance.data.data
-        let resHistory = await Mine.history.query({
-            customerid: customerId,
-            num: -1
-        })
-        // close toast
-        Toast.hide()
+        try {
+            let resBasic = await Mine.basic.query({ customerid: customerId })
+            let { customer } = resBasic.data.data
+            let resBalance = await Mine.balance.query({
+                customerid: customerId
+            })
+            let { prepayType, icmList, account } = resBalance.data.data
+            let resHistory = await Mine.history.query({
+                customerid: customerId,
+                num: -1
+            })
+            // close toast
+            Toast.hide()
 
-        // process balance
-        let balance = 0
-        if (parseInt(prepayType) === 1) {
-            balance = account.usablemoney
-        } else {
-            for (let { remain } of icmList) {
-                balance += remain
+            // process balance
+            let balance = 0
+            if (parseInt(prepayType) === 1) {
+                balance = account.usablemoney
+            } else {
+                for (let { remain } of icmList) {
+                    balance += remain
+                }
             }
-        }
-        // process history
-        let history = []
-        if (resHistory.data.errcode === 0) {
-            let {
-                esamRechargeHistory,
-                icmRechargeHistory,
-                rechargeHistory
-            } = resHistory.data.data
+            // process history
+            let history = []
+            if (resHistory.data.errcode === 0) {
+                let {
+                    esamRechargeHistory,
+                    icmRechargeHistory,
+                    rechargeHistory
+                } = resHistory.data.data
 
-            switch (parseInt(prepayType)) {
-                case 2:
-                    history = icmRechargeHistory.map(item => {
-                        let { handler, addTime, buyMoney } = item
-                        return { handler, money: buyMoney, time: addTime }
-                    })
-                    break
-                case 3:
-                    history = esamRechargeHistory.map(item => {
-                        let { handler, addTime, money } = item
-                        return { handler, money, time: addTime }
-                    })
-                    break
-                case 1:
-                default:
-                    history = rechargeHistory.map(item => {
-                        let { handler, addtime, payMoney, actualMoney } = item
-                        return {
-                            handler,
-                            time: addtime,
-                            money: actualMoney || payMoney
-                        }
-                    })
-                    break
+                switch (parseInt(prepayType)) {
+                    case 2:
+                        history = icmRechargeHistory.map(item => {
+                            let { handler, addTime, buyMoney } = item
+                            return { handler, money: buyMoney, time: addTime }
+                        })
+                        break
+                    case 3:
+                        history = esamRechargeHistory.map(item => {
+                            let { handler, addTime, money } = item
+                            return { handler, money, time: addTime }
+                        })
+                        break
+                    case 1:
+                    default:
+                        history = rechargeHistory.map(item => {
+                            let {
+                                handler,
+                                addtime,
+                                payMoney,
+                                actualMoney
+                            } = item
+                            return {
+                                handler,
+                                time: addtime,
+                                money: actualMoney || payMoney
+                            }
+                        })
+                        break
+                }
             }
-        }
 
-        this.setState({
-            hm: customer.hm,
-            user: customer.linkman,
-            phone: customer.phone,
-            type: parseInt(prepayType),
-            balance,
-            history
-        })
+            this.setState({
+                hm: customer.hm,
+                user: customer.linkman,
+                phone: customer.phone,
+                type: parseInt(prepayType),
+                balance,
+                history
+            })
+        } catch (err) {
+            console.error(err)
+            Toast.fail('请求超时，请刷新页面')
+        }
     }
 
     render() {

@@ -117,11 +117,21 @@ class App extends React.Component {
     async componentDidMount() {
         if (isWeChat && this.code) {
             if ((isProd || isTest) && !localStorage.openId) {
-                let { data } = await Wechat.auth.query({ code: this.code })
-                localStorage.openId = data.data.openId
+                try {
+                    let { data } = await Wechat.auth.query({ code: this.code })
+                    localStorage.openId = data.data.openId
+                } catch (err) {
+                    console.error(err)
+                    localStorage.removeItem('openId')
+                }
             } else if (isHaina && !localStorage.residentId) {
-                let { data } = await Haina.auth.query({ code: this.code })
-                localStorage.residentId = data.data.residentId
+                try {
+                    let { data } = await Haina.auth.query({ code: this.code })
+                    localStorage.residentId = data.data.residentId
+                } catch (err) {
+                    console.error(err)
+                    localStorage.removeItem('residentId')
+                }
             }
         }
     }

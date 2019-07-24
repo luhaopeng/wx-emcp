@@ -32,16 +32,21 @@ class Redirect extends React.Component {
                     break
             }
             Toast.loading('请求支付...', 0)
-            let { data } = await api.query({ rechargeid: id })
-            Toast.hide()
-            if (data.errcode !== 0) {
-                Toast.fail(data.errmsg)
-            } else {
-                document.body.innerHTML = data.data.form
-                let scripts = document.querySelectorAll('script')
-                for (let i = 0; i < scripts.length; i++) {
-                    eval(scripts[i].innerHTML)
+            try {
+                let { data } = await api.query({ rechargeid: id })
+                Toast.hide()
+                if (data.errcode !== 0) {
+                    Toast.fail(data.errmsg)
+                } else {
+                    document.body.innerHTML = data.data.form
+                    let scripts = document.querySelectorAll('script')
+                    for (let i = 0; i < scripts.length; i++) {
+                        eval(scripts[i].innerHTML)
+                    }
                 }
+            } catch (err) {
+                console.error(err)
+                Toast.fail('请求超时')
             }
         }
     }

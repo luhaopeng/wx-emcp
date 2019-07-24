@@ -23,6 +23,7 @@ class Pay extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            configged: false,
             channel: 1, // 1 regular; 2 icbc; 3 cmbc; 4 haina
             payType: 1,
             forbidden: false,
@@ -65,65 +66,85 @@ class Pay extends React.Component {
     }
 
     configWechatJsApi = async () => {
-        let { data } = await Wechat.config.query({
-            url: window.location.href.split('#')[0]
-        })
-        // eslint-disable-next-line no-undef
-        wx.config({
-            debug: isDev || isTest,
-            appId: data.data.wxConfig.appId,
-            timestamp: data.data.wxConfig.timestamp,
-            nonceStr: data.data.wxConfig.nonceStr,
-            signature: data.data.wxConfig.signature,
-            jsApiList: ['chooseWXPay']
-        })
+        try {
+            let { data } = await Wechat.config.query({
+                url: window.location.href.split('#')[0]
+            })
+            // eslint-disable-next-line no-undef
+            wx.config({
+                debug: isDev || isTest,
+                appId: data.data.wxConfig.appId,
+                timestamp: data.data.wxConfig.timestamp,
+                nonceStr: data.data.wxConfig.nonceStr,
+                signature: data.data.wxConfig.signature,
+                jsApiList: ['chooseWXPay']
+            })
+            this.setState({ configged: true })
+        } catch (err) {
+            console.error(err)
+            this.setState({ configged: false })
+            Toast.fail('微信支付初始化失败')
+        }
     }
 
     checkAbility = async () => {
-        let { data } = await PayApi.able.query({
-            customerid: localStorage.customerId
-        })
-        let { canOnlineRecharge, entPay } = data.data
-        if (canOnlineRecharge) {
-            // 0 able; 1 forbidden
-            this.setState({ forbidden: !!canOnlineRecharge })
-            return false
-        }
-        let newState = {}
-        if (entPay.useDiscount) {
-            newState = Object.assign(newState, {
-                aliDiscount: entPay.alipayDiscount,
-                wxDiscount: entPay.wechatDiscount
+        try {
+            let { data } = await PayApi.able.query({
+                customerid: localStorage.customerId
             })
-            if (!localStorage.protocol) {
-                newState = Object.assign(newState, { protocol: true })
+            let { canOnlineRecharge, entPay } = data.data
+            if (canOnlineRecharge) {
+                // 0 able; 1 forbidden
+                this.setState({ forbidden: !!canOnlineRecharge })
+                return false
             }
+            let newState = {}
+            if (entPay.useDiscount) {
+                newState = Object.assign(newState, {
+                    aliDiscount: entPay.alipayDiscount,
+                    wxDiscount: entPay.wechatDiscount
+                })
+                if (!localStorage.protocol) {
+                    newState = Object.assign(newState, { protocol: true })
+                }
+            }
+            newState = Object.assign(newState, { channel: entPay.payChannel })
+            if (entPay.payChannel > 1) {
+                newState = Object.assign(newState, { payType: 1 })
+            }
+            this.setState(newState)
+            return true
+        } catch (err) {
+            console.error(err)
+            Toast.fail('获取支付信息超时，请重试')
         }
-        newState = Object.assign(newState, { channel: entPay.payChannel })
-        if (entPay.payChannel > 1) {
-            newState = Object.assign(newState, { payType: 1 })
-        }
-        this.setState(newState)
-        return true
     }
 
     queryBalance = async () => {
         Toast.loading('加载中...', 0)
-        let { data } = await Mine.balance.query({
-            customerid: localStorage.customerId
-        })
-        Toast.hide()
-        let { prepayType, account, icmList } = data.data
-        this.setState({
-            type: prepayType,
-            account,
-            meters: icmList,
-            selectedMeter: icmList && icmList[0]
-        })
+        try {
+            let { data } = await Mine.balance.query({
+                customerid: localStorage.customerId
+            })
+            Toast.hide()
+            let { prepayType, account, icmList } = data.data
+            this.setState({
+                type: prepayType,
+                account,
+                meters: icmList,
+                selectedMeter: icmList && icmList[0]
+            })
+        } catch (err) {
+            console.error(err)
+            Toast.fail('获取余额超时，请重试')
+        }
     }
 
     queryOrderId = async money => {
-        let { type, payType, selectedMeter } = this.state
+        let { configged, type, payType, selectedMeter } = this.state
+        if (!configged) {
+            Toast.fail('微信支付初始化失败，请刷新页面')
+        }
         let api
         switch (type) {
             case 3:
@@ -138,19 +159,23 @@ class Pay extends React.Component {
                 break
         }
         Toast.loading('请求支付...', 0)
-        let { data } = await api.query(
-            {
-                customerid: localStorage.customerId,
-                amount: money,
-                tool: payType,
-                icmid: selectedMeter && selectedMeter.pointid
-            },
-            { timeout: 90000 }
-        )
-        if (data.errcode !== 0) {
-            Toast.fail(data.errmsg)
-        } else {
-            this.queryPay(data.data.rechargeId)
+        try {
+            let { data } = await api.query(
+                {
+                    customerid: localStorage.customerId,
+                    amount: money,
+                    tool: payType,
+                    icmid: selectedMeter && selectedMeter.pointid
+                },
+                { timeout: 90000 }
+            )
+            if (data.errcode !== 0) {
+                Toast.fail(data.errmsg)
+            } else {
+                this.queryPay(data.data.rechargeId)
+            }
+        } catch (err) {
+            Toast.fail('请求超时')
         }
     }
 
@@ -178,43 +203,47 @@ class Pay extends React.Component {
                 break
         }
 
-        let { data } = await api.query({
-            rechargeid: id,
-            openid: localStorage.openId
-        })
-        Toast.hide()
-        if (data.errcode !== 0) {
-            Toast.fail(data.errmsg)
-        } else {
-            // wechat or icbc-aggregate
-            let { form, wxData } = data.data
-            if (form) {
-                // icbc-aggregate form
-                document.body.innerHTML = form
-                let scripts = document.querySelectorAll('script')
-                for (let i = 0; i < scripts.length; i++) {
-                    eval(scripts[i].innerHTML)
-                }
-            } else if (wxData.result_code === 'SUCCESS') {
-                // eslint-disable-next-line no-undef
-                wx.chooseWXPay({
-                    appId: wxData.appid,
-                    timestamp: wxData.timeStamp,
-                    nonceStr: wxData.nonce_str,
-                    package: wxData.packageStr,
-                    signType: wxData.signType,
-                    paySign: wxData.sign,
-                    success: () => {
-                        // redirect to result
-                        let to = {
-                            pathname: `/pay/result?type=${type}&id=${id}`
-                        }
-                        history.push(to)
-                    }
-                })
+        try {
+            let { data } = await api.query({
+                rechargeid: id,
+                openid: localStorage.openId
+            })
+            Toast.hide()
+            if (data.errcode !== 0) {
+                Toast.fail(data.errmsg)
             } else {
-                Toast.fail(wxData.return_msg)
+                // wechat or icbc-aggregate
+                let { form, wxData } = data.data
+                if (form) {
+                    // icbc-aggregate form
+                    document.body.innerHTML = form
+                    let scripts = document.querySelectorAll('script')
+                    for (let i = 0; i < scripts.length; i++) {
+                        eval(scripts[i].innerHTML)
+                    }
+                } else if (wxData.result_code === 'SUCCESS') {
+                    // eslint-disable-next-line no-undef
+                    wx.chooseWXPay({
+                        appId: wxData.appid,
+                        timestamp: wxData.timeStamp,
+                        nonceStr: wxData.nonce_str,
+                        package: wxData.packageStr,
+                        signType: wxData.signType,
+                        paySign: wxData.sign,
+                        success: () => {
+                            // redirect to result
+                            history.push({
+                                pathname: `/pay/result?type=${type}&id=${id}`
+                            })
+                        }
+                    })
+                } else {
+                    Toast.fail(wxData.return_msg)
+                }
             }
+        } catch (err) {
+            console.error(err)
+            Toast.fail('请求超时')
         }
     }
 
@@ -228,7 +257,13 @@ class Pay extends React.Component {
     }
 
     buildPayMethod = () => {
-        let { channel, payType, aliDiscount, wxDiscount } = this.state
+        let {
+            configged,
+            channel,
+            payType,
+            aliDiscount,
+            wxDiscount
+        } = this.state
         let wxTip = `(需收取${((1 - wxDiscount) * 100).toFixed(1)}%手续费)`
         let aliTip = `(需收取${((1 - aliDiscount) * 100).toFixed(1)}%手续费)`
         if (channel > 1) {
@@ -237,7 +272,7 @@ class Pay extends React.Component {
                     <h3>支付方式</h3>
                     <List>
                         <Radio.RadioItem
-                            disabled={!isWeChat}
+                            disabled={!isWeChat || !configged}
                             thumb={
                                 <Icon
                                     size='sm'
@@ -263,7 +298,7 @@ class Pay extends React.Component {
                     <h3>支付方式</h3>
                     <List>
                         <Radio.RadioItem
-                            disabled={!isWeChat}
+                            disabled={!isWeChat || !configged}
                             thumb={
                                 <Icon
                                     size='sm'

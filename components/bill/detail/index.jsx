@@ -23,23 +23,28 @@ class Detail extends React.Component {
         let { time, billType } = sessionStorage
         billType = parseInt(billType)
         Toast.loading('加载中...', 0)
-        let { data } = await Elec.billDetail.query({
-            customerid: localStorage.customerId,
-            date: dayjs(time).format('YYYY-MM'),
-            type: billType + 1
-        })
-        Toast.hide()
-        if (data.errcode !== 0) {
-            this.setState({ error: true, errmsg: data.errmsg })
-        } else {
-            let { top, list, checked, prepayType, changeList } = data.data
-            this.setState({
-                prepayType,
-                checked,
-                top,
-                detail: list,
-                changeList
+        try {
+            let { data } = await Elec.billDetail.query({
+                customerid: localStorage.customerId,
+                date: dayjs(time).format('YYYY-MM'),
+                type: billType + 1
             })
+            Toast.hide()
+            if (data.errcode !== 0) {
+                this.setState({ error: true, errmsg: data.errmsg })
+            } else {
+                let { top, list, checked, prepayType, changeList } = data.data
+                this.setState({
+                    prepayType,
+                    checked,
+                    top,
+                    detail: list,
+                    changeList
+                })
+            }
+        } catch (err) {
+            console.error(err)
+            Toast.fail('请求超时')
         }
     }
 

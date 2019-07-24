@@ -172,26 +172,35 @@ class Usage extends React.Component {
     async queryData(newMode) {
         let { mode } = this.state
         Toast.loading('加载中...', 0)
-        let { data } = await Elec.usage.query({
-            mode: newMode !== undefined ? newMode : mode,
-            customerid: localStorage.customerId
-        })
-        Toast.hide()
-        let { dayUseList: elec, dayWaterList: water, prepayType } = data.data
-        if (newMode !== undefined) {
-            this.setState({
-                elecList: elec,
-                waterList: water,
-                mode: newMode
+        try {
+            let { data } = await Elec.usage.query({
+                mode: newMode !== undefined ? newMode : mode,
+                customerid: localStorage.customerId
             })
-        } else {
-            this.setState({
-                elecList: elec,
-                waterList: water,
-                usageType: elec.length === 0 && water.length > 0 ? 1 : 0,
-                type: prepayType,
-                single: !(elec.length > 0 && water.length > 0)
-            })
+            Toast.hide()
+            let {
+                dayUseList: elec,
+                dayWaterList: water,
+                prepayType
+            } = data.data
+            if (newMode !== undefined) {
+                this.setState({
+                    elecList: elec,
+                    waterList: water,
+                    mode: newMode
+                })
+            } else {
+                this.setState({
+                    elecList: elec,
+                    waterList: water,
+                    usageType: elec.length === 0 && water.length > 0 ? 1 : 0,
+                    type: prepayType,
+                    single: !(elec.length > 0 && water.length > 0)
+                })
+            }
+        } catch (err) {
+            console.error(err)
+            Toast.fail('请求超时')
         }
     }
 
