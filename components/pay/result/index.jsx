@@ -17,7 +17,7 @@ const ResultEnum = {
                 </p>
             )
         },
-        success: {
+        succeed: {
             title: '充值成功',
             message: remain => (
                 <p>
@@ -39,7 +39,7 @@ const ResultEnum = {
             title: '电量下发中',
             message: () => <p>请稍后关注公众号推送消息</p>
         },
-        success: {
+        succeed: {
             title: '购电成功',
             message: () => <p>请稍后关注卡表电量</p>
         },
@@ -85,7 +85,7 @@ function categorize({ type, recharge, operate }) {
                         status = 'processing'
                         break
                     case 1:
-                        status = 'success'
+                        status = 'succeed'
                         break
                     case 2:
                         status = 'error'
@@ -114,7 +114,7 @@ function categorize({ type, recharge, operate }) {
                 status = 'unknown'
                 break
             case 1:
-                status = 'success'
+                status = 'succeed'
                 break
             case 2:
                 status = 'error'

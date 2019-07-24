@@ -1,6 +1,6 @@
 import React from 'react'
 import Icon from '../../icon'
-import success from '../../../static/img/result/success.svg'
+import success from '../../../static/img/result/succeed.svg'
 import './index.less'
 
 class Paid extends React.Component {
