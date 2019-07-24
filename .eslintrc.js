@@ -20,7 +20,8 @@ module.exports = {
     quotes: ['error', 'single'],
     semi: ['error', 'never'],
     'react/jsx-uses-react': 'error',
-    'react/jsx-uses-vars': 'error'
+    'react/jsx-uses-vars': 'error',
+    'require-atomic-updates': 'off'
   },
   overrides: [
     {
