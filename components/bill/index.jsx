@@ -205,7 +205,8 @@ class Bill extends React.Component {
                                         ? '消耗水量 (吨)'
                                         : type === 3
                                             ? '购电金额 (元)'
-                                            : '消耗电量 (度)'}
+                                            : '消耗电量 (度)' // prettier-ignore
+                                    }
                                 </span>
                             </div>
                             <div>

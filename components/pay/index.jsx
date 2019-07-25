@@ -24,7 +24,7 @@ class Pay extends React.Component {
         super(props)
         this.state = {
             configged: false,
-            channel: 1, // 1 regular; 2 icbc; 3 cmbc; 4 haina
+            channel: 1, // 1 regular; 2 icbc; 3 cmbc; 4 haina; 5 umb
             payType: 1,
             forbidden: false,
             aliDiscount: 1,
@@ -484,7 +484,7 @@ class Pay extends React.Component {
                         </div>
                         <p
                             className={classNames('custom-amount', {
-                                hide: !customInput
+                                hide: !customInput || (curDis >= 1 && type !== 2) // prettier-ignore
                             })}
                         >
                             可得{income}
