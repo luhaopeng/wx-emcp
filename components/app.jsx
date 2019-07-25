@@ -9,10 +9,9 @@ import TabBar from './tabbar'
 import PageUser from './user'
 import PagePay from './pay'
 import PageBill from './bill'
+import PageDetail from './bill/detail'
 import PageUsage from './usage'
 import PageLogin from './login'
-import PageHistory from './user/history'
-import PageMeters from './user/meterList'
 import PagePaid from './pay/done'
 import PageRedirect from './pay/redirect'
 import Icon from './icon'
@@ -48,19 +47,19 @@ const TabWrap = () => (
     <TabBar>
         <TabItem
             to='/'
-            label='个人中心'
+            label='账单查询'
             exact={true}
-            icon={userO}
-            selectedIcon={user}
+            icon={billO}
+            selectedIcon={bill}
         />
-        <TabItem to='/pay' label='余额充值' icon={payO} selectedIcon={pay} />
-        <TabItem to='/bill' label='账单查询' icon={billO} selectedIcon={bill} />
         <TabItem
             to='/usage'
             label='用量分析'
             icon={statO}
             selectedIcon={stat}
         />
+        <TabItem to='/pay' label='余额充值' icon={payO} selectedIcon={pay} />
+        <TabItem to='/user' label='个人中心' icon={userO} selectedIcon={user} />
     </TabBar>
 )
 
@@ -140,12 +139,11 @@ class App extends React.Component {
         return (
             <div>
                 <Switch>
-                    <AuthRoute exact path='/' component={PageUser} />
-                    <AuthRoute path='/history' component={PageHistory} />
-                    <AuthRoute path='/meters' component={PageMeters} />
-                    <AuthRoute path='/pay' component={PagePay} />
-                    <AuthRoute path='/bill' component={PageBill} />
+                    <AuthRoute exact path='/' component={PageBill} />
+                    <AuthRoute path='/detail' component={PageDetail} />
                     <AuthRoute path='/usage' component={PageUsage} />
+                    <AuthRoute path='/pay' component={PagePay} />
+                    <AuthRoute path='/user' component={PageUser} />
                     <Route path='/login' component={PageLogin} />
                     <Route path='/paid' component={PagePaid} />
                     <Route path='/redirect' component={PageRedirect} />
@@ -153,9 +151,9 @@ class App extends React.Component {
 
                 <Switch>
                     <Route exact path='/' component={TabWrap} />
-                    <Route exact path='/pay' component={TabWrap} />
-                    <Route exact path='/bill' component={TabWrap} />
                     <Route exact path='/usage' component={TabWrap} />
+                    <Route exact path='/pay' component={TabWrap} />
+                    <Route exact path='/user' component={TabWrap} />
                 </Switch>
             </div>
         )

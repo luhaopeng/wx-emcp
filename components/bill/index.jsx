@@ -1,9 +1,7 @@
 import React from 'react'
 import { SegmentedControl, List, Toast } from 'antd-mobile'
-import { Switch, Route } from 'react-router-dom'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
-import Detail from './detail'
 import './index.less'
 import { Elec } from '../../api/url'
 
@@ -35,7 +33,7 @@ class Bill extends React.Component {
         let { billType } = this.state
         sessionStorage.time = time
         sessionStorage.billType = billType
-        this.props.history.push({ pathname: '/bill/detail' })
+        this.props.history.push({ pathname: '/detail' })
     }
 
     queryCurrent = async () => {
@@ -230,11 +228,4 @@ class Bill extends React.Component {
     }
 }
 
-const Render = () => (
-    <Switch>
-        <Route path='/bill' exact component={Bill} />
-        <Route path='/bill/detail' component={Detail} />
-    </Switch>
-)
-
-export default Render
+export default Bill

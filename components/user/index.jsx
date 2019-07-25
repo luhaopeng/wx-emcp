@@ -1,9 +1,12 @@
 import React from 'react'
+import { Switch, Route } from 'react-router-dom'
 import { Button, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
 import Icon from '../icon'
 import './index.less'
 import { Mine } from '../../api/url'
+import PageHistory from './history'
+import PageMeters from './meterList'
 
 class User extends React.Component {
     constructor(props) {
@@ -33,7 +36,7 @@ class User extends React.Component {
     }
 
     handleMoreClick = () => {
-        this.props.history.push('/history')
+        this.props.history.push('/user/history')
     }
 
     handleSignOut = async () => {
@@ -54,7 +57,7 @@ class User extends React.Component {
 
     handleMeterListClick = () => {
         if (this.state.type > 1) {
-            this.props.history.push('/meters')
+            this.props.history.push('/user/meters')
         }
     }
 
@@ -228,4 +231,12 @@ class User extends React.Component {
     }
 }
 
-export default User
+const Render = () => (
+    <Switch>
+        <Route exact path='/user' component={User} />
+        <Route path='/user/history' component={PageHistory} />
+        <Route path='/user/meters' component={PageMeters} />
+    </Switch>
+)
+
+export default Render
