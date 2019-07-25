@@ -136,7 +136,7 @@ class PayResult extends React.Component {
     }
 
     handleRedirectUserClick = () => {
-        this.props.history.push('/')
+        this.props.history.push('/user')
     }
 
     handleRedirectPayClick = () => {

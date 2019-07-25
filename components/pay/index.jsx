@@ -181,7 +181,6 @@ class Pay extends React.Component {
 
     queryPay = async id => {
         let { type, payType } = this.state
-        let { history } = this.props
         if (payType - 1) {
             Toast.hide()
             let prefix = window.location.href.split('#')[0]
@@ -232,9 +231,8 @@ class Pay extends React.Component {
                         paySign: wxData.sign,
                         success: () => {
                             // redirect to result
-                            history.push({
-                                pathname: `/pay/result?type=${type}&id=${id}`
-                            })
+                            let prefix = window.location.href.split('#')[0]
+                            window.location.href = `${prefix}#/pay/result?type=${type}&id=${id}`
                         }
                     })
                 } else {
