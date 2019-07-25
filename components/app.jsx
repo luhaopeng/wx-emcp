@@ -119,6 +119,7 @@ class App extends React.Component {
                 try {
                     let { data } = await Wechat.auth.query({ code: this.code })
                     localStorage.openId = data.data.openId
+                    window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
                 } catch (err) {
                     console.error(err)
                     localStorage.removeItem('openId')
@@ -127,6 +128,7 @@ class App extends React.Component {
                 try {
                     let { data } = await Haina.auth.query({ code: this.code })
                     localStorage.residentId = data.data.residentId
+                    window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
                 } catch (err) {
                     console.error(err)
                     localStorage.removeItem('residentId')
