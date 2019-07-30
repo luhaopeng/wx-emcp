@@ -41,7 +41,9 @@ function regularTop({ obj, detail, changeList, billType, checked }) {
                     </tr>
                 </tbody>
             </table>
-            {changeList.length ? <Change list={changeList} /> : null}
+            {changeList && changeList.length ? (
+                <Change list={changeList} />
+            ) : null}
         </div>
     )
 }

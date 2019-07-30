@@ -471,7 +471,7 @@ class Pay extends React.Component {
                                 }
                             />
                             <input
-                                type='text'
+                                type='number'
                                 value={customInput}
                                 placeholder='其他金额'
                                 onChange={this.hanldeCustomInput}

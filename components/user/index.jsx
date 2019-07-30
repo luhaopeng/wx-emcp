@@ -159,7 +159,7 @@ class User extends React.Component {
         ))
         list.push(
             history.length < 2 ? (
-                <li key='more'>无记录</li>
+                <li key='more'>无更多记录</li>
             ) : (
                 <li key='more' onClick={this.handleMoreClick}>
                     查看更多记录

@@ -192,7 +192,7 @@ class Bill extends React.Component {
                             className='cur'
                             onClick={() => {
                                 if (cur) {
-                                    this.handleListClick(cur.updatetime)
+                                    this.handleListClick(cur.datatime)
                                 }
                             }}
                         >
