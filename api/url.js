@@ -59,8 +59,8 @@ const Pay = {
 }
 
 const Wechat = {
-    auth: new Request('/wechat_authorize.action', prodUrl),
-    config: new Request('/wechat_wxConfig.action', prodUrl)
+    auth: new Request('/wechat/authorize', prodUrl),
+    config: new Request('/wechat/wxConfig', prodUrl)
 }
 
 const Haina = {
