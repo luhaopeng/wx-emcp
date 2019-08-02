@@ -9,7 +9,7 @@ const isHaina = process.env.NODE_ENV === 'haina'
 
 // platform
 const isWeChat = detect.match(/micromessenger/i)
-let isIOS = detect.match(/iphone|ipad|ipod/i)
+const isIOS = detect.match(/iphone|ipad|ipod/i)
 
 // appid
 const appid = 'wx9881a033828453e0'
