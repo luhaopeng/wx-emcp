@@ -4,9 +4,10 @@ import { List, SegmentedControl, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
 import './index.less'
 import Chart from './chart'
-import { Elec } from '../../api/url'
+import { Elec, Test } from '../../api/url'
 import Empty from '../empty'
 import Switch from '../switch'
+import Reporter from '../../util/reporter'
 
 class Usage extends React.Component {
     constructor(props) {
@@ -199,8 +200,10 @@ class Usage extends React.Component {
                 })
             }
         } catch (err) {
-            console.error(err)
             Toast.fail('请求超时')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(reporter.format('usage/data', '获取数据'))
         }
     }
 

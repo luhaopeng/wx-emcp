@@ -3,7 +3,8 @@ import { Button, Toast } from 'antd-mobile'
 import queryString from 'query-string'
 import Icon from '../../icon'
 import './index.less'
-import { Pay } from '../../../api/url'
+import { Pay, Test } from '../../../api/url'
+import Reporter from '../../../util/reporter'
 
 const ResultEnum = {
     regular: {
@@ -159,8 +160,12 @@ class PayResult extends React.Component {
             let { title, message } = result
             this.setState({ status, title, message, remain })
         } catch (err) {
-            console.error(err)
             Toast.fail('查询超时，请刷新页面')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(
+                reporter.format('pay/result/mount', '查询结果')
+            )
         }
     }
 

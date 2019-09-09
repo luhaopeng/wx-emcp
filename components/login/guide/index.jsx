@@ -2,8 +2,9 @@ import React from 'react'
 import { List, Radio, Button, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
 import './index.less'
-import { Mine, Haina } from '../../../api/url'
+import { Mine, Haina, Test } from '../../../api/url'
 import { isWeChat, isProd, isTest, isHaina } from '../../../util/constants'
+import Reporter from '../../../util/reporter'
 
 const DATE = 'YYYY-MM-DD HH:mm:ss'
 
@@ -59,8 +60,12 @@ class Guide extends React.Component {
                 this.setState({ selectedId: records[0].id, records })
             }
         } catch (err) {
-            console.error(err)
             Toast.fail('请求超时')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(
+                reporter.format('login/guide/mount', '多户名列表')
+            )
         }
     }
 

@@ -4,7 +4,7 @@ import { Switch, Route, Link, Redirect } from 'react-router-dom'
 import queryString from 'query-string'
 import dayjs from 'dayjs'
 import { isWeChat, isProd, isTest, isHaina, authUrl } from '../util/constants'
-import { Wechat, Haina } from '../api/url'
+import { Wechat, Haina, Test } from '../api/url'
 import TabBar from './tabbar'
 import PageUser from './user'
 import PagePay from './pay'
@@ -23,6 +23,8 @@ import statO from '../static/img/tabbar/stat-o.svg'
 import stat from '../static/img/tabbar/stat.svg'
 import userO from '../static/img/tabbar/user-o.svg'
 import user from '../static/img/tabbar/user.svg'
+import ErrorCatcher from './error-catcher'
+import Reporter from '../util/reporter'
 
 const TabItem = ({ label, to, exact, icon, selectedIcon }) => {
     return (
@@ -121,8 +123,12 @@ class App extends React.Component {
                     localStorage.openId = data.data.openId
                     window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
                 } catch (err) {
-                    console.error(err)
                     localStorage.removeItem('openId')
+                    let reporter = new Reporter()
+                    reporter.setRequest(err)
+                    await Test.report.query(
+                        reporter.format('app/mount', '微信授权')
+                    )
                 }
             } else if (isHaina && !localStorage.residentId) {
                 try {
@@ -130,8 +136,12 @@ class App extends React.Component {
                     localStorage.residentId = data.data.residentId
                     window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
                 } catch (err) {
-                    console.error(err)
                     localStorage.removeItem('residentId')
+                    let reporter = new Reporter()
+                    reporter.setRequest(err)
+                    await Test.report.query(
+                        reporter.format('app/mount', '海纳授权')
+                    )
                 }
             }
         }
@@ -139,25 +149,28 @@ class App extends React.Component {
 
     render() {
         return (
-            <div>
-                <Switch>
-                    <AuthRoute exact path='/' component={PageBill} />
-                    <AuthRoute path='/detail' component={PageDetail} />
-                    <AuthRoute path='/usage' component={PageUsage} />
-                    <AuthRoute path='/pay' component={PagePay} />
-                    <AuthRoute path='/user' component={PageUser} />
-                    <Route path='/login' component={PageLogin} />
-                    <Route path='/paid' component={PagePaid} />
-                    <Route path='/redirect' component={PageRedirect} />
-                </Switch>
+            <ErrorCatcher>
+                <div>
+                    <Switch>
+                        <AuthRoute exact path='/' component={PageBill} />
+                        <AuthRoute path='/detail' component={PageDetail} />
+                        <AuthRoute path='/usage' component={PageUsage} />
+                        <AuthRoute path='/pay' component={PagePay} />
+                        <AuthRoute path='/user' component={PageUser} />
+                        <Route path='/login' component={PageLogin} />
+                        <Route path='/paid' component={PagePaid} />
+                        <Route path='/redirect' component={PageRedirect} />
+                        <AuthRoute component={PageBill} />
+                    </Switch>
 
-                <Switch>
-                    <Route exact path='/' component={TabWrap} />
-                    <Route exact path='/usage' component={TabWrap} />
-                    <Route exact path='/pay' component={TabWrap} />
-                    <Route exact path='/user' component={TabWrap} />
-                </Switch>
-            </div>
+                    <Switch>
+                        <Route exact path='/' component={TabWrap} />
+                        <Route exact path='/usage' component={TabWrap} />
+                        <Route exact path='/pay' component={TabWrap} />
+                        <Route exact path='/user' component={TabWrap} />
+                    </Switch>
+                </div>
+            </ErrorCatcher>
         )
     }
 }

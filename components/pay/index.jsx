@@ -12,10 +12,11 @@ import {
 import Icon from '../icon'
 import classNames from 'classnames'
 import './index.less'
-import { Pay as PayApi, Wechat, Mine } from '../../api/url'
+import { Pay as PayApi, Wechat, Mine, Test } from '../../api/url'
 import { isDev, isTest, isWeChat } from '../../util/constants'
 import OptionGroup from './option'
 import Result from './result'
+import Reporter from '../../util/reporter'
 
 const Option = OptionGroup.Item
 
@@ -81,9 +82,11 @@ class Pay extends React.Component {
             })
             this.setState({ configged: true })
         } catch (err) {
-            console.error(err)
             this.setState({ configged: false })
             Toast.fail('微信支付初始化失败')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(reporter.format('pay/config', '配置微信'))
         }
     }
 
@@ -96,7 +99,11 @@ class Pay extends React.Component {
             if (canOnlineRecharge) {
                 // 0 able; 1 forbidden
                 this.setState({ forbidden: !!canOnlineRecharge })
-                return false
+                return
+            }
+            if (!entPay) {
+                Toast.fail('您所属企业未开通在线支付功能，请咨询管理员')
+                return
             }
             let newState = {}
             if (entPay.useDiscount) {
@@ -113,10 +120,12 @@ class Pay extends React.Component {
                 newState = Object.assign(newState, { payType: 1 })
             }
             this.setState(newState)
-            return true
+            return
         } catch (err) {
-            console.error(err)
             Toast.fail('获取支付信息超时，请重试')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(reporter.format('pay/check', '检查权限'))
         }
     }
 
@@ -135,8 +144,10 @@ class Pay extends React.Component {
                 selectedMeter: icmList && icmList[0]
             })
         } catch (err) {
-            console.error(err)
             Toast.fail('获取余额超时，请重试')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(reporter.format('pay/balance', '获取余额'))
         }
     }
 
@@ -176,6 +187,9 @@ class Pay extends React.Component {
             }
         } catch (err) {
             Toast.fail('请求超时')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(reporter.format('pay/orderId', '预支付'))
         }
     }
 
@@ -240,8 +254,10 @@ class Pay extends React.Component {
                 }
             }
         } catch (err) {
-            console.error(err)
             Toast.fail('请求超时')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(reporter.format('pay/pay', '支付'))
         }
     }
 
@@ -347,7 +363,8 @@ class Pay extends React.Component {
             this.configWechatJsApi()
         }
         // check ability & get balance
-        this.checkAbility() && this.queryBalance()
+        this.checkAbility()
+        this.queryBalance()
     }
 
     render() {

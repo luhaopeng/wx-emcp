@@ -2,7 +2,8 @@ import React from 'react'
 import { List, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
 import './index.less'
-import { Mine } from '../../../api/url'
+import { Mine, Test } from '../../../api/url'
+import Reporter from '../../../util/reporter'
 
 class History extends React.Component {
     constructor(props) {
@@ -91,8 +92,12 @@ class History extends React.Component {
                 })
             }
         } catch (err) {
-            console.error(err)
             Toast.fail('请求超时')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(
+                reporter.format('user/history/data', '获取数据')
+            )
         }
     }
 

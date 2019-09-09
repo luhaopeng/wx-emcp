@@ -6,8 +6,9 @@ import dayjs from 'dayjs'
 import Guide from './guide'
 import './index.less'
 import Avatar from '../../static/img/login.jpg'
-import { Mine, Haina } from '../../api/url'
+import { Mine, Haina, Test } from '../../api/url'
 import { isWeChat, isProd, isTest, isHaina } from '../../util/constants'
+import Reporter from '../../util/reporter'
 
 const DATE = 'YYYY-MM-DD HH:mm:ss'
 
@@ -58,8 +59,12 @@ class Login extends React.Component {
                 }, 1000)
             }
         } catch (err) {
-            console.error(err)
             Toast.fail('请求超时，请重试')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(
+                reporter.format('login/sendCode', '发送短信')
+            )
         }
     }
 
@@ -125,8 +130,10 @@ class Login extends React.Component {
                 }
             }
         } catch (err) {
-            console.error(err)
-            this.setState({ error: true, errMsg: '请求超时' })
+            this.setState({ error: true, errMsg: '请求超时', loading: false })
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(reporter.format('login/login', '登录'))
         }
     }
 
@@ -157,8 +164,12 @@ class Login extends React.Component {
                     history.replace(from)
                 }
             } catch (err) {
-                console.error(err)
                 Toast.fail('请求超时')
+                let reporter = new Reporter()
+                reporter.setRequest(err)
+                await Test.report.query(
+                    reporter.format('login/mount', '自动登录')
+                )
             }
         }
     }

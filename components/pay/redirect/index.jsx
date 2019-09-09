@@ -5,7 +5,8 @@ import { isWeChat, isIOS } from '../../../util/constants'
 import './index.less'
 import android from '../../../static/img/tip_android.png'
 import ios from '../../../static/img/tip_ios.png'
-import { Pay } from '../../../api/url'
+import { Pay, Test } from '../../../api/url'
+import Reporter from '../../../util/reporter'
 
 class Redirect extends React.Component {
     handleDoneClick = () => {
@@ -45,8 +46,12 @@ class Redirect extends React.Component {
                     }
                 }
             } catch (err) {
-                console.error(err)
                 Toast.fail('请求超时')
+                let reporter = new Reporter()
+                reporter.setRequest(err)
+                await Test.report.query(
+                    reporter.format('pay/redirect/mount', '支付')
+                )
             }
         }
     }

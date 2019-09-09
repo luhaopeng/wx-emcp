@@ -68,4 +68,8 @@ const Haina = {
     bind: new Request('/haina/bind')
 }
 
-export { Elec, Mine, Pay, Wechat, Haina }
+const Test = {
+    report: new Request('/test/report')
+}
+
+export { Elec, Mine, Pay, Wechat, Haina, Test }

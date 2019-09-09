@@ -3,7 +3,8 @@ import { SegmentedControl, List, Toast } from 'antd-mobile'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 import './index.less'
-import { Elec } from '../../api/url'
+import { Elec, Test } from '../../api/url'
+import Reporter from '../../util/reporter'
 
 const FULL = 'YYYY-MM-DD HH:mm:ss'
 
@@ -59,9 +60,11 @@ class Bill extends React.Component {
                 })
             }
         } catch (err) {
-            console.error(err)
             --this.queryCount
             Toast.fail('请求超时')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(reporter.format('bill/current', '当月账单'))
         }
     }
 
@@ -105,9 +108,11 @@ class Bill extends React.Component {
                 }
             }
         } catch (err) {
-            console.error(err)
             --this.queryCount
             Toast.fail('请求超时')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(reporter.format('bill/past', '往月账单'))
         }
     }
 

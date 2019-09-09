@@ -1,7 +1,8 @@
 import React from 'react'
 import { List, Toast } from 'antd-mobile'
 import './index.less'
-import { Mine } from '../../../api/url'
+import { Mine, Test } from '../../../api/url'
+import Reporter from '../../../util/reporter'
 
 class MeterList extends React.Component {
     constructor(props) {
@@ -26,8 +27,12 @@ class MeterList extends React.Component {
             }))
             this.setState({ meters, type: parseInt(prepayType) })
         } catch (err) {
-            console.error(err)
             Toast.fail('请求超时，请刷新页面')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(
+                reporter.format('user/meter/mount', '获取数据')
+            )
         }
     }
 

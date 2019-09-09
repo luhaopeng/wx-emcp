@@ -1,9 +1,10 @@
 import React from 'react'
 import { Modal, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
-import { Elec } from '../../../api/url'
+import { Elec, Test } from '../../../api/url'
 import './index.less'
 import { buildTop, buildTable } from './chart'
+import Reporter from '../../../util/reporter'
 
 class Detail extends React.Component {
     constructor(props) {
@@ -43,8 +44,12 @@ class Detail extends React.Component {
                 })
             }
         } catch (err) {
-            console.error(err)
             Toast.fail('请求超时')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(
+                reporter.format('bill/detail/mount', '账单详情')
+            )
         }
     }
 

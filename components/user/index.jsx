@@ -4,9 +4,10 @@ import { Button, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
 import Icon from '../icon'
 import './index.less'
-import { Mine } from '../../api/url'
+import { Mine, Test } from '../../api/url'
 import PageHistory from './history'
 import PageMeters from './meterList'
+import Reporter from '../../util/reporter'
 
 class User extends React.Component {
     constructor(props) {
@@ -139,8 +140,10 @@ class User extends React.Component {
                 history
             })
         } catch (err) {
-            console.error(err)
             Toast.fail('请求超时，请刷新页面')
+            let reporter = new Reporter()
+            reporter.setRequest(err)
+            await Test.report.query(reporter.format('user/mount', '获取数据'))
         }
     }
 
