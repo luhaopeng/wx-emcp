@@ -12,6 +12,14 @@ class Reporter {
     }
 
     setRequest(axiosErr) {
+        if (!axiosErr.isAxiosError) {
+            this.Request = {
+                url: '非网络请求错误',
+                param: {},
+                errMsg: axiosErr.toString()
+            }
+            return
+        }
         let errorReport = {
             url: axiosErr.config.url,
             param: axiosErr.config.data,
