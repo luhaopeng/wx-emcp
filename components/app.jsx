@@ -1,6 +1,7 @@
 import React from 'react'
 import { hot } from 'react-hot-loader/root'
 import { Switch, Route, Link, Redirect } from 'react-router-dom'
+import { Toast } from 'antd-mobile'
 import queryString from 'query-string'
 import dayjs from 'dayjs'
 import { isWeChat, isProd, isTest, isHaina, authUrl } from '../util/constants'
@@ -119,7 +120,9 @@ class App extends React.Component {
         if (isWeChat && this.code) {
             if ((isProd || isTest) && !localStorage.openId) {
                 try {
+                    Toast.loading('请稍等', 0)
                     let { data } = await Wechat.auth.query({ code: this.code })
+                    Toast.hide()
                     localStorage.openId = data.data.openId
                     window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
                 } catch (err) {
@@ -132,7 +135,9 @@ class App extends React.Component {
                 }
             } else if (isHaina && !localStorage.residentId) {
                 try {
+                    Toast.loading('请稍等', 0)
                     let { data } = await Haina.auth.query({ code: this.code })
+                    Toast.hide()
                     localStorage.residentId = data.data.residentId
                     window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
                 } catch (err) {
