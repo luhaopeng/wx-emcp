@@ -126,6 +126,7 @@ class App extends React.Component {
                     localStorage.openId = data.data.openId
                     window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
                 } catch (err) {
+                    Toast.hide()
                     localStorage.removeItem('openId')
                     let reporter = new Reporter()
                     reporter.setRequest(err)
@@ -141,6 +142,7 @@ class App extends React.Component {
                     localStorage.residentId = data.data.residentId
                     window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
                 } catch (err) {
+                    Toast.hide()
                     localStorage.removeItem('residentId')
                     let reporter = new Reporter()
                     reporter.setRequest(err)
