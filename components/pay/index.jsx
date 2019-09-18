@@ -71,13 +71,14 @@ class Pay extends React.Component {
             let { data } = await Wechat.config.query({
                 url: window.location.href.split('#')[0]
             })
+            let { appId, timestamp, nonceStr, signature } = data.data.wxConfig
             // eslint-disable-next-line no-undef
             wx.config({
                 debug: isDev || isTest,
-                appId: data.data.wxConfig.appId,
-                timestamp: data.data.wxConfig.timestamp,
-                nonceStr: data.data.wxConfig.nonceStr,
-                signature: data.data.wxConfig.signature,
+                appId,
+                timestamp,
+                nonceStr,
+                signature,
                 jsApiList: ['chooseWXPay']
             })
             this.setState({ configged: true })
