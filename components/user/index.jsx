@@ -70,6 +70,13 @@ class User extends React.Component {
         try {
             let resBasic = await Mine.basic.query({ customerid: customerId })
             let { customer } = resBasic.data.data
+            if (!customer) {
+                Toast.fail('账户已被注销，请重新登录', 3, () => {
+                    localStorage.clear()
+                    window.location.reload()
+                })
+                return
+            }
             let resBalance = await Mine.balance.query({
                 customerid: customerId
             })
