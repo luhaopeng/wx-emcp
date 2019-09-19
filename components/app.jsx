@@ -5,7 +5,7 @@ import { Toast } from 'antd-mobile'
 import queryString from 'query-string'
 import dayjs from 'dayjs'
 import { isWeChat, isProd, isTest, isHaina, authUrl } from '../util/constants'
-import { Wechat, Haina, Test } from '../api/url'
+import { Wechat, Haina, Mine, Test } from '../api/url'
 import TabBar from './tabbar'
 import PageUser from './user'
 import PagePay from './pay'
@@ -95,63 +95,98 @@ const AuthRoute = ({ component: Component, ...rest }) => {
 }
 
 class App extends React.Component {
-    constructor(props) {
-        super(props)
-        if (isWeChat) {
-            if ((isProd || isTest) && !localStorage.openId) {
+    queryOpenId = async () => {
+        if (isProd || isTest) {
+            // wechat
+            if (!localStorage.msgOpenId) {
+                if (!localStorage.gettingMsg) {
+                    let { ent } = queryString.parse(window.location.search)
+                    if (ent) {
+                        // get config
+                        try {
+                            Toast.loading('获取商户信息...', 0)
+                            let { data } = await Mine.wxArg.query({ ent })
+                            Toast.hide()
+                            let { appId } = data.data
+                            // authorize redirection
+                            localStorage.gettingMsg = true
+                            window.location.href = authUrl(appId, ent)
+                        } catch (err) {
+                            Toast.fail('获取商户信息失败，请重进页面')
+                            let reporter = new Reporter()
+                            reporter.setRequest(err)
+                            await Test.report.query(
+                                reporter.format('app/openId', '推送商户配置')
+                            )
+                        }
+                    }
+                } else {
+                    // exchange
+                    let { code, state } = queryString.parse(
+                        window.location.search
+                    )
+                    localStorage.removeItem('gettingMsg')
+                    await this.exchangeIdWithCode(code, state)
+                }
+            }
+            if (!localStorage.openId) {
                 if (!localStorage.getting) {
                     localStorage.getting = true
-                    window.location.href = authUrl
+                    window.location.href = authUrl()
                 } else {
-                    let { code } = queryString.parse(window.location.search)
-                    this.code = code
+                    let { code, state } = queryString.parse(
+                        window.location.search
+                    )
                     localStorage.removeItem('getting')
+                    this.exchangeIdWithCode(code, state)
                 }
-            } else if (isHaina && !localStorage.residentId) {
-                let { resident_code } = queryString.parse(
-                    window.location.search
+            }
+        } else if (isHaina && !localStorage.residentId) {
+            // haina
+            let { resident_code } = queryString.parse(window.location.search)
+            this.exchangeIdWithCode(resident_code)
+        }
+    }
+
+    exchangeIdWithCode = async (code, ent = 'none') => {
+        if (isProd || isTest) {
+            const key = ent === 'none' ? 'openId' : 'msgOpenId'
+            try {
+                Toast.loading('请稍等', 0)
+                let { data } = await Wechat.auth.query({ code, ent })
+                Toast.hide()
+                localStorage[key] = data.data.openId
+                window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
+            } catch (err) {
+                Toast.fail('微信授权失败，请刷新页面重试')
+                localStorage.removeItem(key)
+                let reporter = new Reporter()
+                reporter.setRequest(err)
+                await Test.report.query(
+                    reporter.format('app/exchange', '微信授权')
                 )
-                this.code = resident_code
+            }
+        } else if (isHaina) {
+            try {
+                Toast.loading('请稍等', 0)
+                let { data } = await Haina.auth.query({ code })
+                Toast.hide()
+                localStorage.residentId = data.data.residentId
+                window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
+            } catch (err) {
+                Toast.fail('海纳授权失败，请刷新页面重试')
+                localStorage.removeItem('residentId')
+                let reporter = new Reporter()
+                reporter.setRequest(err)
+                await Test.report.query(
+                    reporter.format('app/exchange', '海纳授权')
+                )
             }
         }
     }
 
-    async componentDidMount() {
-        if (isWeChat && this.code) {
-            if ((isProd || isTest) && !localStorage.openId) {
-                try {
-                    Toast.loading('请稍等', 0)
-                    let { data } = await Wechat.auth.query({ code: this.code })
-                    Toast.hide()
-                    localStorage.openId = data.data.openId
-                    window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
-                } catch (err) {
-                    Toast.hide()
-                    localStorage.removeItem('openId')
-                    let reporter = new Reporter()
-                    reporter.setRequest(err)
-                    await Test.report.query(
-                        reporter.format('app/mount', '微信授权')
-                    )
-                }
-            } else if (isHaina && !localStorage.residentId) {
-                try {
-                    Toast.loading('请稍等', 0)
-                    let { data } = await Haina.auth.query({ code: this.code })
-                    Toast.hide()
-                    localStorage.residentId = data.data.residentId
-                    window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
-                } catch (err) {
-                    Toast.hide()
-                    localStorage.removeItem('residentId')
-                    let reporter = new Reporter()
-                    reporter.setRequest(err)
-                    await Test.report.query(
-                        reporter.format('app/mount', '海纳授权')
-                    )
-                }
-            }
-        }
+    componentDidMount() {
+        isWeChat && this.queryOpenId()
     }
 
     render() {

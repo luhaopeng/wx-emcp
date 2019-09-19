@@ -28,12 +28,17 @@ const prodBase = '/wxemcp/wx'
 const testRedirect = `${prodUrl}/test`
 const prodRedirect = `${prodUrl}/wx`
 // wechat auth url
-const authUrl =
-    'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' +
-    appid +
-    '&redirect_uri=' +
-    encodeURIComponent(isTest ? testRedirect : prodRedirect) +
-    '&response_type=code&state=1&scope=snsapi_base#wechat_redirect'
+const authUrl = (appId = appid, state = 'none') => {
+    return (
+        'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' +
+        appId +
+        '&redirect_uri=' +
+        encodeURIComponent(isTest ? testRedirect : prodRedirect) +
+        '&response_type=code&state=' +
+        state +
+        '&scope=snsapi_base#wechat_redirect'
+    )
+}
 
 // export
 const urlPrefix = isDev ? devUrl : isTest ? testUrl : prodUrl

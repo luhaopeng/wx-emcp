@@ -44,7 +44,8 @@ const Mine = {
     autoLogin: new Request('/mine/autoLogin'),
     sms: new Request('/mine/sendSms'),
     bind: new Request('/mine/bind'),
-    unbind: new Request('/mine/unbind')
+    unbind: new Request('/mine/unbind'),
+    wxArg: new Request('/mine/wxArg')
 }
 
 const Pay = {

@@ -28,6 +28,7 @@ class Guide extends React.Component {
             if (isProd || isTest) {
                 await Mine.bind.query({
                     openid: localStorage.openId,
+                    msgOpenId: localStorage.msgOpenId,
                     customerid: selectedId
                 })
             } else if (isHaina) {
