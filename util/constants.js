@@ -25,8 +25,8 @@ const testBase = '/wxemcp/test'
 const prodBase = '/wxemcp/wx'
 
 // redirect
-const testRedirect = `${prodUrl}/test`
-const prodRedirect = `${prodUrl}/wx`
+const testRedirect = `${prodUrl}/test/`
+const prodRedirect = `${prodUrl}/wx/`
 // wechat auth url
 const authUrl = (appId = appid, state = 'none') => {
     return (

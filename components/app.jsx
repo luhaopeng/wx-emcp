@@ -111,6 +111,7 @@ class App extends React.Component {
                             // authorize redirection
                             localStorage.gettingMsg = true
                             window.location.href = authUrl(appId, ent)
+                            return
                         } catch (err) {
                             Toast.fail('获取商户信息失败，请重进页面')
                             let reporter = new Reporter()
