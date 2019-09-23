@@ -127,7 +127,9 @@ class App extends React.Component {
                         window.location.search
                     )
                     localStorage.removeItem('gettingMsg')
-                    await this.exchangeIdWithCode(code, state)
+                    if (code) {
+                        await this.exchangeIdWithCode(code, state)
+                    }
                 }
             }
             if (!localStorage.openId) {
@@ -139,13 +141,17 @@ class App extends React.Component {
                         window.location.search
                     )
                     localStorage.removeItem('getting')
-                    this.exchangeIdWithCode(code, state)
+                    if (code) {
+                        this.exchangeIdWithCode(code, state)
+                    }
                 }
             }
         } else if (isHaina && !localStorage.residentId) {
             // haina
             let { resident_code } = queryString.parse(window.location.search)
-            this.exchangeIdWithCode(resident_code)
+            if (resident_code) {
+                this.exchangeIdWithCode(resident_code)
+            }
         }
     }
 
