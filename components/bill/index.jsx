@@ -154,7 +154,7 @@ class Bill extends React.Component {
                         <div className='list-col right'>
                             {type === 3 ? null : (
                                 <span className='usage'>
-                                    {usage ? usage.toFixed(2) : '---'}
+                                    {usage === null ? '---' : usage.toFixed(2)}
                                     {billType ? ' 吨' : ' 度'}
                                 </span>
                             )}
