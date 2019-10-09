@@ -38,6 +38,10 @@ class Pay extends React.Component {
             selectedMeter: null,
             customInput: ''
         }
+        let locate = window.location.href
+        if (locate.search(/\?.*#/) > -1) {
+            window.location.href = locate.replace(/\?.*#/, '#')
+        }
     }
 
     handleOptionClick = money => {
@@ -248,6 +252,11 @@ class Pay extends React.Component {
                             // redirect to result
                             let prefix = window.location.href.split('#')[0]
                             window.location.href = `${prefix}#/pay/result?type=${type}&id=${id}`
+                        },
+                        fail: err => {
+                            let reporter = new Reporter()
+                            reporter.setRequest(err)
+                            Test.report.query(reporter.format('pay/pay', '微信支付失败'))
                         }
                     })
                 } else {
