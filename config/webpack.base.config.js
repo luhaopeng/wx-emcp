@@ -10,8 +10,7 @@ module.exports = {
     redirect: path.resolve(__dirname, '../src/redirect.js')
   },
   output: {
-    path: path.resolve(__dirname, '../dist'),
-    filename: '[name]_[hash].js'
+    path: path.resolve(__dirname, '../dist')
   },
   module: {
     rules: [

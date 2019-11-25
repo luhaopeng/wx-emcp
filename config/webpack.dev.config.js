@@ -6,7 +6,8 @@ const webpack = require('webpack')
 module.exports = merge(base, {
   mode: 'development',
   output: {
-    publicPath: '/'
+    publicPath: '/',
+    filename: '[name]_[hash].js'
   },
   devServer: {
     contentBase: path.resolve(__dirname, '../dist'),
