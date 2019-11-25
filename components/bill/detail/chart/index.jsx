@@ -100,7 +100,7 @@ class Change extends React.Component {
                                     <td>{item.addtime.replace('T', ' ')}</td>
                                     <td>{item.typeStr}</td>
                                     <td>{item.money.toFixed(2)}</td>
-                                    <td>{item.remark.substr(0, 20)}</td>
+                                    <td>{item.remark}</td>
                                 </tr>
                             ))}
                         </tbody>
