@@ -1,6 +1,7 @@
 import React from 'react'
 import { List, Radio, Button, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
+import classNames from 'classnames'
 import './index.less'
 import { Mine, Haina, Test } from '../../../api/url'
 import { isWeChat, isProd, isTest, isHaina } from '../../../util/constants'
@@ -12,16 +13,19 @@ class Guide extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            selectedId: 0,
+            selectedIndex: 0,
             records: []
         }
     }
 
     handleBindClick = async () => {
-        let { selectedId } = this.state
+        let { selectedIndex, records } = this.state
         let { history, location } = this.props
-        localStorage.customerId = selectedId
+        let selected = records[selectedIndex]
+        let { id, ban } = selected
+        localStorage.customerId = id
         localStorage.lastLogin = dayjs().format(DATE)
+        sessionStorage.banned = ban
 
         // bind
         if (isWeChat) {
@@ -29,12 +33,12 @@ class Guide extends React.Component {
                 await Mine.bind.query({
                     openid: localStorage.openId,
                     msgOpenId: localStorage.msgOpenId,
-                    customerid: selectedId
+                    customerid: id
                 })
             } else if (isHaina) {
                 await Haina.bind.query({
                     residentid: localStorage.residentId,
-                    customerid: selectedId
+                    customerid: id
                 })
             }
         }
@@ -51,14 +55,13 @@ class Guide extends React.Component {
             Toast.hide()
             if (data.errcode === 0) {
                 let array = data.data.customerEnts
-                let records = array.map(item => {
-                    return {
-                        id: item.customerid,
-                        hm: item.hm,
-                        company: item.ename
-                    }
-                })
-                this.setState({ selectedId: records[0].id, records })
+                let records = array.map(item => ({
+                    id: item.customerid,
+                    hm: item.hm,
+                    company: item.ename,
+                    ban: item.banMp
+                }))
+                this.setState({ records })
             }
         } catch (err) {
             Toast.fail('请求超时')
@@ -71,14 +74,13 @@ class Guide extends React.Component {
     }
 
     render() {
-        let { records } = this.state
-        let { selectedId } = this.state
-        let list = records.map(val => (
+        let { records, selectedIndex } = this.state
+        let list = records.map((val, idx) => (
             <Radio.RadioItem
                 key={val.id}
-                checked={selectedId === val.id}
+                checked={selectedIndex === idx}
                 onChange={() => {
-                    this.setState({ selectedId: val.id })
+                    this.setState({ selectedIndex: idx })
                 }}
             >
                 <div className='record-wrap'>
@@ -87,6 +89,7 @@ class Guide extends React.Component {
                 </div>
             </Radio.RadioItem>
         ))
+        let banned = records.length > 0 && records[selectedIndex].ban === 1
         return (
             <div className='page-guide'>
                 <header>
@@ -94,7 +97,15 @@ class Guide extends React.Component {
                     <p>请在以下选择一条进行绑定：</p>
                 </header>
                 <List>{list}</List>
+                <div
+                    className={classNames('banned', {
+                        show: banned
+                    })}
+                >
+                    由于业务调整，此户号目前无法登录，详情请咨询物业
+                </div>
                 <Button
+                    disabled={banned}
                     type='primary'
                     className='bind-btn'
                     onClick={this.handleBindClick}

@@ -67,15 +67,33 @@ const TabWrap = () => (
 )
 
 const AuthRoute = ({ component: Component, ...rest }) => {
+    /**
+     * check if this user is banned for login
+     * @param {string} customerid
+     */
+    const checkAbility = async customerid => {
+        const { data } = await Mine.able.query({ customerid })
+        sessionStorage.banned = data.errcode
+        if (data.errcode) {
+            localStorage.clear()
+            window.location.reload()
+        }
+    }
+
     return (
         <Route
             {...rest}
             render={props => {
                 let { customerId, lastLogin } = localStorage
+                let { banned } = sessionStorage
+                if (customerId && typeof banned === 'undefined') {
+                    checkAbility(customerId)
+                }
                 if (
                     customerId &&
                     lastLogin &&
-                    dayjs().diff(dayjs(lastLogin), 'day') < 7
+                    dayjs().diff(dayjs(lastLogin), 'day') < 7 &&
+                    !parseInt(banned, 10)
                 ) {
                     return <Component {...props} />
                 } else {

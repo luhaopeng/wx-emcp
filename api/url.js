@@ -37,6 +37,7 @@ const Elec = {
 }
 
 const Mine = {
+    able: new Request('/mine/checkAbility'),
     basic: new Request('/mine/basicInfo'),
     balance: new Request('/mine/balance'),
     history: new Request('/mine/rechargeHistory'),
