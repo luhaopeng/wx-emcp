@@ -51,7 +51,7 @@ class Base extends React.Component {
                             <tr>
                                 <th>{type}</th>
                                 <td>{value}</td>
-                                <td>{price}</td>
+                                <td>{(price * 1).toFixed(2)}</td>
                                 <td>{(cost * 1).toFixed(2)}</td>
                             </tr>
                         </tbody>

@@ -1,7 +1,7 @@
 import React from 'react'
 import dayjs from 'dayjs'
 import { Icon } from 'antd-mobile'
-import { Base, Power, Fund } from '../extra'
+import { Base, Power, Fund, Other } from '../extra'
 
 const DATE = 'YYYY-MM-DD'
 
@@ -31,7 +31,7 @@ class Singlet extends React.Component {
         let unit = billType ? '吨' : '度'
         let { pricerule, pointname, time, data, extra } = obj
         let { start, end, rate, energy, percent, cost, total } = data
-        let { base, power, fund, fundList } = extra
+        let { base, power, fund, fundList, other } = extra
         return (
             <div className='detail-wrapper'>
                 <div className='table-title'>
@@ -84,6 +84,7 @@ class Singlet extends React.Component {
                 {base ? <Base data={base} /> : null}
                 {power ? <Power data={power} /> : null}
                 {fundList ? <Fund fund={fund} list={fundList} /> : null}
+                {other ? <Other data={other} /> : null}
                 <table className='total'>
                     <tbody>
                         <tr>

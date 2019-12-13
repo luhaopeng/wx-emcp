@@ -1,7 +1,7 @@
 import React from 'react'
 import dayjs from 'dayjs'
 import { Icon } from 'antd-mobile'
-import { Base, Power, Fund } from '../extra'
+import { Base, Power, Fund, Other } from '../extra'
 
 const DATE = 'YYYY-MM-DD'
 
@@ -28,7 +28,7 @@ class Rating extends React.Component {
         let { collapse } = this.state
         let { obj } = this.props
         let { pricerule, pointname, time, data, extra } = obj
-        let { base, power, fund, fundList } = extra
+        let { base, power, fund, fundList, other } = extra
         let { start, end, rate, energy, percent, cost, total } = data
         let { start_jian, start_feng, start_ping, start_gu } = data
         let { end_jian, end_feng, end_ping, end_gu } = data
@@ -115,6 +115,7 @@ class Rating extends React.Component {
                 {base ? <Base data={base} /> : null}
                 {power ? <Power data={power} /> : null}
                 {fundList ? <Fund fund={fund} list={fundList} /> : null}
+                {other ? <Other data={other} /> : null}
                 <table className='total'>
                     <tbody>
                         <tr>

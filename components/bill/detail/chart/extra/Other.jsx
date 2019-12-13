@@ -1,7 +1,7 @@
 import React from 'react'
 import { Icon } from 'antd-mobile'
 
-class Fund extends React.Component {
+class Other extends React.Component {
     constructor(props) {
         super(props)
         this.state = { collapse: true }
@@ -21,12 +21,12 @@ class Fund extends React.Component {
 
     render() {
         let { collapse } = this.state
-        let { fund, list } = this.props
+        let { label, price, cost } = this.props.data
         return (
             <React.Fragment>
                 <div className='panel-label' onClick={this.handleCollapse}>
-                    <p>基金电费合计（元）</p>
-                    <p>{(fund * 1).toFixed(2)}</p>
+                    <p>其他费用合计（元）</p>
+                    <p>{(cost * 1).toFixed(2)}</p>
                     <Icon
                         type={collapse ? 'down' : 'up'}
                         size='xs'
@@ -41,21 +41,17 @@ class Fund extends React.Component {
                     <table>
                         <thead>
                             <tr>
-                                <th>项目</th>
-                                <th>电量（kWh）</th>
-                                <th>电价（元/度）</th>
-                                <th>电费（元）</th>
+                                <th>类目</th>
+                                <th>价格（元/度）</th>
+                                <th>费用（元）</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {list.map((item, idx) => (
-                                <tr key={idx}>
-                                    <th>{item.label}</th>
-                                    <td>{item.energy}</td>
-                                    <td>{(item.price * 1).toFixed(2)}</td>
-                                    <td>{(item.cost * 1).toFixed(2)}</td>
-                                </tr>
-                            ))}
+                            <tr>
+                                <td>{label}</td>
+                                <td>{(price * 1).toFixed(2)}</td>
+                                <td>{(cost * 1).toFixed(2)}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </section>
@@ -64,4 +60,4 @@ class Fund extends React.Component {
     }
 }
 
-export default Fund
+export default Other

@@ -51,7 +51,7 @@ class Power extends React.Component {
                             <tr>
                                 <th>{standard}</th>
                                 <td>{current}</td>
-                                <td>{adjust}</td>
+                                <td>{(adjust * 1).toFixed(2)}</td>
                                 <td>{(cost * 1).toFixed(2)}</td>
                             </tr>
                         </tbody>
