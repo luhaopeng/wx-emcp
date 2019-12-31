@@ -39,7 +39,7 @@ class Singlet extends React.Component {
                     <p>抄表日期：{dayjs(time).format(DATE)}</p>
                 </div>
                 <div className='panel-label' onClick={this.handleCollapse}>
-                    <p>电度电费合计（元）</p>
+                    <p>{billType ? '水费' : '电度电费'}合计（元）</p>
                     <p>{(cost * 1).toFixed(2)}</p>
                     <Icon
                         type={collapse ? 'down' : 'up'}
