@@ -2,6 +2,7 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { Button, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
+import classNames from 'classnames'
 import Icon from '../icon'
 import './index.less'
 import { Mine, Test } from '../../api/url'
@@ -126,12 +127,14 @@ class User extends React.Component {
                                 handler,
                                 addtime,
                                 payMoney,
-                                actualMoney
+                                actualMoney,
+                                payway
                             } = item
                             return {
                                 handler,
                                 time: addtime,
-                                money: actualMoney || payMoney
+                                money: actualMoney || payMoney,
+                                withdraw: payway == -1
                             }
                         })
                         break
@@ -156,15 +159,20 @@ class User extends React.Component {
 
     render() {
         let { hm, user, phone, balance, type, history } = this.state
-        let list = history.map((item, idx) => (
+        let list = history.map(({ handler, time, money, withdraw }, idx) => (
             <li key={idx}>
                 <div>
-                    <p>{item.handler}</p>
-                    <span>
-                        {dayjs(item.time).format('YYYY-MM-DD HH:mm:ss')}
-                    </span>
+                    <p>{handler}</p>
+                    <span>{dayjs(time).format('YYYY-MM-DD HH:mm:ss')}</span>
                 </div>
-                <b>+ {item.money.toFixed(2)}</b>
+                <b
+                    className={classNames({
+                        plus: !withdraw,
+                        minus: withdraw
+                    })}
+                >
+                    {money.toFixed(2)}
+                </b>
             </li>
         ))
         list.push(

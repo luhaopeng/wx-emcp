@@ -1,5 +1,6 @@
 import React from 'react'
 import { List, Toast } from 'antd-mobile'
+import classNames from 'classnames'
 import dayjs from 'dayjs'
 import './index.less'
 import { Mine, Test } from '../../../api/url'
@@ -75,12 +76,14 @@ class History extends React.Component {
                                 handler,
                                 addtime,
                                 payMoney,
-                                actualMoney
+                                actualMoney,
+                                payway
                             } = item
                             return {
                                 handler,
                                 time: addtime,
-                                money: actualMoney || payMoney
+                                money: actualMoney || payMoney,
+                                withdraw: payway == -1
                             }
                         })
                         break
@@ -103,22 +106,31 @@ class History extends React.Component {
 
     render() {
         let { history, type } = this.state
-        let list = history.map((val, idx) => (
-            <List.Item key={idx}>
-                <div className='history-row'>
-                    <div className='history-item'>
-                        <h4>{val.handler}</h4>
-                        <span>
-                            {dayjs(val.time).format('YYYY-MM-DD HH:mm:ss')}
-                        </span>
+        let list = history.map(
+            ({ handler, time, money, withdraw, name }, idx) => (
+                <List.Item key={idx}>
+                    <div className='history-row'>
+                        <div className='history-item'>
+                            <h4>{handler}</h4>
+                            <span>
+                                {dayjs(time).format('YYYY-MM-DD HH:mm:ss')}
+                            </span>
+                        </div>
+                        <div className='history-item'>
+                            <h4
+                                className={classNames({
+                                    plus: !withdraw,
+                                    minus: withdraw
+                                })}
+                            >
+                                {money.toFixed(2)}
+                            </h4>
+                            {type > 1 ? <span>{name}</span> : null}
+                        </div>
                     </div>
-                    <div className='history-item'>
-                        <h4>+ {val.money.toFixed(2)}</h4>
-                        {type > 1 ? <span>{val.name}</span> : null}
-                    </div>
-                </div>
-            </List.Item>
-        ))
+                </List.Item>
+            )
+        )
         list.push(
             <List.Item key='more'>
                 <div className='more' onClick={this.queryData}>

@@ -123,6 +123,18 @@
 
                 b {
                     font-size: 20px;
+
+                    &.plus::before {
+                        content: '+ ';
+                    }
+
+                    &.minus {
+                        color: @error-color;
+
+                        &::before {
+                            content: '- ';
+                        }
+                    }
                 }
             }
         }
