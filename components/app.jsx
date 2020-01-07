@@ -28,218 +28,205 @@ import ErrorCatcher from './error-catcher'
 import Reporter from '../util/reporter'
 
 const TabItem = ({ label, to, exact, icon, selectedIcon }) => {
-    return (
-        <Route
-            path={to}
-            exact={exact}
-            children={({ match }) => (
-                <Link to={to} replace>
-                    <TabBar.Item
-                        label={label}
-                        icon={<Icon svg={icon} />}
-                        selectedIcon={<Icon svg={selectedIcon} />}
-                        selected={match}
-                    />
-                </Link>
-            )}
-        />
-    )
+  return (
+    <Route
+      path={to}
+      exact={exact}
+      children={({ match }) => (
+        <Link to={to} replace>
+          <TabBar.Item
+            label={label}
+            icon={<Icon svg={icon} />}
+            selectedIcon={<Icon svg={selectedIcon} />}
+            selected={match}
+          />
+        </Link>
+      )}
+    />
+  )
 }
 
 const TabWrap = () => (
-    <TabBar>
-        <TabItem
-            to='/'
-            label='账单查询'
-            exact={true}
-            icon={billO}
-            selectedIcon={bill}
-        />
-        <TabItem
-            to='/usage'
-            label='用量分析'
-            icon={statO}
-            selectedIcon={stat}
-        />
-        <TabItem to='/pay' label='余额充值' icon={payO} selectedIcon={pay} />
-        <TabItem to='/user' label='个人中心' icon={userO} selectedIcon={user} />
-    </TabBar>
+  <TabBar>
+    <TabItem
+      to='/'
+      label='账单查询'
+      exact={true}
+      icon={billO}
+      selectedIcon={bill}
+    />
+    <TabItem to='/usage' label='用量分析' icon={statO} selectedIcon={stat} />
+    <TabItem to='/pay' label='余额充值' icon={payO} selectedIcon={pay} />
+    <TabItem to='/user' label='个人中心' icon={userO} selectedIcon={user} />
+  </TabBar>
 )
 
 const AuthRoute = ({ component: Component, ...rest }) => {
-    /**
-     * check if this user is banned for login
-     * @param {string} customerid
-     */
-    const checkAbility = async customerid => {
-        const { data } = await Mine.able.query({ customerid })
-        sessionStorage.banned = data.errcode == 10
-        if (data.errcode) {
-            localStorage.clear()
-            window.location.reload()
-        }
+  /**
+   * check if this user is banned for login
+   * @param {string} customerid
+   */
+  const checkAbility = async customerid => {
+    const { data } = await Mine.able.query({ customerid })
+    sessionStorage.banned = data.errcode == 10
+    if (data.errcode) {
+      localStorage.clear()
+      window.location.reload()
     }
+  }
 
-    return (
-        <Route
-            {...rest}
-            render={props => {
-                let { customerId, lastLogin } = localStorage
-                let { banned } = sessionStorage
-                if (customerId && typeof banned === 'undefined') {
-                    checkAbility(customerId)
-                }
-                if (
-                    customerId &&
-                    lastLogin &&
-                    dayjs().diff(dayjs(lastLogin), 'day') < 7 &&
-                    !parseInt(banned, 10)
-                ) {
-                    return <Component {...props} />
-                } else {
-                    return (
-                        <Redirect
-                            to={{
-                                pathname: '/login',
-                                search: props.location.search,
-                                state: { from: props.location }
-                            }}
-                        />
-                    )
-                }
-            }}
-        />
-    )
+  return (
+    <Route
+      {...rest}
+      render={props => {
+        let { customerId, lastLogin } = localStorage
+        let { banned } = sessionStorage
+        if (customerId && typeof banned === 'undefined') {
+          checkAbility(customerId)
+        }
+        if (
+          customerId &&
+          lastLogin &&
+          dayjs().diff(dayjs(lastLogin), 'day') < 7 &&
+          !parseInt(banned, 10)
+        ) {
+          return <Component {...props} />
+        } else {
+          return (
+            <Redirect
+              to={{
+                pathname: '/login',
+                search: props.location.search,
+                state: { from: props.location },
+              }}
+            />
+          )
+        }
+      }}
+    />
+  )
 }
 
 class App extends React.Component {
-    queryOpenId = async () => {
-        if (isProd || isTest) {
-            // wechat
-            if (!localStorage.msgOpenId) {
-                if (!localStorage.gettingMsg) {
-                    let { ent } = queryString.parse(window.location.search)
-                    if (ent) {
-                        // get config
-                        try {
-                            Toast.loading('获取商户信息...', 0)
-                            let { data } = await Mine.wxArg.query({ ent })
-                            Toast.hide()
-                            let { appId } = data.data
-                            // authorize redirection
-                            localStorage.gettingMsg = true
-                            window.location.href = authUrl(appId, ent)
-                            return
-                        } catch (err) {
-                            Toast.fail('获取商户信息失败，请重进页面')
-                            let reporter = new Reporter()
-                            reporter.setRequest(err)
-                            await Test.report.query(
-                                reporter.format('app/openId', '推送商户配置')
-                            )
-                        }
-                    }
-                } else {
-                    // exchange
-                    let { code, state } = queryString.parse(
-                        window.location.search
-                    )
-                    localStorage.removeItem('gettingMsg')
-                    if (code) {
-                        await this.exchangeIdWithCode(code, state)
-                    }
-                }
-            }
-            if (!localStorage.openId) {
-                if (!localStorage.getting) {
-                    localStorage.getting = true
-                    window.location.href = authUrl()
-                } else {
-                    let { code, state } = queryString.parse(
-                        window.location.search
-                    )
-                    localStorage.removeItem('getting')
-                    if (code) {
-                        this.exchangeIdWithCode(code, state)
-                    }
-                }
-            }
-        } else if (isHaina && !localStorage.residentId) {
-            // haina
-            let { resident_code } = queryString.parse(window.location.search)
-            if (resident_code) {
-                this.exchangeIdWithCode(resident_code)
-            }
-        }
-    }
-
-    exchangeIdWithCode = async (code, ent = 'none') => {
-        if (isProd || isTest) {
-            const key = ent === 'none' ? 'openId' : 'msgOpenId'
+  queryOpenId = async () => {
+    if (isProd || isTest) {
+      // wechat
+      if (!localStorage.msgOpenId) {
+        if (!localStorage.gettingMsg) {
+          let { ent } = queryString.parse(window.location.search)
+          if (ent) {
+            // get config
             try {
-                Toast.loading('请稍等', 0)
-                let { data } = await Wechat.auth.query({ code, ent })
-                Toast.hide()
-                localStorage[key] = data.data.openId
-                window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
+              Toast.loading('获取商户信息...', 0)
+              let { data } = await Mine.wxArg.query({ ent })
+              Toast.hide()
+              let { appId } = data.data
+              // authorize redirection
+              localStorage.gettingMsg = true
+              window.location.href = authUrl(appId, ent)
+              return
             } catch (err) {
-                Toast.fail('微信授权失败，请刷新页面重试')
-                localStorage.removeItem(key)
-                let reporter = new Reporter()
-                reporter.setRequest(err)
-                await Test.report.query(
-                    reporter.format('app/exchange', '微信授权')
-                )
+              Toast.fail('获取商户信息失败，请重进页面')
+              let reporter = new Reporter()
+              reporter.setRequest(err)
+              await Test.report.query(
+                reporter.format('app/openId', '推送商户配置'),
+              )
             }
-        } else if (isHaina) {
-            try {
-                Toast.loading('请稍等', 0)
-                let { data } = await Haina.auth.query({ code })
-                Toast.hide()
-                localStorage.residentId = data.data.residentId
-                window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
-            } catch (err) {
-                Toast.fail('海纳授权失败，请刷新页面重试')
-                localStorage.removeItem('residentId')
-                let reporter = new Reporter()
-                reporter.setRequest(err)
-                await Test.report.query(
-                    reporter.format('app/exchange', '海纳授权')
-                )
-            }
+          }
+        } else {
+          // exchange
+          let { code, state } = queryString.parse(window.location.search)
+          localStorage.removeItem('gettingMsg')
+          if (code) {
+            await this.exchangeIdWithCode(code, state)
+          }
         }
+      }
+      if (!localStorage.openId) {
+        if (!localStorage.getting) {
+          localStorage.getting = true
+          window.location.href = authUrl()
+        } else {
+          let { code, state } = queryString.parse(window.location.search)
+          localStorage.removeItem('getting')
+          if (code) {
+            this.exchangeIdWithCode(code, state)
+          }
+        }
+      }
+    } else if (isHaina && !localStorage.residentId) {
+      // haina
+      let { resident_code } = queryString.parse(window.location.search)
+      if (resident_code) {
+        this.exchangeIdWithCode(resident_code)
+      }
     }
+  }
 
-    componentDidMount() {
-        isWeChat && this.queryOpenId()
+  exchangeIdWithCode = async (code, ent = 'none') => {
+    if (isProd || isTest) {
+      const key = ent === 'none' ? 'openId' : 'msgOpenId'
+      try {
+        Toast.loading('请稍等', 0)
+        let { data } = await Wechat.auth.query({ code, ent })
+        Toast.hide()
+        localStorage[key] = data.data.openId
+        window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
+      } catch (err) {
+        Toast.fail('微信授权失败，请刷新页面重试')
+        localStorage.removeItem(key)
+        let reporter = new Reporter()
+        reporter.setRequest(err)
+        await Test.report.query(reporter.format('app/exchange', '微信授权'))
+      }
+    } else if (isHaina) {
+      try {
+        Toast.loading('请稍等', 0)
+        let { data } = await Haina.auth.query({ code })
+        Toast.hide()
+        localStorage.residentId = data.data.residentId
+        window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
+      } catch (err) {
+        Toast.fail('海纳授权失败，请刷新页面重试')
+        localStorage.removeItem('residentId')
+        let reporter = new Reporter()
+        reporter.setRequest(err)
+        await Test.report.query(reporter.format('app/exchange', '海纳授权'))
+      }
     }
+  }
 
-    render() {
-        return (
-            <ErrorCatcher>
-                <div>
-                    <Switch>
-                        <AuthRoute exact path='/' component={PageBill} />
-                        <AuthRoute path='/detail' component={PageDetail} />
-                        <AuthRoute path='/usage' component={PageUsage} />
-                        <AuthRoute path='/pay' component={PagePay} />
-                        <AuthRoute path='/user' component={PageUser} />
-                        <Route path='/login' component={PageLogin} />
-                        <Route path='/paid' component={PagePaid} />
-                        <Route path='/redirect' component={PageRedirect} />
-                        <AuthRoute component={PageBill} />
-                    </Switch>
+  componentDidMount() {
+    isWeChat && this.queryOpenId()
+  }
 
-                    <Switch>
-                        <Route exact path='/' component={TabWrap} />
-                        <Route exact path='/usage' component={TabWrap} />
-                        <Route exact path='/pay' component={TabWrap} />
-                        <Route exact path='/user' component={TabWrap} />
-                    </Switch>
-                </div>
-            </ErrorCatcher>
-        )
-    }
+  render() {
+    return (
+      <ErrorCatcher>
+        <div>
+          <Switch>
+            <AuthRoute exact path='/' component={PageBill} />
+            <AuthRoute path='/detail' component={PageDetail} />
+            <AuthRoute path='/usage' component={PageUsage} />
+            <AuthRoute path='/pay' component={PagePay} />
+            <AuthRoute path='/user' component={PageUser} />
+            <Route path='/login' component={PageLogin} />
+            <Route path='/paid' component={PagePaid} />
+            <Route path='/redirect' component={PageRedirect} />
+            <AuthRoute component={PageBill} />
+          </Switch>
+
+          <Switch>
+            <Route exact path='/' component={TabWrap} />
+            <Route exact path='/usage' component={TabWrap} />
+            <Route exact path='/pay' component={TabWrap} />
+            <Route exact path='/user' component={TabWrap} />
+          </Switch>
+        </div>
+      </ErrorCatcher>
+    )
+  }
 }
 
 export default hot(App)

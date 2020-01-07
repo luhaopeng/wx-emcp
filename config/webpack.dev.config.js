@@ -7,20 +7,20 @@ module.exports = merge(base, {
   mode: 'development',
   output: {
     publicPath: '/',
-    filename: '[name]_[hash].js'
+    filename: '[name]_[hash].js',
   },
   devServer: {
     contentBase: path.resolve(__dirname, '../dist'),
     historyApiFallback: true,
     compress: true,
     port: 9000,
-    hot: true
+    hot: true,
   },
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader']
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
       {
         test: /\.less$/,
@@ -31,17 +31,17 @@ module.exports = merge(base, {
           {
             loader: 'less-loader',
             options: {
-              javascriptEnabled: true
-            }
-          }
-        ]
-      }
-    ]
+              javascriptEnabled: true,
+            },
+          },
+        ],
+      },
+    ],
   },
   plugins: [new webpack.HotModuleReplacementPlugin()],
   resolve: {
     alias: {
-      'react-dom': '@hot-loader/react-dom'
-    }
-  }
+      'react-dom': '@hot-loader/react-dom',
+    },
+  },
 })

@@ -1,15 +1,12 @@
 {
-  "trailingComma": "none",
-  "tabWidth": 4,
+  "trailingComma": "all",
+  "tabWidth": 2,
   "semi": false,
   "singleQuote": true,
   "jsxSingleQuote": true,
-  "overrides": [
-    {
-      "files": [".*", "*.config.js", "*.json"],
-      "options": {
-        "tabWidth": 2
-      }
-    }
-  ]
+  "printWidth": 80,
+  "useTabs": false,
+  "bracketSpacing": true,
+  "jsxBracketSameLine": false,
+  "arrowParens": "avoid"
 }

@@ -4,11 +4,11 @@ const webpack = require('webpack')
 
 module.exports = merge(prod, {
   output: {
-    publicPath: '/wxemcp/haina/'
+    publicPath: '/wxemcp/haina/',
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('haina')
-    })
-  ]
+      'process.env.NODE_ENV': JSON.stringify('haina'),
+    }),
+  ],
 })

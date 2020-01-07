@@ -1,153 +1,153 @@
 @import '../../static/style/theme.less';
 
 .am-modal-mask {
-    display: none;
+  display: none;
 }
 
 .am-modal-wrap {
-    background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .pay-modal-wrap {
-    height: calc(100vh - @tabbar-height);
+  height: calc(100vh - @tabbar-height);
 
-    .pay-modal-body {
-        .am-modal-body {
-            padding-bottom: 0;
+  .pay-modal-body {
+    .am-modal-body {
+      padding-bottom: 0;
 
-            p {
-                margin: 0;
-                color: @text-color;
-                font-size: 15px;
+      p {
+        margin: 0;
+        color: @text-color;
+        font-size: 15px;
+      }
+
+      span {
+        color: @text-color-secondary;
+        font-size: 13px;
+      }
+
+      .am-checkbox-agree {
+        .am-checkbox-agree-label {
+          color: tomato;
+
+          .am-checkbox-inner {
+            width: 17px;
+            height: 17px;
+            top: 13px;
+
+            &::after {
+              right: 5px;
+              width: 4px;
+              height: 8px;
             }
-
-            span {
-                color: @text-color-secondary;
-                font-size: 13px;
-            }
-
-            .am-checkbox-agree {
-                .am-checkbox-agree-label {
-                    color: tomato;
-
-                    .am-checkbox-inner {
-                        width: 17px;
-                        height: 17px;
-                        top: 13px;
-
-                        &::after {
-                            right: 5px;
-                            width: 4px;
-                            height: 8px;
-                        }
-                    }
-                }
-            }
+          }
         }
+      }
     }
+  }
 }
 
 .page-pay {
-    background-color: @body-bg-color;
-    overflow: scroll;
-    -webkit-overflow-scrolling: touch;
-    height: calc(100vh - @tabbar-height);
+  background-color: @body-bg-color;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  height: calc(100vh - @tabbar-height);
 
-    .top {
-        background-color: @top-bg-color;
-        overflow: hidden;
+  .top {
+    background-color: @top-bg-color;
+    overflow: hidden;
 
-        p {
-            color: white;
-            margin: 25px 0 0 @side-margin;
+    p {
+      color: white;
+      margin: 25px 0 0 @side-margin;
+      font-size: 16px;
+    }
+
+    h1 {
+      color: white;
+      margin: 0;
+      margin-left: @side-margin;
+      font-size: 48px;
+      font-weight: normal;
+      height: 100px;
+      line-height: 100px;
+    }
+
+    .picker-selected {
+      display: flex;
+      margin: 20px @side-margin;
+      justify-content: space-between;
+      border-bottom: 2px dashed white;
+
+      h3 {
+        color: white;
+        font-size: 20px;
+      }
+    }
+  }
+
+  .content {
+    background-color: white;
+    margin: @side-margin 0;
+    padding: 0 @side-margin;
+    overflow: hidden;
+
+    section {
+      h3 {
+        font-size: 16px;
+        font-weight: normal;
+      }
+
+      .am-list-item {
+        padding-left: 0;
+      }
+
+      .fee {
+        display: flex;
+        align-items: center;
+        border-bottom: @divider;
+        padding-bottom: 4px;
+
+        .am-icon {
+          flex: 0 0 22px;
+          margin-right: 8px;
+          color: @heading-color;
+        }
+
+        input {
+          flex: 1 0;
+          border: none;
+          outline: 0;
+          font-size: 46px;
+          width: 100%;
+
+          &::-webkit-input-placeholder {
             font-size: 16px;
+            // transform: translateY(-10px);
+          }
         }
+      }
 
-        h1 {
-            color: white;
-            margin: 0;
-            margin-left: @side-margin;
-            font-size: 48px;
-            font-weight: normal;
-            height: 100px;
-            line-height: 100px;
+      .custom-amount {
+        color: @text-color-secondary;
+        font-size: 14px;
+        margin: 0.5em 0;
+        text-align: right;
+
+        &.hide {
+          display: none;
         }
+      }
 
-        .picker-selected {
-            display: flex;
-            margin: 20px @side-margin;
-            justify-content: space-between;
-            border-bottom: 2px dashed white;
+      .next-btn {
+        background-color: @success-color;
+        margin: 8px 0;
 
-            h3 {
-                color: white;
-                font-size: 20px;
-            }
+        &.active {
+          background-color: darken(@success-color, 5%);
+          color: darken(white, 5%);
         }
+      }
     }
-
-    .content {
-        background-color: white;
-        margin: @side-margin 0;
-        padding: 0 @side-margin;
-        overflow: hidden;
-
-        section {
-            h3 {
-                font-size: 16px;
-                font-weight: normal;
-            }
-
-            .am-list-item {
-                padding-left: 0;
-            }
-
-            .fee {
-                display: flex;
-                align-items: center;
-                border-bottom: @divider;
-                padding-bottom: 4px;
-
-                .am-icon {
-                    flex: 0 0 22px;
-                    margin-right: 8px;
-                    color: @heading-color;
-                }
-
-                input {
-                    flex: 1 0;
-                    border: none;
-                    outline: 0;
-                    font-size: 46px;
-                    width: 100%;
-
-                    &::-webkit-input-placeholder {
-                        font-size: 16px;
-                        // transform: translateY(-10px);
-                    }
-                }
-            }
-
-            .custom-amount {
-                color: @text-color-secondary;
-                font-size: 14px;
-                margin: 0.5em 0;
-                text-align: right;
-
-                &.hide {
-                    display: none;
-                }
-            }
-
-            .next-btn {
-                background-color: @success-color;
-                margin: 8px 0;
-
-                &.active {
-                    background-color: darken(@success-color, 5%);
-                    color: darken(white, 5%);
-                }
-            }
-        }
-    }
+  }
 }

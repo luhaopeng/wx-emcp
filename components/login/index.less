@@ -1,40 +1,40 @@
 @import '../../static/style/theme.less';
 
 .page-login {
-    background-color: #f5f5f9;
-    overflow: scroll;
-    -webkit-overflow-scrolling: touch;
+  background-color: #f5f5f9;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
 
-    .login-avatar {
-        display: block;
-        margin: 30px auto 20px;
-        width: 60px;
-        height: 60px;
-        border-radius: 30px;
+  .login-avatar {
+    display: block;
+    margin: 30px auto 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+  }
+
+  .am-input-label,
+  .am-input-control input {
+    font-size: 16px;
+  }
+
+  .am-list-item .am-input-extra {
+    max-height: 32px;
+  }
+
+  .login-btn {
+    margin: 20px @side-margin;
+  }
+
+  .error {
+    text-align: center;
+    display: none;
+    color: @error-color;
+    font-size: 14px;
+    transition: all linear 0.5s;
+
+    &.show {
+      display: block;
     }
-
-    .am-input-label,
-    .am-input-control input {
-        font-size: 16px;
-    }
-
-    .am-list-item .am-input-extra {
-        max-height: 32px;
-    }
-
-    .login-btn {
-        margin: 20px @side-margin;
-    }
-
-    .error {
-        text-align: center;
-        display: none;
-        color: @error-color;
-        font-size: 14px;
-        transition: all linear 0.5s;
-
-        &.show {
-            display: block;
-        }
-    }
+  }
 }

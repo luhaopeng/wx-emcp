@@ -1,60 +1,60 @@
 class Reporter {
-    constructor() {
-        const { customerId, customerid, openId, openid } = localStorage
-        this.UserInfo = {
-            customerId: customerId || customerid,
-            openId: openId || openid
-        }
-
-        this.Hardware = {
-            userAgent: window.navigator.userAgent
-        }
+  constructor() {
+    const { customerId, customerid, openId, openid } = localStorage
+    this.UserInfo = {
+      customerId: customerId || customerid,
+      openId: openId || openid,
     }
 
-    setRequest(axiosErr) {
-        if (!axiosErr.isAxiosError) {
-            this.Request = {
-                url: '非网络请求错误',
-                param: {},
-                errMsg: axiosErr.toString()
-            }
-            return
-        }
-        let errorReport = {
-            url: axiosErr.config.url,
-            param: axiosErr.config.data,
-            errMsg: axiosErr.message
-        }
-        if (axiosErr.response) {
-            let extra = {
-                retData: axiosErr.response.data,
-                status: axiosErr.response.status,
-                statusText: axiosErr.response.statusText
-            }
-            Object.assign(errorReport, {
-                extra: JSON.stringify(extra)
-            })
-        }
-        this.Request = errorReport
+    this.Hardware = {
+      userAgent: window.navigator.userAgent,
     }
+  }
 
-    setReact(error, errorInfo) {
-        this.React = {
-            error: JSON.stringify(error),
-            errorInfo: JSON.stringify(errorInfo)
-        }
+  setRequest(axiosErr) {
+    if (!axiosErr.isAxiosError) {
+      this.Request = {
+        url: '非网络请求错误',
+        param: {},
+        errMsg: axiosErr.toString(),
+      }
+      return
     }
+    let errorReport = {
+      url: axiosErr.config.url,
+      param: axiosErr.config.data,
+      errMsg: axiosErr.message,
+    }
+    if (axiosErr.response) {
+      let extra = {
+        retData: axiosErr.response.data,
+        status: axiosErr.response.status,
+        statusText: axiosErr.response.statusText,
+      }
+      Object.assign(errorReport, {
+        extra: JSON.stringify(extra),
+      })
+    }
+    this.Request = errorReport
+  }
 
-    format(position, message) {
-        return {
-            position,
-            message,
-            ...this.UserInfo,
-            ...this.Hardware,
-            ...this.Request,
-            ...this.React
-        }
+  setReact(error, errorInfo) {
+    this.React = {
+      error: JSON.stringify(error),
+      errorInfo: JSON.stringify(errorInfo),
     }
+  }
+
+  format(position, message) {
+    return {
+      position,
+      message,
+      ...this.UserInfo,
+      ...this.Hardware,
+      ...this.Request,
+      ...this.React,
+    }
+  }
 }
 
 export default Reporter

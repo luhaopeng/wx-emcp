@@ -7,13 +7,13 @@ module.exports = merge(base, {
   mode: 'production',
   output: {
     publicPath: '/wxemcp/wx/',
-    filename: '[name]_[contenthash].js'
+    filename: '[name]_[contenthash].js',
   },
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader']
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
       },
       {
         test: /\.less$/,
@@ -24,17 +24,17 @@ module.exports = merge(base, {
           {
             loader: 'less-loader',
             options: {
-              javascriptEnabled: true
-            }
-          }
-        ]
-      }
-    ]
+              javascriptEnabled: true,
+            },
+          },
+        ],
+      },
+    ],
   },
   plugins: [new CleanWebpackPlugin()],
   optimization: {
     splitChunks: {
-      chunks: 'all'
-    }
-  }
+      chunks: 'all',
+    },
+  },
 })

@@ -1,47 +1,47 @@
 @import '../../../static/style/theme.less';
 
 .page-history {
-    -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
 
-    .history-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+  .history-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-        .history-item {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+    .history-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
 
-            h4 {
-                font-weight: normal;
-                margin: 0 0 4px;
-                font-size: 14px;
-                color: @text-color;
-
-                &.plus::before {
-                    content: '+ ';
-                }
-
-                &.minus {
-                    color: @error-color;
-
-                    &::before {
-                        content: '- ';
-                    }
-                }
-            }
-
-            span {
-                color: @text-color-secondary;
-                font-size: 12px;
-            }
-        }
-    }
-
-    .more {
+      h4 {
+        font-weight: normal;
+        margin: 0 0 4px;
         font-size: 14px;
-        text-align: center;
         color: @text-color;
+
+        &.plus::before {
+          content: '+ ';
+        }
+
+        &.minus {
+          color: @error-color;
+
+          &::before {
+            content: '- ';
+          }
+        }
+      }
+
+      span {
+        color: @text-color-secondary;
+        font-size: 12px;
+      }
     }
+  }
+
+  .more {
+    font-size: 14px;
+    text-align: center;
+    color: @text-color;
+  }
 }

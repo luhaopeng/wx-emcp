@@ -4,90 +4,88 @@
 @list-head-height: 43px;
 
 .page-usage {
-    background-color: white;
+  background-color: white;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  height: calc(100vh - @tabbar-height);
+
+  .empty {
+    margin-top: 50px;
+  }
+
+  .mode-switch {
+    position: absolute;
+    top: 50px;
+    left: 16px;
+    z-index: 10;
+
+    &.hide {
+      display: none;
+    }
+
+    &.non-seg {
+      top: 8px;
+    }
+  }
+
+  .segment-control {
+    margin: @side-margin;
+
+    &.hide {
+      display: none;
+    }
+  }
+
+  .chart-root {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+
+    &.hide {
+      display: none;
+    }
+  }
+
+  .list-header {
+    padding: 0 @side-margin;
+    border-top: @divider;
+    border-bottom: @divider;
+  }
+
+  .list-header,
+  .list-row {
+    display: flex;
+    justify-content: space-around;
+
+    h3 {
+      font-weight: normal;
+      color: @heading-color;
+      margin: 0.7em 0;
+      text-align: center;
+      flex: 1 0 50px;
+    }
+
+    div {
+      font-size: 12px;
+      color: @text-color;
+      text-align: center;
+      flex: 1 0 50px;
+    }
+  }
+
+  .am-list {
+    height: calc(
+      100vh - @segment-height - @side-margin * 2 - @chart-height -
+        @list-head-height - @tabbar-height
+    );
     overflow: scroll;
-    -webkit-overflow-scrolling: touch;
-    height: calc(100vh - @tabbar-height);
 
-    .empty {
-        margin-top: 50px;
+    &.non-seg {
+      height: calc(100vh - @chart-height - @list-head-height - @tabbar-height);
     }
 
-    .mode-switch {
-        position: absolute;
-        top: 50px;
-        left: 16px;
-        z-index: 10;
-
-        &.hide {
-            display: none;
-        }
-
-        &.non-seg {
-            top: 8px;
-        }
+    .am-list-body::before {
+      display: none;
     }
-
-    .segment-control {
-        margin: @side-margin;
-
-        &.hide {
-            display: none;
-        }
-    }
-
-    .chart-root {
-        width: 100%;
-        height: 250px;
-        overflow: hidden;
-
-        &.hide {
-            display: none;
-        }
-    }
-
-    .list-header {
-        padding: 0 @side-margin;
-        border-top: @divider;
-        border-bottom: @divider;
-    }
-
-    .list-header,
-    .list-row {
-        display: flex;
-        justify-content: space-around;
-
-        h3 {
-            font-weight: normal;
-            color: @heading-color;
-            margin: 0.7em 0;
-            text-align: center;
-            flex: 1 0 50px;
-        }
-
-        div {
-            font-size: 12px;
-            color: @text-color;
-            text-align: center;
-            flex: 1 0 50px;
-        }
-    }
-
-    .am-list {
-        height: calc(
-            100vh - @segment-height - @side-margin * 2 - @chart-height -
-                @list-head-height - @tabbar-height
-        );
-        overflow: scroll;
-
-        &.non-seg {
-            height: calc(
-                100vh - @chart-height - @list-head-height - @tabbar-height
-            );
-        }
-
-        .am-list-body::before {
-            display: none;
-        }
-    }
+  }
 }

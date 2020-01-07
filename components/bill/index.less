@@ -3,123 +3,123 @@
 @bill-price-color: #228b22;
 
 .page-bill {
-    background-color: @body-bg-color;
-    overflow: scroll;
-    -webkit-overflow-scrolling: touch;
-    height: calc(100vh - @tabbar-height);
+  background-color: @body-bg-color;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  height: calc(100vh - @tabbar-height);
 
-    .num-usage {
-        color: @bill-usage-color;
+  .num-usage {
+    color: @bill-usage-color;
+  }
+
+  .num-price {
+    color: @bill-price-color;
+  }
+
+  .segment-control {
+    margin: @side-margin;
+
+    &.hide {
+      display: none;
     }
+  }
 
-    .num-price {
-        color: @bill-price-color;
-    }
+  .content {
+    section {
+      margin-bottom: @side-margin;
+      background-color: #fff;
 
-    .segment-control {
-        margin: @side-margin;
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 @side-margin;
+        border-bottom: @divider;
 
-        &.hide {
-            display: none;
+        h3 {
+          font-weight: normal;
         }
-    }
 
-    .content {
-        section {
-            margin-bottom: @side-margin;
-            background-color: #fff;
-
-            header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0 @side-margin;
-                border-bottom: @divider;
-
-                h3 {
-                    font-weight: normal;
-                }
-
-                div {
-                    font-size: 12px;
-                    color: @text-color-secondary;
-                }
-            }
-
-            .cur {
-                display: flex;
-                justify-content: space-around;
-                padding: 1em 0;
-
-                div {
-                    text-align: center;
-
-                    h3 {
-                        font-size: 28px;
-                        font-weight: normal;
-                        margin: 0 auto 0.5em;
-
-                        &.usage {
-                            .num-usage;
-                        }
-
-                        &.price {
-                            .num-price;
-                        }
-                    }
-
-                    span {
-                        font-size: 12px;
-                        color: @text-color-secondary;
-                    }
-                }
-            }
-
-            .list-row {
-                display: flex;
-                justify-content: space-between;
-
-                .list-col {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-
-                    &.right {
-                        text-align: end;
-                    }
-
-                    span {
-                        font-size: 12px;
-                        color: @heading-color;
-
-                        &:first-child {
-                            margin-bottom: 4px;
-                        }
-
-                        &.brief {
-                            color: @text-color-secondary;
-                        }
-
-                        &.usage {
-                            .num-usage;
-                        }
-
-                        &.price {
-                            .num-price;
-                        }
-                    }
-                }
-            }
-
-            .more {
-                font-size: 14px;
-                text-align: center;
-            }
-
-            .am-list-body::before,
-            .am-list-body::after {
-                display: none;
-            }
+        div {
+          font-size: 12px;
+          color: @text-color-secondary;
         }
+      }
+
+      .cur {
+        display: flex;
+        justify-content: space-around;
+        padding: 1em 0;
+
+        div {
+          text-align: center;
+
+          h3 {
+            font-size: 28px;
+            font-weight: normal;
+            margin: 0 auto 0.5em;
+
+            &.usage {
+              .num-usage;
+            }
+
+            &.price {
+              .num-price;
+            }
+          }
+
+          span {
+            font-size: 12px;
+            color: @text-color-secondary;
+          }
+        }
+      }
+
+      .list-row {
+        display: flex;
+        justify-content: space-between;
+
+        .list-col {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+
+          &.right {
+            text-align: end;
+          }
+
+          span {
+            font-size: 12px;
+            color: @heading-color;
+
+            &:first-child {
+              margin-bottom: 4px;
+            }
+
+            &.brief {
+              color: @text-color-secondary;
+            }
+
+            &.usage {
+              .num-usage;
+            }
+
+            &.price {
+              .num-price;
+            }
+          }
+        }
+      }
+
+      .more {
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .am-list-body::before,
+      .am-list-body::after {
+        display: none;
+      }
     }
+  }
 }

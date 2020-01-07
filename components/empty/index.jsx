@@ -5,15 +5,15 @@ import classNames from 'classnames'
 import './index.less'
 
 class Empty extends React.Component {
-    render() {
-        let { style, className } = this.props
-        return (
-            <div style={style} className={classNames('hl-empty', className)}>
-                <Icon svg={svg} className='hl-empty-icon' />
-                <p>暂无数据</p>
-            </div>
-        )
-    }
+  render() {
+    let { style, className } = this.props
+    return (
+      <div style={style} className={classNames('hl-empty', className)}>
+        <Icon svg={svg} className='hl-empty-icon' />
+        <p>暂无数据</p>
+      </div>
+    )
+  }
 }
 
 export default Empty

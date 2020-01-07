@@ -1,52 +1,52 @@
 @import '../../../static/style/theme.less';
 
 .page-guide {
-    -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
 
-    header {
-        overflow: hidden;
-        margin: 20px @side-margin 10px;
+  header {
+    overflow: hidden;
+    margin: 20px @side-margin 10px;
 
-        p {
-            color: @text-color-secondary;
-        }
+    p {
+      color: @text-color-secondary;
     }
+  }
 
-    .record-wrap {
-        display: flex;
+  .record-wrap {
+    display: flex;
 
-        div {
-            font-size: 14px;
-            color: @text-color;
-            overflow-x: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+    div {
+      font-size: 14px;
+      color: @text-color;
+      overflow-x: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
 
-            &:first-child {
-                width: 30%;
-                margin-right: 8px;
-            }
+      &:first-child {
+        width: 30%;
+        margin-right: 8px;
+      }
 
-            &:last-child {
-                width: 60%;
-            }
-        }
+      &:last-child {
+        width: 60%;
+      }
     }
+  }
 
-    .banned {
-        color: #f5222d;
-        text-align: center;
-        font-size: 13px;
-        margin-top: 5px;
-        display: none;
+  .banned {
+    color: #f5222d;
+    text-align: center;
+    font-size: 13px;
+    margin-top: 5px;
+    display: none;
 
-        &.show {
-            display: block;
-        }
+    &.show {
+      display: block;
     }
+  }
 
-    .bind-btn {
-        font-size: 16px;
-        margin: 20px @side-margin;
-    }
+  .bind-btn {
+    font-size: 16px;
+    margin: 20px @side-margin;
+  }
 }

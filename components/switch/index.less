@@ -1,62 +1,62 @@
 @tint-color: #4dd865;
 
 .hl-switch {
-    margin: 0;
-    padding: 0;
-    color: rgba(0, 0, 0, 0.65);
-    font-size: 14px;
-    font-variant: tabular-nums;
-    line-height: 1.5;
-    list-style: none;
-    font-feature-settings: 'tnum';
-    position: relative;
-    display: inline-block;
-    box-sizing: border-box;
-    min-width: 44px;
-    height: 22px;
-    line-height: 20px;
-    vertical-align: middle;
-    background-color: rgba(0, 0, 0, 0.25);
-    border: 1px solid transparent;
-    border-radius: 100px;
-    cursor: pointer;
-    transition: all 0.36s;
-    user-select: none;
+  margin: 0;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5;
+  list-style: none;
+  font-feature-settings: 'tnum';
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: 44px;
+  height: 22px;
+  line-height: 20px;
+  vertical-align: middle;
+  background-color: rgba(0, 0, 0, 0.25);
+  border: 1px solid transparent;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.36s;
+  user-select: none;
 
-    &.hl-switch-checked {
-        background-color: @tint-color;
-
-        &::after {
-            left: 100%;
-            margin-left: -1px;
-            transform: translateX(-100%);
-        }
-
-        .hl-switch-label {
-            margin-right: 24px;
-            margin-left: 6px;
-        }
-    }
+  &.hl-switch-checked {
+    background-color: @tint-color;
 
     &::after {
-        content: ' ';
-        position: absolute;
-        top: 1px;
-        left: 1px;
-        width: 18px;
-        height: 18px;
-        background-color: #fff;
-        border-radius: 18px;
-        cursor: pointer;
-        transition: all 0.36s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-        box-shadow: 0 2px 4px 0 rgba(0, 35, 11, 0.2);
+      left: 100%;
+      margin-left: -1px;
+      transform: translateX(-100%);
     }
 
     .hl-switch-label {
-        display: block;
-        margin-right: 6px;
-        margin-left: 24px;
-        color: #fff;
-        font-size: 12px;
+      margin-right: 24px;
+      margin-left: 6px;
     }
+  }
+
+  &::after {
+    content: ' ';
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 18px;
+    height: 18px;
+    background-color: #fff;
+    border-radius: 18px;
+    cursor: pointer;
+    transition: all 0.36s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    box-shadow: 0 2px 4px 0 rgba(0, 35, 11, 0.2);
+  }
+
+  .hl-switch-label {
+    display: block;
+    margin-right: 6px;
+    margin-left: 24px;
+    color: #fff;
+    font-size: 12px;
+  }
 }
