@@ -25,7 +25,7 @@ class Guide extends React.Component {
     let { id, ban } = selected
     localStorage.customerId = id
     localStorage.lastLogin = dayjs().format(DATE)
-    sessionStorage.banned = ban
+    sessionStorage.banned = ban * 10
 
     // bind
     if (isWeChat) {

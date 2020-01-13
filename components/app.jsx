@@ -68,8 +68,8 @@ const AuthRoute = ({ component: Component, ...rest }) => {
    */
   const checkAbility = async customerid => {
     const { data } = await Mine.able.query({ customerid })
-    sessionStorage.banned = data.errcode == 10
-    if (data.errcode) {
+    sessionStorage.banned = data.errcode
+    if (data.errcode == 10) {
       localStorage.clear()
       window.location.reload()
     }
@@ -88,7 +88,7 @@ const AuthRoute = ({ component: Component, ...rest }) => {
           customerId &&
           lastLogin &&
           dayjs().diff(dayjs(lastLogin), 'day') < 7 &&
-          !parseInt(banned, 10)
+          banned != 10
         ) {
           return <Component {...props} />
         } else {
