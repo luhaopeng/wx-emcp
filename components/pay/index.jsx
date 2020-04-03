@@ -348,6 +348,12 @@ class Pay extends React.Component {
   }
 
   componentDidMount() {
+    if (localStorage.shouldChangePwd === '1') {
+      Modal.alert('请修改密码', '为了您的数据安全，请先修改密码', [
+        { text: '去修改', onPress: () => this.props.history.push('/user/pwd') },
+      ])
+      return
+    }
     // wechat pay detect
     if (!isWeChat) {
       Toast.fail('您不在微信浏览器中，无法使用微信支付')

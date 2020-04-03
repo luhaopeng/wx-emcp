@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { List, SegmentedControl, Toast } from 'antd-mobile'
+import { List, SegmentedControl, Toast, Modal } from 'antd-mobile'
 import dayjs from 'dayjs'
 import './index.less'
 import Chart from './chart'
@@ -204,6 +204,12 @@ class Usage extends React.Component {
   }
 
   componentDidMount() {
+    if (localStorage.shouldChangePwd === '1') {
+      Modal.alert('请修改密码', '为了您的数据安全，请先修改密码', [
+        { text: '去修改', onPress: () => this.props.history.push('/user/pwd') },
+      ])
+      return
+    }
     this.queryData()
   }
 

@@ -8,6 +8,7 @@ import './index.less'
 import Avatar from '../../static/img/login.jpg'
 import { Mine, Haina, Test } from '../../api/url'
 import { isWeChat, isProd, isTest, isHaina } from '../../util/constants'
+import LoginTypeSelector from './login-type-selector'
 import Reporter from '../../util/reporter'
 
 const DATE = 'YYYY-MM-DD HH:mm:ss'
@@ -18,11 +19,14 @@ class Login extends React.Component {
     this.state = {
       code: '',
       phone: '',
+      account: '',
+      password: '',
       error: false,
       errMsg: '',
       sent: false,
       sentBtnLabel: '获取验证码',
       loading: false,
+      loginType: 0,
     }
   }
 
@@ -66,7 +70,7 @@ class Login extends React.Component {
     }
   }
 
-  handleLogin = async () => {
+  loginWithPhone = async () => {
     // hide error msg
     this.setState({ error: false, loading: true })
     // get params
@@ -136,13 +140,73 @@ class Login extends React.Component {
     }
   }
 
-  handlePhoneChange = phone => {
-    this.setState({ phone })
+  loginWithAccount = async () => {
+    // hide error msg
+    this.setState({ error: false, loading: true })
+    // get params
+    let { account, password } = this.state
+    account = account.replace(/\s/g, '')
+    // empty check
+    if (!account || !password) {
+      this.setState({ error: true, errMsg: '请填写完整', loading: false })
+      return
+    }
+    // login
+    try {
+      let { data } = await Mine.loginHH.query({ hh: account, password })
+      if (data.errcode !== 0) {
+        this.setState({
+          error: true,
+          errMsg: data.errmsg,
+          loading: false,
+        })
+      } else {
+        this.setState({ loading: false })
+        // success
+        const { customerid, shouldChangePwd } = data.data
+        localStorage.customerId = customerid
+        localStorage.lastLogin = dayjs().format(DATE)
+        localStorage.shouldChangePwd = shouldChangePwd
+
+        if (isWeChat) {
+          await Mine.bind.query({
+            openid: localStorage.openId,
+            msgOpenId: localStorage.msgOpenId,
+            customerid: customerid,
+          })
+        }
+
+        // redirect
+        let { history, location } = this.props
+        let { from } = location.state || { from: { pathname: '/' } }
+        history.replace(from)
+      }
+    } catch (err) {
+      this.setState({ error: true, errMsg: '请求超时', loading: false })
+      let reporter = new Reporter()
+      reporter.setRequest(err)
+      await Test.report.query(reporter.format('login/loginHH', '登录'))
+    }
   }
 
-  handleCodeChange = code => {
-    this.setState({ code })
+  handleLogin = () => {
+    const { loginType } = this.state
+    if (loginType) {
+      this.loginWithAccount()
+    } else {
+      this.loginWithPhone()
+    }
   }
+
+  handlePhoneChange = phone => this.setState({ phone })
+
+  handleCodeChange = code => this.setState({ code })
+
+  handleAccountChange = account => this.setState({ account })
+
+  handlePasswordChange = password => this.setState({ password })
+
+  handleLoginTypeChange = idx => this.setState({ loginType: idx, error: false })
 
   async componentDidMount() {
     let { openId } = localStorage
@@ -175,36 +239,57 @@ class Login extends React.Component {
     return (
       <div className='page-login'>
         <img className='login-avatar' src={Avatar} />
-        <List>
-          <InputItem
-            value={this.state.phone}
-            type='phone'
-            placeholder='填写手机号码'
-            onChange={this.handlePhoneChange}
-          >
-            手机号码
-          </InputItem>
-          <InputItem
-            value={this.state.code}
-            type='tel'
-            placeholder='填写验证码'
-            onChange={this.handleCodeChange}
-            maxLength='6'
-            extra={
-              <Button
-                disabled={this.state.sent}
-                type='primary'
-                size='small'
-                inline
-                onClick={this.handleSendCode}
-              >
-                {this.state.sentBtnLabel}
-              </Button>
-            }
-          >
-            验证码
-          </InputItem>
-        </List>
+        {this.state.loginType ? (
+          <List>
+            <InputItem
+              value={this.state.account}
+              placeholder='填写户号'
+              onChange={this.handleAccountChange}
+              clear
+            >
+              户号
+            </InputItem>
+            <InputItem
+              value={this.state.password}
+              type='password'
+              placeholder='填写密码'
+              onChange={this.handlePasswordChange}
+            >
+              密码
+            </InputItem>
+          </List>
+        ) : (
+          <List>
+            <InputItem
+              value={this.state.phone}
+              type='phone'
+              placeholder='填写手机号码'
+              onChange={this.handlePhoneChange}
+            >
+              手机号码
+            </InputItem>
+            <InputItem
+              value={this.state.code}
+              type='tel'
+              placeholder='填写验证码'
+              onChange={this.handleCodeChange}
+              maxLength='6'
+              extra={
+                <Button
+                  disabled={this.state.sent}
+                  type='primary'
+                  size='small'
+                  inline
+                  onClick={this.handleSendCode}
+                >
+                  {this.state.sentBtnLabel}
+                </Button>
+              }
+            >
+              验证码
+            </InputItem>
+          </List>
+        )}
         <Button
           loading={this.state.loading}
           className='login-btn'
@@ -220,6 +305,7 @@ class Login extends React.Component {
         >
           {this.state.errMsg}
         </p>
+        <LoginTypeSelector onChange={this.handleLoginTypeChange} />
       </div>
     )
   }

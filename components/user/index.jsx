@@ -8,6 +8,7 @@ import './index.less'
 import { Mine, Test } from '../../api/url'
 import PageHistory from './history'
 import PageMeters from './meterList'
+import PageChangePwd from './change-pwd'
 import Reporter from '../../util/reporter'
 
 class User extends React.Component {
@@ -61,6 +62,10 @@ class User extends React.Component {
     if (this.state.type > 1) {
       this.props.history.push('/user/meters')
     }
+  }
+
+  handleChangePwd = () => {
+    this.props.history.push('/user/pwd')
   }
 
   async componentDidMount() {
@@ -224,6 +229,9 @@ class User extends React.Component {
                 切换户号
               </Button>
             )}
+            <Button className='op-btn' onClick={this.handleChangePwd}>
+              修改密码
+            </Button>
             <Button
               type='warning'
               className='op-btn'
@@ -241,6 +249,7 @@ class User extends React.Component {
 const Render = () => (
   <Switch>
     <Route exact path='/user' component={User} />
+    <Route path='/user/pwd' component={PageChangePwd} />
     <Route path='/user/history' component={PageHistory} />
     <Route path='/user/meters' component={PageMeters} />
   </Switch>

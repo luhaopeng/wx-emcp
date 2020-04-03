@@ -42,6 +42,8 @@ const Mine = {
   balance: new Request('/mine/balance'),
   history: new Request('/mine/rechargeHistory'),
   login: new Request('/mine/login'),
+  loginHH: new Request('/mine/loginHH'),
+  changePwd: new Request('/mine/changePwd'),
   autoLogin: new Request('/mine/autoLogin'),
   sms: new Request('/mine/sendSms'),
   bind: new Request('/mine/bind'),

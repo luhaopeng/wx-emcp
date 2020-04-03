@@ -1,0 +1,19 @@
+@import '../../../static/style/theme.less';
+
+.page-change-pwd {
+  .save-btn {
+    margin: 20px @side-margin;
+  }
+
+  .error {
+    text-align: center;
+    display: none;
+    color: @error-color;
+    font-size: 14px;
+    transition: all linear 0.5s;
+
+    &.show {
+      display: block;
+    }
+  }
+}
