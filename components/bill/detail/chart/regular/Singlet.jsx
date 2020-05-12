@@ -58,7 +58,7 @@ class Singlet extends React.Component {
                 <th>
                   单价
                   <br />
-                  (元/{type})
+                  (元/{unit})
                 </th>
                 <th>
                   {type}量<br />({unit})
