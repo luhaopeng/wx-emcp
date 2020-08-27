@@ -67,13 +67,8 @@ const Wechat = {
   config: new Request('/wechat/wxConfig', prodUrl),
 }
 
-const Haina = {
-  auth: new Request('/haina/authorize'),
-  bind: new Request('/haina/bind'),
-}
-
 const Test = {
   report: new Request('/test/report'),
 }
 
-export { Elec, Mine, Pay, Wechat, Haina, Test }
+export { Elec, Mine, Pay, Wechat, Test }

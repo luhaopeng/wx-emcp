@@ -6,8 +6,8 @@ import dayjs from 'dayjs'
 import Guide from './guide'
 import './index.less'
 import Avatar from '../../static/img/login.jpg'
-import { Mine, Haina, Test } from '../../api/url'
-import { isWeChat, isProd, isTest, isHaina } from '../../util/constants'
+import { Mine, Test } from '../../api/url'
+import { isWeChat, isProd, isTest } from '../../util/constants'
 import LoginTypeSelector from './login-type-selector'
 import Reporter from '../../util/reporter'
 
@@ -105,11 +105,6 @@ class Login extends React.Component {
               await Mine.bind.query({
                 openid: localStorage.openId,
                 msgOpenId: localStorage.msgOpenId,
-                customerid: id,
-              })
-            } else if (isHaina) {
-              await Haina.bind.query({
-                residentid: localStorage.residentId,
                 customerid: id,
               })
             }

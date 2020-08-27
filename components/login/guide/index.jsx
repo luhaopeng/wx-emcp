@@ -3,8 +3,8 @@ import { List, Radio, Button, Toast } from 'antd-mobile'
 import dayjs from 'dayjs'
 import classNames from 'classnames'
 import './index.less'
-import { Mine, Haina, Test } from '../../../api/url'
-import { isWeChat, isProd, isTest, isHaina } from '../../../util/constants'
+import { Mine, Test } from '../../../api/url'
+import { isWeChat, isProd, isTest } from '../../../util/constants'
 import Reporter from '../../../util/reporter'
 
 const DATE = 'YYYY-MM-DD HH:mm:ss'
@@ -33,11 +33,6 @@ class Guide extends React.Component {
         await Mine.bind.query({
           openid: localStorage.openId,
           msgOpenId: localStorage.msgOpenId,
-          customerid: id,
-        })
-      } else if (isHaina) {
-        await Haina.bind.query({
-          residentid: localStorage.residentId,
           customerid: id,
         })
       }

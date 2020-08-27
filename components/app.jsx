@@ -4,8 +4,8 @@ import { Switch, Route, Link, Redirect } from 'react-router-dom'
 import { Toast } from 'antd-mobile'
 import queryString from 'query-string'
 import dayjs from 'dayjs'
-import { isWeChat, isProd, isTest, isHaina, authUrl } from '../util/constants'
-import { Wechat, Haina, Mine, Test } from '../api/url'
+import { isWeChat, isProd, isTest, authUrl } from '../util/constants'
+import { Wechat, Mine, Test } from '../api/url'
 import TabBar from './tabbar'
 import PageUser from './user'
 import PagePay from './pay'
@@ -155,12 +155,6 @@ class App extends React.Component {
           }
         }
       }
-    } else if (isHaina && !localStorage.residentId) {
-      // haina
-      let { resident_code } = queryString.parse(window.location.search)
-      if (resident_code) {
-        this.exchangeIdWithCode(resident_code)
-      }
     }
   }
 
@@ -179,20 +173,6 @@ class App extends React.Component {
         let reporter = new Reporter()
         reporter.setRequest(err)
         await Test.report.query(reporter.format('app/exchange', '微信授权'))
-      }
-    } else if (isHaina) {
-      try {
-        Toast.loading('请稍等', 0)
-        let { data } = await Haina.auth.query({ code })
-        Toast.hide()
-        localStorage.residentId = data.data.residentId
-        window.location.href = window.location.href.replace(/\?.*#/, '#') // prettier-ignore
-      } catch (err) {
-        Toast.fail('海纳授权失败，请刷新页面重试')
-        localStorage.removeItem('residentId')
-        let reporter = new Reporter()
-        reporter.setRequest(err)
-        await Test.report.query(reporter.format('app/exchange', '海纳授权'))
       }
     }
   }
