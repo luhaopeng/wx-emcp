@@ -43,7 +43,6 @@ class Stair extends React.Component {
         return null
       }
       if (idx === 4 || !priceList[idx + 1]) {
-        // 最后一条
         let usage = energy - energyList[idx]
         return (
           <p key={idx}>

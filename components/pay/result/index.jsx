@@ -74,7 +74,6 @@ const ResultEnum = {
 function categorize({ type, recharge, operate }) {
   let cat, status
   if (type === 2 || type === 3) {
-    // icm
     cat = 'icm'
     switch (recharge) {
       case 0:
@@ -108,7 +107,6 @@ function categorize({ type, recharge, operate }) {
         break
     }
   } else {
-    // regular
     cat = 'regular'
     switch (recharge) {
       case 0:

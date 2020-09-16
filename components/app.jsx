@@ -62,10 +62,6 @@ const TabWrap = () => (
 )
 
 const AuthRoute = ({ component: Component, ...rest }) => {
-  /**
-   * check if this user is banned for login
-   * @param {string} customerid
-   */
   const checkAbility = async customerid => {
     const { data } = await Mine.able.query({ customerid })
     sessionStorage.banned = data.errcode
@@ -110,18 +106,15 @@ const AuthRoute = ({ component: Component, ...rest }) => {
 class App extends React.Component {
   queryOpenId = async () => {
     if (isProd || isTest) {
-      // wechat
       if (!localStorage.msgOpenId) {
         if (!localStorage.gettingMsg) {
           let { ent } = queryString.parse(window.location.search)
           if (ent) {
-            // get config
             try {
               Toast.loading('获取商户信息...', 0)
               let { data } = await Mine.wxArg.query({ ent })
               Toast.hide()
               let { appId } = data.data
-              // authorize redirection
               localStorage.gettingMsg = true
               window.location.href = authUrl(appId, ent)
               return
@@ -135,7 +128,6 @@ class App extends React.Component {
             }
           }
         } else {
-          // exchange
           let { code, state } = queryString.parse(window.location.search)
           localStorage.removeItem('gettingMsg')
           if (code) {

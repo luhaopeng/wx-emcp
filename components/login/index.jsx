@@ -31,12 +31,9 @@ class Login extends React.Component {
   }
 
   handleSendCode = async () => {
-    // hide error msg
     this.setState({ error: false })
-    // get phone
     let { phone } = this.state
     phone = phone.replace(/\s/g, '')
-    // send
     try {
       let { data } = await Mine.sms.query({ phone })
       if (data.errcode !== 0) {
@@ -71,17 +68,13 @@ class Login extends React.Component {
   }
 
   loginWithPhone = async () => {
-    // hide error msg
     this.setState({ error: false, loading: true })
-    // get params
     let { phone, code } = this.state
     phone = phone.replace(/\s/g, '')
-    // empty check
     if (!phone || !code) {
       this.setState({ error: true, errMsg: '请填写完整', loading: false })
       return
     }
-    // login
     try {
       let { data } = await Mine.login.query({ phone, code })
       if (data.errcode !== 0) {
@@ -92,14 +85,12 @@ class Login extends React.Component {
         })
       } else {
         this.setState({ loading: false })
-        // success
         let customers = data.data.customerEnts
         if (customers.length === 1) {
           let id = customers[0].customerid
           localStorage.customerId = id
           localStorage.lastLogin = dayjs().format(DATE)
 
-          // bind
           if (isWeChat) {
             if (isProd || isTest) {
               await Mine.bind.query({
@@ -110,15 +101,12 @@ class Login extends React.Component {
             }
           }
 
-          // redirect
           let { history, location } = this.props
           let { from } = location.state || { from: { pathname: '/' } }
           history.replace(from)
         } else {
-          // >1
           localStorage.relog = true
           localStorage.phone = phone
-          // redirect
           let { history, location } = this.props
           let to = {
             pathname: '/login/guide',
@@ -136,17 +124,13 @@ class Login extends React.Component {
   }
 
   loginWithAccount = async () => {
-    // hide error msg
     this.setState({ error: false, loading: true })
-    // get params
     let { account, password } = this.state
     account = account.replace(/\s/g, '')
-    // empty check
     if (!account || !password) {
       this.setState({ error: true, errMsg: '请填写完整', loading: false })
       return
     }
-    // login
     try {
       let { data } = await Mine.loginHH.query({ hh: account, password })
       if (data.errcode !== 0) {
@@ -157,7 +141,6 @@ class Login extends React.Component {
         })
       } else {
         this.setState({ loading: false })
-        // success
         const { customerid, shouldChangePwd } = data.data
         localStorage.customerId = customerid
         localStorage.lastLogin = dayjs().format(DATE)
@@ -171,7 +154,6 @@ class Login extends React.Component {
           })
         }
 
-        // redirect
         let { history, location } = this.props
         let { from } = location.state || { from: { pathname: '/' } }
         history.replace(from)
@@ -216,7 +198,6 @@ class Login extends React.Component {
           localStorage.relog = multiple
           localStorage.phone = phone
           localStorage.lastLogin = dayjs().format(DATE)
-          // redirect
           let { history, location } = this.props
           let { from } = location.state || { from: { pathname: '/' } }
           history.replace(from)

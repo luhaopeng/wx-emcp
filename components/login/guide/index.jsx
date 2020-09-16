@@ -27,7 +27,6 @@ class Guide extends React.Component {
     localStorage.lastLogin = dayjs().format(DATE)
     sessionStorage.banned = ban * 10
 
-    // bind
     if (isWeChat) {
       if (isProd || isTest) {
         await Mine.bind.query({

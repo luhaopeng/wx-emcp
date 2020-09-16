@@ -12,9 +12,9 @@ class Bill extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      billType: 0, // 0 电；1 水,
+      billType: 0,
       single: true,
-      type: 1, // 1 regular; 2 icm; 3 esam
+      type: 1,
       curElec: null,
       curWater: null,
       done: false,

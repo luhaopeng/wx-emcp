@@ -15,9 +15,9 @@ class Usage extends React.Component {
     this.state = {
       elecList: [],
       waterList: [],
-      usageType: 0, // 0 电; 1 水
-      type: 1, // 1 regular; 2 icm; 3 esam
-      mode: 0, // 0 天; 1 小时
+      usageType: 0,
+      type: 1,
+      mode: 0,
       single: true,
     }
     this.chartRef = React.createRef()
@@ -52,7 +52,6 @@ class Usage extends React.Component {
       dayList.unshift(dayjs(item.datatime).format(FORMAT))
       dataList.unshift(usageType ? item.used : item.zong)
     })
-    // 不足7天/24小时，在前部填充空值
     if (usageList.length < timePeriod) {
       let addNum = timePeriod - usageList.length
       for (let j = 0; j < addNum; j++) {

@@ -25,7 +25,6 @@ class User extends React.Component {
   }
 
   handleRelog = () => {
-    // redirect
     let { history, location } = this.props
     let to = {
       pathname: '/login/guide',
@@ -43,7 +42,6 @@ class User extends React.Component {
   }
 
   handleSignOut = async () => {
-    // open toast
     Toast.loading('加载中...', 0)
     try {
       await Mine.unbind.query({ openid: localStorage.openId })
@@ -51,7 +49,6 @@ class User extends React.Component {
       console.error(err)
       Toast.fail('请求超时，请重试')
     }
-    // close toast
     Toast.hide()
 
     localStorage.clear()
@@ -69,9 +66,7 @@ class User extends React.Component {
   }
 
   async componentDidMount() {
-    // open toast
     Toast.loading('加载中...', 0)
-    // query data
     let { customerId } = localStorage
     try {
       let resBasic = await Mine.basic.query({ customerid: customerId })
@@ -91,10 +86,8 @@ class User extends React.Component {
         customerid: customerId,
         num: -1,
       })
-      // close toast
       Toast.hide()
 
-      // process balance
       let balance = 0
       if (parseInt(prepayType) === 1) {
         balance = account.usablemoney
@@ -103,7 +96,6 @@ class User extends React.Component {
           balance += remain
         }
       }
-      // process history
       let history = []
       if (resHistory.data.errcode === 0) {
         let {

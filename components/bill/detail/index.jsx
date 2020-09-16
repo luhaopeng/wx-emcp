@@ -13,7 +13,7 @@ class Detail extends React.Component {
       top: null,
       detail: [],
       changeList: [],
-      prepayType: 1, // 1 regular; 2 icm; 3 esam
+      prepayType: 1,
       checked: true,
       error: false,
       errmsg: '',

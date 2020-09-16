@@ -25,14 +25,14 @@ class Pay extends React.Component {
     super(props)
     this.state = {
       configged: false,
-      channel: 1, // 1 regular; 2 abc;  5 umb
+      channel: 1,
       payType: 1,
       forbidden: false,
       aliDiscount: 1,
       wxDiscount: 1,
       protocol: false,
       agreed: false,
-      type: 1, // 1 regular; 2 icm; 3 esam
+      type: 1,
       account: null,
       meters: [],
       selectedMeter: null,
@@ -102,7 +102,6 @@ class Pay extends React.Component {
       })
       let { canOnlineRecharge, entPay } = data.data
       if (canOnlineRecharge) {
-        // 0 able; 1 forbidden
         this.setState({ forbidden: !!canOnlineRecharge })
         return
       }
@@ -230,10 +229,8 @@ class Pay extends React.Component {
       if (data.errcode !== 0) {
         Toast.fail(data.errmsg)
       } else {
-        // wechat or icbc-aggregate
         let { form, wxData } = data.data
         if (form) {
-          // icbc-aggregate form
           document.body.innerHTML = form
           let scripts = document.querySelectorAll('script')
           for (let i = 0; i < scripts.length; i++) {
@@ -249,7 +246,6 @@ class Pay extends React.Component {
             signType: wxData.signType,
             paySign: wxData.sign,
             success: () => {
-              // redirect to result
               let prefix = window.location.href.split('#')[0]
               window.location.href = `${prefix}#/pay/result?type=${type}&id=${id}`
             },
@@ -354,16 +350,13 @@ class Pay extends React.Component {
       ])
       return
     }
-    // wechat pay detect
     if (!isWeChat) {
       Toast.fail('您不在微信浏览器中，无法使用微信支付')
       this.setState({ payType: 2 })
     }
-    // config wechat jsapi
     if (!isDev && isWeChat) {
       this.configWechatJsApi()
     }
-    // check ability & get balance
     this.checkAbility()
     this.queryBalance()
   }

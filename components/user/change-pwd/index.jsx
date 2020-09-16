@@ -24,7 +24,6 @@ class ChangePwd extends React.Component {
   handleConfirmPwdChange = confirmPwd => this.setState({ confirmPwd })
 
   handleSave = async () => {
-    // hide error msg
     this.setState({ error: false, loading: true })
 
     const { oldPwd, newPwd, confirmPwd } = this.state
@@ -50,7 +49,6 @@ class ChangePwd extends React.Component {
       return
     }
 
-    // api call
     const { data } = await Mine.changePwd.query({
       customerid: localStorage.customerId,
       oldPwd,
@@ -63,9 +61,7 @@ class ChangePwd extends React.Component {
         loading: false,
       })
     } else {
-      // success
       this.setState({ loading: false })
-      // reset info and reload
       Toast.success('修改成功，即将重新登录...', 3, async () => {
         await Mine.unbind.query({ openid: localStorage.openId })
 
