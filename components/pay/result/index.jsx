@@ -22,7 +22,7 @@ const ResultEnum = {
       title: '充值成功',
       message: remain => (
         <p>
-          当前余额为 <b>{remain.toFixed(2)}</b> 元
+          当前余额为 <b>{remain ? remain.toFixed(2) : '--'}</b> 元
         </p>
       ),
     },
@@ -73,7 +73,7 @@ const ResultEnum = {
 
 function categorize({ type, recharge, operate }) {
   let cat, status
-  if (type === 2 || type === 3) {
+  if (+type === 2 || +type === 3) {
     cat = 'icm'
     switch (recharge) {
       case 0:
